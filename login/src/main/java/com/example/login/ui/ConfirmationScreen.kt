@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-public fun ConfirmationScreen(
+fun ConfirmationScreen(
     verificationType: String,
     email: String? = null,
     phoneNumber: String? = null,
