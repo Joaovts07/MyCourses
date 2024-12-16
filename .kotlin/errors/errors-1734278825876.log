@@ -1,0 +1,683 @@
+kotlin version: 2.0.0
+error message: org.jetbrains.kotlin.backend.common.BackendException: Backend Internal error: Exception during IR lowering
+File being compiled: C:/Users/joaki/AndroidStudioProjects/MyCourses/mylogin/src/main/java/com/targinet/mylibrary/ui/ConfirmationScreen.kt
+The root cause java.lang.RuntimeException was thrown at: org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.common.CodegenUtil.reportBackendException(CodegenUtil.kt:253)
+	at org.jetbrains.kotlin.backend.common.CodegenUtil.reportBackendException$default(CodegenUtil.kt:236)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invokeSequential(performByIrFile.kt:65)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invoke(performByIrFile.kt:52)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invoke(performByIrFile.kt:38)
+	at org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase.phaseBody(CompilerPhase.kt:166)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:29)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:16)
+	at org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase.phaseBody(CompilerPhase.kt:166)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:62)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.invokeCodegen(JvmIrCodegenFactory.kt:371)
+	at org.jetbrains.kotlin.codegen.CodegenFactory.generateModule(CodegenFactory.kt:47)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.generateModuleInFrontendIRMode(JvmIrCodegenFactory.kt:433)
+	at org.jetbrains.kotlin.cli.jvm.compiler.pipeline.JvmCompilerPipelineKt.generateCodeFromIr(jvmCompilerPipeline.kt:241)
+	at org.jetbrains.kotlin.cli.jvm.compiler.pipeline.JvmCompilerPipelineKt.compileModulesUsingFrontendIrAndLightTree(jvmCompilerPipeline.kt:140)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecute(K2JVMCompiler.kt:155)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecute(K2JVMCompiler.kt:50)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:104)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:48)
+	at org.jetbrains.kotlin.cli.common.CLITool.exec(CLITool.kt:101)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner.runCompiler(IncrementalJvmCompilerRunner.kt:453)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner.runCompiler(IncrementalJvmCompilerRunner.kt:62)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:506)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:423)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileNonIncrementally(IncrementalCompilerRunner.kt:301)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:129)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:676)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:92)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1661)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.RuntimeException: Exception while generating code for:
+FUN LOCAL_FUNCTION_FOR_LAMBDA name:ConfirmationScreen$lambda$9 visibility:private modality:FINAL <> ($verificationType:kotlin.String, $email:kotlin.String?, $phoneNumber:kotlin.String?, $onResendClick:kotlin.Function0<kotlin.Unit>, innerPadding:androidx.compose.foundation.layout.PaddingValues) returnType:kotlin.Unit?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$verificationType index:0 type:kotlin.String
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$email index:1 type:kotlin.String?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$phoneNumber index:2 type:kotlin.String?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$onResendClick index:3 type:kotlin.Function0<kotlin.Unit>
+  VALUE_PARAMETER name:innerPadding index:4 type:androidx.compose.foundation.layout.PaddingValues
+  BLOCK_BODY
+    CALL 'public final fun Column (modifier: androidx.compose.ui.Modifier, verticalArrangement: androidx.compose.foundation.layout.Arrangement.Vertical, horizontalAlignment: androidx.compose.ui.Alignment.Horizontal, content: @[Composable] @[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.ColumnScope, kotlin.Unit>): kotlin.Unit [inline] declared in androidx.compose.foundation.layout.ColumnKt' type=kotlin.Unit origin=null
+      modifier: CALL 'public final fun padding-3ABfNKs (all: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.PaddingKt' type=androidx.compose.ui.Modifier origin=null
+        $receiver: CALL 'public final fun padding (paddingValues: androidx.compose.foundation.layout.PaddingValues): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.PaddingKt' type=androidx.compose.ui.Modifier origin=null
+          $receiver: CALL 'public final fun fillMaxSize$default (fraction: kotlin.Float, $mask0: kotlin.Int, $handler: kotlin.Any?): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=DEFAULT_DISPATCH_CALL
+            $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+            fraction: COMPOSITE type=kotlin.Float origin=DEFAULT_VALUE
+              CONST Float type=kotlin.Float value=0.0
+            $mask0: CONST Int type=kotlin.Int value=1
+            $handler: CONST Null type=kotlin.Any? value=null
+          paddingValues: GET_VAR 'innerPadding: androidx.compose.foundation.layout.PaddingValues declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9' type=androidx.compose.foundation.layout.PaddingValues origin=null
+        all: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+          $receiver: CONST Int type=kotlin.Int value=16
+      verticalArrangement: CALL 'public final fun <get-Center> (): androidx.compose.foundation.layout.Arrangement.HorizontalOrVertical declared in androidx.compose.foundation.layout.Arrangement' type=androidx.compose.foundation.layout.Arrangement.HorizontalOrVertical origin=GET_PROPERTY
+        $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.foundation.layout.Arrangement visibility:public [final,static]' type=androidx.compose.foundation.layout.Arrangement origin=null
+      horizontalAlignment: CALL 'public final fun <get-CenterHorizontally> (): androidx.compose.ui.Alignment.Horizontal declared in androidx.compose.ui.Alignment.Companion' type=androidx.compose.ui.Alignment.Horizontal origin=GET_PROPERTY
+        $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Alignment.Companion visibility:public [final,static]' type=androidx.compose.ui.Alignment.Companion origin=null
+      content: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.ColumnScope, kotlin.Unit> origin=LAMBDA
+        COMPOSITE type=kotlin.Unit origin=null
+        FUNCTION_REFERENCE 'private final fun ConfirmationScreen$lambda$9$lambda$8 ($verificationType: kotlin.String, $email: kotlin.String?, $phoneNumber: kotlin.String?, $onResendClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=@[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.ColumnScope, kotlin.Unit> origin=INLINE_LAMBDA reflectionTarget=null
+          $verificationType: GET_VAR '$verificationType: kotlin.String declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9' type=kotlin.String origin=null
+          $email: GET_VAR '$email: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9' type=kotlin.String? origin=null
+          $phoneNumber: GET_VAR '$phoneNumber: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9' type=kotlin.String? origin=null
+          $onResendClick: GET_VAR '$onResendClick: kotlin.Function0<kotlin.Unit> declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9' type=kotlin.Function0<kotlin.Unit> origin=null
+
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate$default(FunctionCodegen.kt:42)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethodNode(ClassCodegen.kt:385)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethod(ClassCodegen.kt:402)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generate(ClassCodegen.kt:169)
+	at org.jetbrains.kotlin.backend.jvm.FileCodegen.lower(JvmPhases.kt:41)
+	at org.jetbrains.kotlin.backend.common.phaser.PhaseBuildersKt.makeIrFilePhase$lambda$5(PhaseBuilders.kt:114)
+	at org.jetbrains.kotlin.backend.common.phaser.PhaseBuildersKt$createSimpleNamedCompilerPhase$1.phaseBody(PhaseBuilders.kt:71)
+	at org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase.phaseBody(CompilerPhase.kt:226)
+	at org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase.invoke(CompilerPhase.kt:113)
+	at org.jetbrains.kotlin.backend.common.phaser.PerformByIrFilePhase.invokeSequential(performByIrFile.kt:62)
+	... 43 more
+Caused by: java.lang.RuntimeException: Exception while generating code for:
+FUN INLINE_LAMBDA name:ConfirmationScreen$lambda$9$lambda$8 visibility:private modality:FINAL <> ($receiver:androidx.compose.foundation.layout.ColumnScope, $verificationType:kotlin.String, $email:kotlin.String?, $phoneNumber:kotlin.String?, $onResendClick:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+  $receiver: VALUE_PARAMETER name:$this$Column type:androidx.compose.foundation.layout.ColumnScope
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$verificationType index:0 type:kotlin.String
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$email index:1 type:kotlin.String?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$phoneNumber index:2 type:kotlin.String?
+  VALUE_PARAMETER BOUND_VALUE_PARAMETER name:$onResendClick index:3 type:kotlin.Function0<kotlin.Unit>
+  BLOCK_BODY
+    VAR name:$i$a$-Column-ConfirmationScreenKt$ConfirmationScreen$2$1 type:kotlin.Int [val]
+      CONST Int type=kotlin.Int value=0
+    WHEN type=kotlin.Unit origin=IF
+      BRANCH
+        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR '$verificationType: kotlin.String declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String origin=null
+          arg1: CONST String type=kotlin.String value="email"
+        then: BLOCK type=kotlin.Unit origin=null
+          CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+            text: CONST String type=kotlin.String value="A confirmation email has been sent to:"
+            modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.Modifier? value=null
+            color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.graphics.Color
+                v: CONST Long type=kotlin.Long value=0
+            fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+            fontWeight: COMPOSITE type=androidx.compose.ui.text.font.FontWeight? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontWeight? value=null
+            fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+            letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+            textAlign: COMPOSITE type=androidx.compose.ui.text.style.TextAlign? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.style.TextAlign? value=null
+            lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                <T>: kotlin.Int
+                <R>: androidx.compose.ui.text.style.TextOverflow
+                v: CONST Int type=kotlin.Int value=0
+            softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+            style: CALL 'public final fun <get-bodyLarge> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            $mask0: CONST Int type=kotlin.Int value=65534
+            $handler: CONST Null type=kotlin.Any? value=null
+          CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+            modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+              $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+              height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+                $receiver: CONST Int type=kotlin.Int value=8
+          BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp5_text type:kotlin.String [val]
+              BLOCK type=kotlin.String origin=FOLDED_ELVIS
+                WHEN type=kotlin.String origin=FOLDED_ELVIS
+                  BRANCH
+                    if: COMPOSITE type=kotlin.Boolean origin=null
+                      CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                        $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                          arg0: GET_VAR '$email: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String? origin=null
+                          arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: GET_VAR '$email: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String? origin=null
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST String type=kotlin.String value=""
+            VAR IR_TEMPORARY_VARIABLE name:tmp6_style type:androidx.compose.ui.text.TextStyle [val]
+              CALL 'public final fun <get-headlineMedium> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                  $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp7_fontWeight type:androidx.compose.ui.text.font.FontWeight [val]
+              CALL 'public final fun <get-Bold> (): androidx.compose.ui.text.font.FontWeight declared in androidx.compose.ui.text.font.FontWeight.Companion' type=androidx.compose.ui.text.font.FontWeight origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.text.font.FontWeight.Companion visibility:public [final,static]' type=androidx.compose.ui.text.font.FontWeight.Companion origin=null
+            CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+              text: GET_VAR 'val tmp5_text: kotlin.String [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String origin=null
+              modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.Modifier? value=null
+              color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.graphics.Color
+                  v: CONST Long type=kotlin.Long value=0
+              fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+              fontWeight: GET_VAR 'val tmp7_fontWeight: androidx.compose.ui.text.font.FontWeight [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.font.FontWeight origin=null
+              fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+              letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+              textAlign: COMPOSITE type=androidx.compose.ui.text.style.TextAlign? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextAlign? value=null
+              lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                  <T>: kotlin.Int
+                  <R>: androidx.compose.ui.text.style.TextOverflow
+                  v: CONST Int type=kotlin.Int value=0
+              softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+                CONST Boolean type=kotlin.Boolean value=false
+              maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+                CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+              style: GET_VAR 'val tmp6_style: androidx.compose.ui.text.TextStyle [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.TextStyle origin=null
+              $mask0: CONST Int type=kotlin.Int value=65502
+              $handler: CONST Null type=kotlin.Any? value=null
+          CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+            modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+              $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+              height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+                $receiver: CONST Int type=kotlin.Int value=16
+          BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp8_style type:androidx.compose.ui.text.TextStyle [val]
+              CALL 'public final fun <get-bodyLarge> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                  $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp9_textAlign type:androidx.compose.ui.text.style.TextAlign [val]
+              CALL 'public final fun getCenter-e0LSkKk (): androidx.compose.ui.text.style.TextAlign declared in androidx.compose.ui.text.style.TextAlign.Companion' type=androidx.compose.ui.text.style.TextAlign origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.text.style.TextAlign.Companion visibility:public [final,static]' type=androidx.compose.ui.text.style.TextAlign.Companion origin=null
+            CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+              text: CONST String type=kotlin.String value="Please check your inbox and click the link to confirm your email."
+              modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.Modifier? value=null
+              color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.graphics.Color
+                  v: CONST Long type=kotlin.Long value=0
+              fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+              fontWeight: COMPOSITE type=androidx.compose.ui.text.font.FontWeight? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontWeight? value=null
+              fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+              letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+              textAlign: GET_VAR 'val tmp9_textAlign: androidx.compose.ui.text.style.TextAlign [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.style.TextAlign origin=null
+              lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                  <T>: kotlin.Int
+                  <R>: androidx.compose.ui.text.style.TextOverflow
+                  v: CONST Int type=kotlin.Int value=0
+              softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+                CONST Boolean type=kotlin.Boolean value=false
+              maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+                CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+              style: GET_VAR 'val tmp8_style: androidx.compose.ui.text.TextStyle [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.TextStyle origin=null
+              $mask0: CONST Int type=kotlin.Int value=65022
+              $handler: CONST Null type=kotlin.Any? value=null
+      BRANCH
+        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR '$verificationType: kotlin.String declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String origin=null
+          arg1: CONST String type=kotlin.String value="sms"
+        then: BLOCK type=kotlin.Unit origin=null
+          CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+            text: CONST String type=kotlin.String value="An SMS message with a verification code has been sent to:"
+            modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.Modifier? value=null
+            color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.graphics.Color
+                v: CONST Long type=kotlin.Long value=0
+            fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+            fontWeight: COMPOSITE type=androidx.compose.ui.text.font.FontWeight? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontWeight? value=null
+            fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+            letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+            textAlign: COMPOSITE type=androidx.compose.ui.text.style.TextAlign? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.style.TextAlign? value=null
+            lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                <T>: kotlin.Long
+                <R>: androidx.compose.ui.unit.TextUnit
+                v: CONST Long type=kotlin.Long value=0
+            overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                <T>: kotlin.Int
+                <R>: androidx.compose.ui.text.style.TextOverflow
+                v: CONST Int type=kotlin.Int value=0
+            softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+            style: CALL 'public final fun <get-bodyLarge> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+              $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            $mask0: CONST Int type=kotlin.Int value=65534
+            $handler: CONST Null type=kotlin.Any? value=null
+          CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+            modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+              $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+              height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+                $receiver: CONST Int type=kotlin.Int value=8
+          BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp10_text type:kotlin.String [val]
+              BLOCK type=kotlin.String origin=FOLDED_ELVIS
+                WHEN type=kotlin.String origin=FOLDED_ELVIS
+                  BRANCH
+                    if: COMPOSITE type=kotlin.Boolean origin=null
+                      CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                        $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                          arg0: GET_VAR '$phoneNumber: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String? origin=null
+                          arg1: CONST Null type=kotlin.Nothing? value=null
+                    then: GET_VAR '$phoneNumber: kotlin.String? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String? origin=null
+                  BRANCH
+                    if: CONST Boolean type=kotlin.Boolean value=true
+                    then: CONST String type=kotlin.String value=""
+            VAR IR_TEMPORARY_VARIABLE name:tmp11_style type:androidx.compose.ui.text.TextStyle [val]
+              CALL 'public final fun <get-headlineMedium> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                  $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp12_fontWeight type:androidx.compose.ui.text.font.FontWeight [val]
+              CALL 'public final fun <get-Bold> (): androidx.compose.ui.text.font.FontWeight declared in androidx.compose.ui.text.font.FontWeight.Companion' type=androidx.compose.ui.text.font.FontWeight origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.text.font.FontWeight.Companion visibility:public [final,static]' type=androidx.compose.ui.text.font.FontWeight.Companion origin=null
+            CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+              text: GET_VAR 'val tmp10_text: kotlin.String [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.String origin=null
+              modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.Modifier? value=null
+              color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.graphics.Color
+                  v: CONST Long type=kotlin.Long value=0
+              fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+              fontWeight: GET_VAR 'val tmp12_fontWeight: androidx.compose.ui.text.font.FontWeight [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.font.FontWeight origin=null
+              fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+              letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+              textAlign: COMPOSITE type=androidx.compose.ui.text.style.TextAlign? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextAlign? value=null
+              lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                  <T>: kotlin.Int
+                  <R>: androidx.compose.ui.text.style.TextOverflow
+                  v: CONST Int type=kotlin.Int value=0
+              softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+                CONST Boolean type=kotlin.Boolean value=false
+              maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+                CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+              style: GET_VAR 'val tmp11_style: androidx.compose.ui.text.TextStyle [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.TextStyle origin=null
+              $mask0: CONST Int type=kotlin.Int value=65502
+              $handler: CONST Null type=kotlin.Any? value=null
+          CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+            modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+              $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+              height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+                $receiver: CONST Int type=kotlin.Int value=16
+          BLOCK type=kotlin.Unit origin=ARGUMENTS_REORDERING_FOR_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp13_style type:androidx.compose.ui.text.TextStyle [val]
+              CALL 'public final fun <get-bodyLarge> (): androidx.compose.ui.text.TextStyle declared in androidx.compose.material3.Typography' type=androidx.compose.ui.text.TextStyle origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-typography> (): androidx.compose.material3.Typography declared in androidx.compose.material3.MaterialTheme' type=androidx.compose.material3.Typography origin=GET_PROPERTY
+                  $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:INSTANCE type:androidx.compose.material3.MaterialTheme visibility:public [final,static]' type=androidx.compose.material3.MaterialTheme origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp14_textAlign type:androidx.compose.ui.text.style.TextAlign [val]
+              CALL 'public final fun getCenter-e0LSkKk (): androidx.compose.ui.text.style.TextAlign declared in androidx.compose.ui.text.style.TextAlign.Companion' type=androidx.compose.ui.text.style.TextAlign origin=GET_PROPERTY
+                $this: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.text.style.TextAlign.Companion visibility:public [final,static]' type=androidx.compose.ui.text.style.TextAlign.Companion origin=null
+            CALL 'public final fun Text-80ic1_w$default (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, color: androidx.compose.ui.graphics.Color, fontSize: androidx.compose.ui.unit.TextUnit, fontStyle: androidx.compose.ui.text.font.FontStyle?, fontWeight: androidx.compose.ui.text.font.FontWeight?, fontFamily: androidx.compose.ui.text.font.FontFamily?, letterSpacing: androidx.compose.ui.unit.TextUnit, textDecoration: androidx.compose.ui.text.style.TextDecoration?, textAlign: androidx.compose.ui.text.style.TextAlign?, lineHeight: androidx.compose.ui.unit.TextUnit, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, style: androidx.compose.ui.text.TextStyle?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.TextKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+              text: CONST String type=kotlin.String value="Please enter the verification code below:"
+              modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.Modifier? value=null
+              color: COMPOSITE type=androidx.compose.ui.graphics.Color origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.graphics.Color origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.graphics.Color
+                  v: CONST Long type=kotlin.Long value=0
+              fontSize: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              fontStyle: COMPOSITE type=androidx.compose.ui.text.font.FontStyle? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontStyle? value=null
+              fontWeight: COMPOSITE type=androidx.compose.ui.text.font.FontWeight? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontWeight? value=null
+              fontFamily: COMPOSITE type=androidx.compose.ui.text.font.FontFamily? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.font.FontFamily? value=null
+              letterSpacing: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              textDecoration: COMPOSITE type=androidx.compose.ui.text.style.TextDecoration? origin=DEFAULT_VALUE
+                CONST Null type=androidx.compose.ui.text.style.TextDecoration? value=null
+              textAlign: GET_VAR 'val tmp14_textAlign: androidx.compose.ui.text.style.TextAlign [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.style.TextAlign origin=null
+              lineHeight: COMPOSITE type=androidx.compose.ui.unit.TextUnit origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.unit.TextUnit origin=null
+                  <T>: kotlin.Long
+                  <R>: androidx.compose.ui.unit.TextUnit
+                  v: CONST Long type=kotlin.Long value=0
+              overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+                CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                  <T>: kotlin.Int
+                  <R>: androidx.compose.ui.text.style.TextOverflow
+                  v: CONST Int type=kotlin.Int value=0
+              softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+                CONST Boolean type=kotlin.Boolean value=false
+              maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+                CONST Int type=kotlin.Int value=0
+              onTextLayout: COMPOSITE type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? origin=DEFAULT_VALUE
+                CONST Null type=kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>? value=null
+              style: GET_VAR 'val tmp13_style: androidx.compose.ui.text.TextStyle [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.ui.text.TextStyle origin=null
+              $mask0: CONST Int type=kotlin.Int value=65022
+              $handler: CONST Null type=kotlin.Any? value=null
+          CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+            modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+              $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+              height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+                $receiver: CONST Int type=kotlin.Int value=16
+          VAR PROPERTY_DELEGATE name:verificationCode$delegate type:androidx.compose.runtime.MutableState<kotlin.String> [val]
+            CALL 'public final fun remember <T> (calculation: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.ComposablesKt.remember>): T of androidx.compose.runtime.ComposablesKt.remember [inline] declared in androidx.compose.runtime.ComposablesKt' type=androidx.compose.runtime.MutableState<kotlin.String> origin=null
+              <T>: androidx.compose.runtime.MutableState<kotlin.String>
+              calculation: BLOCK type=kotlin.Function0<androidx.compose.runtime.MutableState<kotlin.String>> origin=LAMBDA
+                COMPOSITE type=kotlin.Unit origin=null
+                FUNCTION_REFERENCE 'private final fun ConfirmationScreen$lambda$9$lambda$8$lambda$2 (): androidx.compose.runtime.MutableState<kotlin.String> declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=kotlin.Function0<androidx.compose.runtime.MutableState<kotlin.String>> origin=INLINE_LAMBDA reflectionTarget=null
+          CALL 'public final fun OutlinedTextField$default (value: kotlin.String, onValueChange: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier?, enabled: kotlin.Boolean, readOnly: kotlin.Boolean, textStyle: androidx.compose.ui.text.TextStyle?, label: @[Composable] kotlin.Function0<kotlin.Unit>?, placeholder: @[Composable] kotlin.Function0<kotlin.Unit>?, leadingIcon: @[Composable] kotlin.Function0<kotlin.Unit>?, trailingIcon: @[Composable] kotlin.Function0<kotlin.Unit>?, prefix: @[Composable] kotlin.Function0<kotlin.Unit>?, suffix: @[Composable] kotlin.Function0<kotlin.Unit>?, supportingText: @[Composable] kotlin.Function0<kotlin.Unit>?, isError: kotlin.Boolean, visualTransformation: androidx.compose.ui.text.input.VisualTransformation?, keyboardOptions: androidx.compose.foundation.text.KeyboardOptions?, keyboardActions: androidx.compose.foundation.text.KeyboardActions?, singleLine: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, interactionSource: androidx.compose.foundation.interaction.MutableInteractionSource?, shape: androidx.compose.ui.graphics.Shape?, colors: androidx.compose.material3.TextFieldColors?, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.OutlinedTextFieldKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+            value: CALL 'private final fun ConfirmationScreen$lambda$9$lambda$8$lambda$3 ($verificationCode$delegate: androidx.compose.runtime.MutableState<kotlin.String>): kotlin.String declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=kotlin.String origin=GET_LOCAL_PROPERTY
+              $verificationCode$delegate: GET_VAR 'val verificationCode$delegate: androidx.compose.runtime.MutableState<kotlin.String> [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.runtime.MutableState<kotlin.String> origin=null
+            onValueChange: BLOCK type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
+              COMPOSITE type=kotlin.Unit origin=null
+              CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                <T>: kotlin.Function1<kotlin.String, kotlin.Unit>
+                dynamicCall: CALL 'public final fun invoke (p0: androidx.compose.runtime.MutableState<kotlin.String>): kotlin.Function1<kotlin.String, kotlin.Unit> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=null
+                  p0: GET_VAR 'val verificationCode$delegate: androidx.compose.runtime.MutableState<kotlin.String> [val] declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=androidx.compose.runtime.MutableState<kotlin.String> origin=null
+                bootstrapMethodHandle: CALL 'public final fun <jvm-method-handle> (tag: kotlin.Int, owner: kotlin.String, name: kotlin.String, descriptor: kotlin.String, isInterface: kotlin.Boolean): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                  tag: CONST Int type=kotlin.Int value=6
+                  owner: CONST String type=kotlin.String value="java/lang/invoke/LambdaMetafactory"
+                  name: CONST String type=kotlin.String value="metafactory"
+                  descriptor: CONST String type=kotlin.String value="(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"
+                  isInterface: CONST Boolean type=kotlin.Boolean value=false
+                bootstrapMethodArguments: VARARG type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any
+                  CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                    method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Any
+                  RAW_FUNCTION_REFERENCE 'private final fun ConfirmationScreen$lambda$9$lambda$8$lambda$5 ($verificationCode$delegate: androidx.compose.runtime.MutableState<kotlin.String>, it: kotlin.String): kotlin.Unit? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=kotlin.Any
+                  CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                    method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.String): kotlin.Unit? [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+            modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.Modifier? value=null
+            enabled: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            readOnly: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            textStyle: COMPOSITE type=androidx.compose.ui.text.TextStyle? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.TextStyle? value=null
+            label: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+              COMPOSITE type=kotlin.Unit origin=null
+              CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=kotlin.Function0<kotlin.Unit> origin=null
+                <T>: kotlin.Function0<kotlin.Unit>
+                dynamicCall: CALL 'public final fun invoke (): kotlin.Function0<kotlin.Unit> declared in kotlin.jvm.internal.invokeDynamic' type=kotlin.Function0<kotlin.Unit> origin=null
+                bootstrapMethodHandle: CALL 'public final fun <jvm-method-handle> (tag: kotlin.Int, owner: kotlin.String, name: kotlin.String, descriptor: kotlin.String, isInterface: kotlin.Boolean): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                  tag: CONST Int type=kotlin.Int value=6
+                  owner: CONST String type=kotlin.String value="java/lang/invoke/LambdaMetafactory"
+                  name: CONST String type=kotlin.String value="metafactory"
+                  descriptor: CONST String type=kotlin.String value="(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"
+                  isInterface: CONST Boolean type=kotlin.Boolean value=false
+                bootstrapMethodArguments: VARARG type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any
+                  CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                    method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Any
+                  RAW_FUNCTION_REFERENCE 'private final fun ConfirmationScreen$lambda$9$lambda$8$lambda$6 (): kotlin.Unit? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=kotlin.Any
+                  CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+                    method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (): kotlin.Unit? [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+            placeholder: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            leadingIcon: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            trailingIcon: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            prefix: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            suffix: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            supportingText: COMPOSITE type=@[Composable] kotlin.Function0<kotlin.Unit>? origin=DEFAULT_VALUE
+              CONST Null type=@[Composable] kotlin.Function0<kotlin.Unit>? value=null
+            isError: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            visualTransformation: COMPOSITE type=androidx.compose.ui.text.input.VisualTransformation? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.text.input.VisualTransformation? value=null
+            keyboardOptions: COMPOSITE type=androidx.compose.foundation.text.KeyboardOptions? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.foundation.text.KeyboardOptions? value=null
+            keyboardActions: COMPOSITE type=androidx.compose.foundation.text.KeyboardActions? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.foundation.text.KeyboardActions? value=null
+            singleLine: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            interactionSource: COMPOSITE type=androidx.compose.foundation.interaction.MutableInteractionSource? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.foundation.interaction.MutableInteractionSource? value=null
+            shape: COMPOSITE type=androidx.compose.ui.graphics.Shape? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.ui.graphics.Shape? value=null
+            colors: COMPOSITE type=androidx.compose.material3.TextFieldColors? origin=DEFAULT_VALUE
+              CONST Null type=androidx.compose.material3.TextFieldColors? value=null
+            $mask0: CONST Int type=kotlin.Int value=8388540
+            $handler: CONST Null type=kotlin.Any? value=null
+    CALL 'public final fun Spacer (modifier: androidx.compose.ui.Modifier): kotlin.Unit declared in androidx.compose.foundation.layout.SpacerKt' type=kotlin.Unit origin=null
+      modifier: CALL 'public final fun height-3ABfNKs (height: androidx.compose.ui.unit.Dp): androidx.compose.ui.Modifier declared in androidx.compose.foundation.layout.SizeKt' type=androidx.compose.ui.Modifier origin=null
+        $receiver: GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Companion type:androidx.compose.ui.Modifier.Companion visibility:public [final,static]' type=androidx.compose.ui.Modifier.Companion origin=null
+        height: CALL 'public final fun <get-dp> (): androidx.compose.ui.unit.Dp [inline] declared in androidx.compose.ui.unit.DpKt' type=androidx.compose.ui.unit.Dp origin=GET_PROPERTY
+          $receiver: CONST Int type=kotlin.Int value=24
+    CALL 'public final fun Button$default (onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier?, enabled: kotlin.Boolean, shape: androidx.compose.ui.graphics.Shape?, colors: androidx.compose.material3.ButtonColors?, elevation: androidx.compose.material3.ButtonElevation?, border: androidx.compose.foundation.BorderStroke?, contentPadding: androidx.compose.foundation.layout.PaddingValues?, interactionSource: androidx.compose.foundation.interaction.MutableInteractionSource?, content: @[Composable] @[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>, $mask0: kotlin.Int, $handler: kotlin.Any?): kotlin.Unit declared in androidx.compose.material3.ButtonKt' type=kotlin.Unit origin=DEFAULT_DISPATCH_CALL
+      onClick: GET_VAR '$onResendClick: kotlin.Function0<kotlin.Unit> declared in com.targinet.mylibrary.ui.ConfirmationScreenKt.ConfirmationScreen$lambda$9$lambda$8' type=kotlin.Function0<kotlin.Unit> origin=null
+      modifier: COMPOSITE type=androidx.compose.ui.Modifier? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.ui.Modifier? value=null
+      enabled: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+        CONST Boolean type=kotlin.Boolean value=false
+      shape: COMPOSITE type=androidx.compose.ui.graphics.Shape? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.ui.graphics.Shape? value=null
+      colors: COMPOSITE type=androidx.compose.material3.ButtonColors? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.material3.ButtonColors? value=null
+      elevation: COMPOSITE type=androidx.compose.material3.ButtonElevation? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.material3.ButtonElevation? value=null
+      border: COMPOSITE type=androidx.compose.foundation.BorderStroke? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.foundation.BorderStroke? value=null
+      contentPadding: COMPOSITE type=androidx.compose.foundation.layout.PaddingValues? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.foundation.layout.PaddingValues? value=null
+      interactionSource: COMPOSITE type=androidx.compose.foundation.interaction.MutableInteractionSource? origin=DEFAULT_VALUE
+        CONST Null type=androidx.compose.foundation.interaction.MutableInteractionSource? value=null
+      content: BLOCK type=@[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit> origin=LAMBDA
+        COMPOSITE type=kotlin.Unit origin=null
+        CALL 'public final fun <jvm-indy> <T> (dynamicCall: T of kotlin.jvm.internal.<jvm-indy>, bootstrapMethodHandle: kotlin.Any, vararg bootstrapMethodArguments: kotlin.Any): T of kotlin.jvm.internal.<jvm-indy> declared in kotlin.jvm.internal' type=@[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit> origin=null
+          <T>: @[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>
+          dynamicCall: CALL 'public final fun invoke (): @[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit> declared in kotlin.jvm.internal.invokeDynamic' type=@[ExtensionFunctionType] kotlin.Function1<androidx.compose.foundation.layout.RowScope, kotlin.Unit> origin=null
+          bootstrapMethodHandle: CALL 'public final fun <jvm-method-handle> (tag: kotlin.Int, owner: kotlin.String, name: kotlin.String, descriptor: kotlin.String, isInterface: kotlin.Boolean): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+            tag: CONST Int type=kotlin.Int value=6
+            owner: CONST String type=kotlin.String value="java/lang/invoke/LambdaMetafactory"
+            name: CONST String type=kotlin.String value="metafactory"
+            descriptor: CONST String type=kotlin.String value="(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"
+            isInterface: CONST Boolean type=kotlin.Boolean value=false
+          bootstrapMethodArguments: VARARG type=kotlin.Array<kotlin.Any> varargElementType=kotlin.Any
+            CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+              method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Any
+            RAW_FUNCTION_REFERENCE 'private final fun ConfirmationScreen$lambda$9$lambda$8$lambda$7 ($this$Button: androidx.compose.foundation.layout.RowScope): kotlin.Unit? declared in com.targinet.mylibrary.ui.ConfirmationScreenKt' type=kotlin.Any
+            CALL 'public final fun <jvm-original-method-type> (method: kotlin.Any): kotlin.Any declared in kotlin.jvm.internal' type=kotlin.Any origin=null
+              method: RAW_FUNCTION_REFERENCE 'public abstract fun invoke (p1: androidx.compose.foundation.layout.RowScope): kotlin.Unit? [fake_override,operator] declared in kotlin.jvm.internal.invokeDynamic.<fake>' type=kotlin.Any
+      $mask0: CONST Int type=kotlin.Int value=510
+      $handler: CONST Null type=kotlin.Any? value=null
+
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrSourceCompilerForInline.generateLambdaBody(IrSourceCompilerForInline.kt:67)
+	at org.jetbrains.kotlin.codegen.inline.ExpressionLambda.generateLambdaBody(LambdaInfo.kt:72)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCodegen.genValueAndPut(IrInlineCodegen.kt:99)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall$handleParameter(ExpressionCodegen.kt:610)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:638)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:578)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlockBody.accept(IrBlockBody.kt:20)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.generate(ExpressionCodegen.kt:239)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.doGenerate(FunctionCodegen.kt:121)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:46)
+	... 53 more
+Caused by: org.jetbrains.kotlin.codegen.CompilationException: Back-end (JVM) Internal error: Couldn't inline method call: CALL 'public final fun remember <T> (calculation: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.ComposablesKt.remember>): T of androidx.compose.runtime.ComposablesKt.remember [inline] declared in androidx.compose.runtime.ComposablesKt' type=androidx.compose.runtime.MutableState<kotlin.String> origin=null
+Method: null
+File is unknown
+The root cause java.lang.IllegalStateException was thrown at: org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.getMethodNode(SourceCompilerForInline.kt:118)
+	at org.jetbrains.kotlin.codegen.inline.InlineCodegen.performInline(InlineCodegen.kt:65)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCodegen.genInlineCall(IrInlineCodegen.kt:162)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCallGenerator.genCall(IrInlineCallGenerator.kt:36)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:647)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:784)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.declarations.IrVariable.accept(IrVariable.kt:36)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:587)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitContainerExpression(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.visitors.IrElementVisitor$DefaultImpls.visitBlock(IrElementVisitor.kt:122)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:407)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlock(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlock.accept(IrBlock.kt:18)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:1095)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitWhen(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrWhen.accept(IrWhen.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:573)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:578)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:137)
+	at org.jetbrains.kotlin.ir.expressions.IrBlockBody.accept(IrBlockBody.kt:20)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.generate(ExpressionCodegen.kt:239)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.doGenerate(FunctionCodegen.kt:121)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:46)
+	... 67 more
+Caused by: java.lang.IllegalStateException: couldn't find inline method Landroidx/compose/runtime/ComposablesKt;.remember(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	at org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.getMethodNode(SourceCompilerForInline.kt:118)
+	at org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.loadCompiledInlineFunction(SourceCompilerForInline.kt:96)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrSourceCompilerForInline.compileInlineFunction(IrSourceCompilerForInline.kt:91)
+	at org.jetbrains.kotlin.codegen.inline.InlineCodegen.compileInline(InlineCodegen.kt:43)
+	at org.jetbrains.kotlin.codegen.inline.InlineCodegen.performInline(InlineCodegen.kt:51)
+	... 92 more
+
+
