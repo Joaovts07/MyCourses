@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyCourses"
 include(":app")
+include(":login")
