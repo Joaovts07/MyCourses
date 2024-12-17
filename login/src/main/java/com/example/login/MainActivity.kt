@@ -13,9 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mylogin.ui.ConfirmationScreen
-import com.example.mylogin.ui.LoginScreen
-import com.example.mylogin.ui.RegistrationChoiseScreen
+import com.example.login.ui.ConfirmationScreen
+import com.example.login.ui.LoginScreen
+import com.example.login.ui.RegistrationChoiseScreen
 import com.example.mylogin.ui.theme.MyLoginTheme
 
 class MainActivity : ComponentActivity() {
@@ -49,18 +49,12 @@ fun LoginNavigation(navController: NavHostController) {
                 )
 
             }
-            composable("confirmation/{verificationType}/{email?}/{phoneNumber?}") { backStackEntry ->
+            composable("confirmation/{verificationType}/{id}") { backStackEntry ->
                 val verificationType = backStackEntry.arguments?.getString("verificationType") ?: "email"
-                val email = backStackEntry.arguments?.getString("email")
-                val phoneNumber = backStackEntry.arguments?.getString("phoneNumber")
-
+                val id = backStackEntry.arguments?.getString("id")
                 ConfirmationScreen(
                     verificationType = verificationType,
-                    email = email,
-                    phoneNumber = phoneNumber,
-                    onResendClick = {
-                        // Lógica para reenviar email ou SMS
-                    }
+                    id = id
                 )
             }
         }

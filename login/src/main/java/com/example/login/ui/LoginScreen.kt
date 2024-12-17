@@ -1,4 +1,4 @@
-package com.example.mylogin.ui
+package com.example.login.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -39,15 +39,15 @@ fun LoginScreen(navController: NavHostController) {
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
 
-    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean) -> Unit) {
+    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,Boolean?) -> Unit) {
         val auth: FirebaseAuth = Firebase.auth
 
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    onResult(true)
+                    onResult(true,task.result?.user?.isEmailVerified)
                 } else {
-                    onResult(false)
+                    onResult(false, false)
                 }
             }
     }
@@ -97,11 +97,16 @@ fun LoginScreen(navController: NavHostController) {
                         return@Button
                     }
 
-                    signInWithEmailAndPassword(email, password) { success ->
+                    signInWithEmailAndPassword(email, password) { success, isVerified ->
                         if (success) {
-                            showSnackbar = true
-                            snackbarMessage = "Login bem-sucedido!"
-                            showError = false
+                            if (isVerified == true) {
+                                showSnackbar = true
+                                snackbarMessage = "Login bem-sucedido!"
+                                showError = false
+                            } else {
+                                navController.navigate("confirmation/email/${email}")
+                            }
+
                         } else {
                             showError = true
                         }

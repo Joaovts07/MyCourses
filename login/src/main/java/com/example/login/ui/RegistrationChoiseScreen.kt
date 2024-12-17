@@ -1,4 +1,4 @@
-package com.example.mylogin.ui
+package com.example.login.ui
 
 import android.app.Activity
 import android.util.Log
@@ -27,10 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mylogin.ui.components.EmailInput
@@ -62,7 +58,6 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
     val context = LocalContext.current
     val activity = context as Activity
 
-    // Função para fazer login com a credencial
     fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
@@ -84,7 +79,6 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
         }
     }
 
-    // Callbacks para lidar com o código de verificação
     val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // Essa função é chamada quando a verificação é concluída automaticamente,
@@ -122,8 +116,6 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                 "confirmation/sms/${phoneNumber}/${storedVerificationId}/{$resendToken}")
         }
     }
-
-
 
     Scaffold(
         snackbarHost = {
@@ -174,12 +166,12 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                 )
 
             } else {
-                var phoneNumberError by remember { mutableStateOf(false) }
+                val phoneNumberError by remember { mutableStateOf(false) }
 
                 OutlinedTextField(
                     value = phoneNumber,
                     onValueChange = {
-                        if (it.length <= 15) {  // Limita o número de caracteres
+                        if (it.length <= 15) {
                             phoneNumber = it.filter { char -> char.isDigit() || char == '(' || char == ')' || char == '-' || char == ' ' }
                         }
                     },
@@ -203,12 +195,10 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    // Salvar dados adicionais do usuário
-                                    // ...
                                     auth.currentUser?.sendEmailVerification()
                                         ?.addOnCompleteListener { verificacaoTask ->
                                             if (verificacaoTask.isSuccessful) {
-                                                navController.navigate("confirmationScreen/${email}")
+                                                navController.navigate("confirmationScreen/${method}/${email}/${phoneNumber}/dsdsds")
                                             } else {
                                                 navController.navigate("confirmation/sms/${phoneNumber}") // Para SMS
                                             }
@@ -222,8 +212,8 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         val options = PhoneAuthOptions.newBuilder(auth)
                             .setPhoneNumber(phoneNumber)
                             .setTimeout(60L, TimeUnit.SECONDS)
-                            .setActivity(activity) // Passar a Activity atual
-                            .setCallbacks(callbacks) // Definir callbacks para lidar com o código de verificação
+                            .setActivity(activity)
+                            .setCallbacks(callbacks)
                             .build()
                         PhoneAuthProvider.verifyPhoneNumber(options)
                     }
