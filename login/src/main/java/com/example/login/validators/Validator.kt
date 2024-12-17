@@ -68,7 +68,7 @@ class DateMaskTransformation : VisualTransformation {
 
 class PhoneNumberMaskTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 15) text.text.substring(0..14) else text.text
+        val trimmed = if (text.text.length >= 11) text.text.substring(0..10) else text.text
         val maskedText = buildString {
             if (trimmed.isNotEmpty()) {
                 append("(")
