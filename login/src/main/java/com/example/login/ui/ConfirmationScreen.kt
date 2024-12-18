@@ -1,4 +1,4 @@
-package com.example.mylogin.ui
+package com.example.login.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,15 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationScreen(
     verificationType: String,
-    email: String? = null,
-    phoneNumber: String? = null,
-    onResendClick: () -> Unit,
+    id: String? = null
 ) {
+    val auth: FirebaseAuth = Firebase.auth
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -48,14 +50,13 @@ fun ConfirmationScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (verificationType == "email") {
-                // Mostrar conteúdo para confirmação de email
                 Text(
                     text = "A confirmation email has been sent to:",
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = email ?: "", // Exibir email se disponível
+                    text = id ?: "",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -66,14 +67,13 @@ fun ConfirmationScreen(
                     textAlign = TextAlign.Center
                 )
             } else if (verificationType == "sms") {
-                // Mostrar conteúdo para confirmação de SMS
                 Text(
                     text = "An SMS message with a verification code has been sent to:",
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = phoneNumber ?: "", // Exibir número de telefone se disponível
+                    text = id ?: "",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -93,9 +93,13 @@ fun ConfirmationScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onResendClick) {
+            Button(onClick = { onResendClick(auth) }) {
                 Text("Resend")
             }
         }
     }
+}
+
+fun onResendClick(auth: FirebaseAuth) {
+    auth.currentUser?.sendEmailVerification()
 }

@@ -1,4 +1,4 @@
-package com.example.mylogin.ui
+package com.example.login.ui
 
 import android.app.Activity
 import android.util.Log
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,12 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.login.firebase.PhoneAuthState
+import com.example.login.firebase.PhoneAuthentication
 import com.example.mylogin.ui.components.EmailInput
 import com.example.mylogin.ui.components.PasswordInput
 import com.example.mylogin.validators.PhoneNumberMaskTransformation
@@ -44,10 +44,8 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.auth
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +56,11 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
     var phoneNumber by remember { mutableStateOf("") }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
+    var showPhoneAuthentication by remember { mutableStateOf(false) }
     val auth: FirebaseAuth = Firebase.auth
     val context = LocalContext.current
     val activity = context as Activity
 
-    // Função para fazer login com a credencial
     fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
@@ -84,7 +82,6 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
         }
     }
 
-    // Callbacks para lidar com o código de verificação
     val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // Essa função é chamada quando a verificação é concluída automaticamente,
@@ -119,11 +116,9 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
 
             val phoneNumber = phoneNumber.filter { it.isDigit() } // Remove a máscara
             navController.navigate(
-                "confirmation/sms/${phoneNumber}/${storedVerificationId}/{$resendToken}")
+                "confirmation/sms/${phoneNumber}")
         }
     }
-
-
 
     Scaffold(
         snackbarHost = {
@@ -174,18 +169,20 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                 )
 
             } else {
-                var phoneNumberError by remember { mutableStateOf(false) }
+                val phoneNumberError by remember { mutableStateOf(false) }
 
                 OutlinedTextField(
                     value = phoneNumber,
                     onValueChange = {
-                        if (it.length <= 15) {  // Limita o número de caracteres
-                            phoneNumber = it.filter { char -> char.isDigit() || char == '(' || char == ')' || char == '-' || char == ' ' }
+                        if (it.length <= 11) {
+                            phoneNumber = it.filter { it.isDigit() }
                         }
                     },
                     label = { Text("Phone Number") },
+
                     modifier = Modifier.fillMaxWidth(),
                     visualTransformation = PhoneNumberMaskTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = phoneNumberError,
                     supportingText = {
                         if (phoneNumberError) {
@@ -203,12 +200,10 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    // Salvar dados adicionais do usuário
-                                    // ...
                                     auth.currentUser?.sendEmailVerification()
                                         ?.addOnCompleteListener { verificacaoTask ->
                                             if (verificacaoTask.isSuccessful) {
-                                                navController.navigate("confirmationScreen/${email}")
+                                                navController.navigate("confirmationScreen/${method}/${email}/${phoneNumber}/dsdsds")
                                             } else {
                                                 navController.navigate("confirmation/sms/${phoneNumber}") // Para SMS
                                             }
@@ -218,14 +213,7 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                                 }
                             }
                     } else {
-                        val phoneNumber = "+55${phoneNumber.filter { it.isDigit() }}" // Ajustar para formato E.164
-                        val options = PhoneAuthOptions.newBuilder(auth)
-                            .setPhoneNumber(phoneNumber)
-                            .setTimeout(60L, TimeUnit.SECONDS)
-                            .setActivity(activity) // Passar a Activity atual
-                            .setCallbacks(callbacks) // Definir callbacks para lidar com o código de verificação
-                            .build()
-                        PhoneAuthProvider.verifyPhoneNumber(options)
+                        showPhoneAuthentication = true
                     }
 
                 },
@@ -240,8 +228,29 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
         }
 
     }
+    if (showPhoneAuthentication) {
+        val formatedPhone = "+55${phoneNumber.filter { it.isDigit() }}"
+        PhoneAuthentication(activity, formatedPhone) { state ->
+            when (state) {
+                is PhoneAuthState.CodeSent -> {
+                    navController.navigate("confirmation/sms/${phoneNumber}")
+                    showPhoneAuthentication = false
+                }
+                is PhoneAuthState.Error -> {
+                    // Exibir mensagem de erro
+                    // ...
+                    showPhoneAuthentication = false
+                }
+                // ... outros estados ...
+                PhoneAuthState.Default -> { }
+                PhoneAuthState.Loading -> { }
+                is PhoneAuthState.Success -> { }
+            }
+        }
+    }
 
 }
+
 private fun validateWithEmail(
     email: String,
     password: String
