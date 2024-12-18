@@ -1,7 +1,6 @@
 package com.example.login.ui
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,12 +38,7 @@ import com.example.mylogin.validators.PhoneNumberMaskTransformation
 import com.example.mylogin.validators.isValidEmail
 import com.example.mylogin.validators.isValidPassword
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseException
-import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,65 +54,6 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
     val auth: FirebaseAuth = Firebase.auth
     val context = LocalContext.current
     val activity = context as Activity
-
-    fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(activity) { task ->
-            if (task.isSuccessful) {
-                // Login bem-sucedido
-                val user = task.result?.user
-                showSnackbar =  true
-                snackbarMessage = "Login bem sucedido"
-                // ...
-            } else {
-            // Login falhou
-            Log.w("TAG", "signInWithCredential:failure", task.exception)
-            if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                showSnackbar =  true
-                snackbarMessage = "O código de verificação era inválido."
-            }
-            // Atualiza a UI
-        }
-        }
-    }
-
-    val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            // Essa função é chamada quando a verificação é concluída automaticamente,
-            // como em alguns dispositivos com o Google Play Services.
-            // Você pode usar a credencial para fazer login do usuário diretamente.
-            signInWithPhoneAuthCredential(credential) // Função para fazer login
-        }
-
-        override fun onVerificationFailed(e: FirebaseException) {
-            // Essa função é chamada quando a verificação falha, por exemplo,
-            // número de telefone inválido, limite de SMS atingido, etc.
-            // Exiba uma mensagem de erro para o usuário.
-            Log.w("TAG", "onVerificationFailed", e)
-            showSnackbar = true
-            if (e is FirebaseAuthInvalidCredentialsException) {
-                snackbarMessage = "Número de telefone inválido."
-            } else if (e is FirebaseTooManyRequestsException) {
-                snackbarMessage = "O limite de SMS foi atingido."
-            }
-
-            // Mostra uma mensagem de erro para o usuário
-            //showErrorSnackbar("Verification failed: ${e.message}")
-        }
-
-        override fun onCodeSent(
-            verificationId: String,
-            token: PhoneAuthProvider.ForceResendingToken) {
-            // Essa função é chamada quando o código de verificação é enviado por SMS.
-            // Salve o verificationId e navegue para a tela de confirmação de SMS.
-            val storedVerificationId = verificationId
-            val resendToken = token
-
-            val phoneNumber = phoneNumber.filter { it.isDigit() } // Remove a máscara
-            navController.navigate(
-                "confirmation/sms/${phoneNumber}")
-        }
-    }
 
     Scaffold(
         snackbarHost = {
@@ -178,7 +113,7 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                             phoneNumber = it.filter { it.isDigit() }
                         }
                     },
-                    label = { Text("Phone Number") },
+                    label = { Text("Numero de telefone") },
 
                     modifier = Modifier.fillMaxWidth(),
                     visualTransformation = PhoneNumberMaskTransformation(),
@@ -186,7 +121,7 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                     isError = phoneNumberError,
                     supportingText = {
                         if (phoneNumberError) {
-                            Text("Invalid phone number")
+                            Text("Número de telefone invalido")
                         }
                     }
                 )
@@ -200,12 +135,11 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
+
                                     auth.currentUser?.sendEmailVerification()
                                         ?.addOnCompleteListener { verificacaoTask ->
                                             if (verificacaoTask.isSuccessful) {
                                                 navController.navigate("confirmationScreen/${method}/${email}/${phoneNumber}/dsdsds")
-                                            } else {
-                                                navController.navigate("confirmation/sms/${phoneNumber}") // Para SMS
                                             }
                                         }
                                 } else {
@@ -233,18 +167,19 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
         PhoneAuthentication(activity, formatedPhone) { state ->
             when (state) {
                 is PhoneAuthState.CodeSent -> {
-                    navController.navigate("confirmation/sms/${phoneNumber}")
+                    val verificationId = state.verificationId
+                    navController.navigate("confirmation/sms/${phoneNumber}/${verificationId}")
                     showPhoneAuthentication = false
                 }
                 is PhoneAuthState.Error -> {
-                    // Exibir mensagem de erro
-                    // ...
                     showPhoneAuthentication = false
+                    snackbarMessage = state.message
                 }
-                // ... outros estados ...
                 PhoneAuthState.Default -> { }
                 PhoneAuthState.Loading -> { }
-                is PhoneAuthState.Success -> { }
+                is PhoneAuthState.Success -> {
+                    snackbarMessage = "Login bem sucedido"
+                }
             }
         }
     }
