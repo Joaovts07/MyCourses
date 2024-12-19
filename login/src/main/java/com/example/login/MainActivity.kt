@@ -49,12 +49,15 @@ fun LoginNavigation(navController: NavHostController) {
                 )
 
             }
-            composable("confirmation/{verificationType}/{id}") { backStackEntry ->
+            composable("confirmation/{verificationType}/{id}/{verificationId}") { backStackEntry ->
                 val verificationType = backStackEntry.arguments?.getString("verificationType") ?: "email"
-                val id = backStackEntry.arguments?.getString("id")
+                val id = backStackEntry.arguments?.getString("id") ?: ""
+                val verificationId = backStackEntry.arguments?.getString("verificationId") ?: ""
                 ConfirmationScreen(
+                    navController,
                     verificationType = verificationType,
-                    id = id
+                    id = id,
+                    verificationId = verificationId
                 )
             }
         }

@@ -104,7 +104,8 @@ fun LoginScreen(navController: NavHostController) {
                                 snackbarMessage = "Login bem-sucedido!"
                                 showError = false
                             } else {
-                                navController.navigate("confirmation/email/${email}")
+                                val verificationId = ""
+                                navController.navigate("confirmation/email/${email}/${verificationId}")
                             }
 
                         } else {
