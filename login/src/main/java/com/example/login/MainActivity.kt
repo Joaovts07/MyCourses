@@ -1,6 +1,7 @@
 package com.example.login
 
 import RegistrationBasicScreen
+import TelaInicial
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,8 +33,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LoginNavigation(navController: NavHostController) {
     MyLoginTheme {
-        NavHost(navController = navController, startDestination = "login") {
+        NavHost(navController = navController, startDestination = "initialScreen") {
             composable("login") { LoginScreen(navController) }
+            composable("initialScreen") { TelaInicial(navController) }
             composable("basicForm") { RegistrationBasicScreen(navController) }
             composable(
                 "choiseForm/{nome}/{dataNascimento}",

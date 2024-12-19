@@ -140,8 +140,10 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                                     val db = Firebase.firestore
                                     val usersRef = db.collection("users")
                                     val newUser = hashMapOf(
+                                        "id" to auth.currentUser?.uid,
                                         "nome" to nome,
-                                        "email" to email
+                                        "email" to email,
+                                        "birthday" to dataNascimento
                                     )
                                     usersRef.add(newUser)
                                         .addOnSuccessListener { documentReference ->
