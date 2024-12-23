@@ -10,14 +10,12 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 appcompat = "1.7.0"
 firebaseBom = "33.7.0"
-material = "1.7.6"
 navigationCompose = "2.8.5"
 firebaseAuthKtx = "23.1.0"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
