@@ -67,11 +67,8 @@ fun ConfirmationScreen(
 
                 }
                 is PhoneAuthState.Error -> {
-                    // Exibir mensagem de erro
-                    // ...
                     Log.i("error", state.message)
                 }
-                // ... outros estados ...
                 PhoneAuthState.Default -> { }
                 PhoneAuthState.Loading -> { }
                 is PhoneAuthState.Success -> {

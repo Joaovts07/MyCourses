@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.login.firebase.PhoneAuthState
 import com.example.login.firebase.PhoneAuthentication
-import com.example.mylogin.ui.components.EmailInput
-import com.example.mylogin.ui.components.PasswordInput
+import com.example.login.ui.components.EmailInput
+import com.example.login.ui.components.PasswordInput
 import com.example.mylogin.validators.PhoneNumberMaskTransformation
 import com.example.mylogin.validators.isValidEmail
 import com.example.mylogin.validators.isValidPassword
