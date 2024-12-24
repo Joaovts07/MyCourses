@@ -1,6 +1,7 @@
 package com.example.login.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ import com.example.mylogin.validators.isValidPassword
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,15 +137,30 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-
+                                    val db = Firebase.firestore
+                                    val usersRef = db.collection("users")
+                                    val newUser = hashMapOf(
+                                        "id" to auth.currentUser?.uid,
+                                        "nome" to nome,
+                                        "email" to email,
+                                        "birthday" to dataNascimento
+                                    )
+                                    usersRef.add(newUser)
+                                        .addOnSuccessListener { documentReference ->
+                                            Log.d("TAG", "Documento adicionado com ID: ${documentReference.id}")
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.w("TAG", "Erro ao adicionar documento", e)
+                                        }
                                     auth.currentUser?.sendEmailVerification()
                                         ?.addOnCompleteListener { verificacaoTask ->
                                             if (verificacaoTask.isSuccessful) {
-                                                navController.navigate("confirmationScreen/${method}/${email}/${phoneNumber}/dsdsds")
+                                                navController.navigate("confirmationScreen/${method}/${email}/")
                                             }
                                         }
                                 } else {
-                                    // Exibir mensagem de erro
+                                    showSnackbar = true
+                                    snackbarMessage = "Falha no cadastro: ${task.exception?.message}"
                                 }
                             }
                     } else {
@@ -168,7 +185,7 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
             when (state) {
                 is PhoneAuthState.CodeSent -> {
                     val verificationId = state.verificationId
-                    navController.navigate("confirmation/sms/${phoneNumber}/${verificationId}")
+                    navController.navigate("confirmationScreen/sms/${phoneNumber}/${verificationId}")
                     showPhoneAuthentication = false
                 }
                 is PhoneAuthState.Error -> {

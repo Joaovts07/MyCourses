@@ -105,7 +105,7 @@ fun LoginScreen(navController: NavHostController) {
                                 showError = false
                             } else {
                                 val verificationId = ""
-                                navController.navigate("confirmation/email/${email}/${verificationId}")
+                                navController.navigate("confirmationScreen/email/${email}/${verificationId}")
                             }
 
                         } else {
