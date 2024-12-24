@@ -1,6 +1,6 @@
 package com.example.mycourses.ui
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,19 +20,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mycourses.R
 
 
-// Dados dos cursos (substitua por seus dados reais)
 data class Curso(val nome: String, val imagem: Int)
 
 val cursos = listOf(
@@ -42,15 +37,22 @@ val cursos = listOf(
     // Adicione mais cursos aqui...
 )
 
+enum class Telas(val rota: String, val icone: ImageVector) {
+    MEUS_CURSOS("meus_cursos", Icons.Filled.Call),
+    PRINCIPAL("principal", Icons.Filled.Home),
+    CONTA("conta", Icons.Filled.AccountCircle)
+}
+
+
 @Composable
 fun TelaInicial(navController: NavHostController) {
     var selectedItem by remember { mutableIntStateOf(0) }
-    val items = listOf("Meus Cursos", "Principal", "Conta")
+    val items = listOf("Principal", "Meus Cursos", "Conta")
 
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color(0xFFADD8E6) // Azul claro
+                containerColor = Color(0xFFADD8E6)
             ){
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
@@ -77,22 +79,24 @@ fun TelaInicial(navController: NavHostController) {
             }
         }
     ) { paddingValues ->
-        Navigation(navController, paddingValues)
-    }
-}
-
-@Composable
-fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
-
-    NavHost(navController = navController, startDestination = "meus_cursos") {
-        composable("meus_cursos") { MeusCursos(paddingValues) }
-        composable("principal") { Principal(paddingValues) }
-        composable("conta") { Conta(paddingValues) }
+        when (selectedItem) {
+            Telas.PRINCIPAL.ordinal -> navController.navigate(Telas.PRINCIPAL.rota) {
+                launchSingleTop = true
+            }
+            Telas.MEUS_CURSOS.ordinal -> navController.navigate(Telas.MEUS_CURSOS.rota) {
+                launchSingleTop = true
+            }
+            Telas.CONTA.ordinal -> navController.navigate(Telas.CONTA.rota) {
+                launchSingleTop = true
+            }
+        }
+        Principal(paddingValues)
     }
 }
 
 @Composable
 fun MeusCursos(paddingValues: PaddingValues) {
+    Log.e("MeusCursos", "MeusCursos")
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -109,14 +113,14 @@ fun MeusCursos(paddingValues: PaddingValues) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
+                    /*Image(
                         bitmap = LocalContext.current.resources.openRawResource(curso.imagem) as ImageBitmap,
                         contentDescription = curso.nome,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(150.dp),
                         contentScale = ContentScale.Crop
-                    )
+                    )*/
                     Text(curso.nome, modifier = Modifier.padding(8.dp))
                 }
             }
@@ -126,11 +130,13 @@ fun MeusCursos(paddingValues: PaddingValues) {
 
 @Composable
 fun Principal(paddingValues: PaddingValues) {
+    Log.e("Principal", "Principal")
     Text(text = "Principal", modifier = Modifier.padding(paddingValues))
 }
 
 @Composable
 fun Conta(paddingValues: PaddingValues) {
+    Log.e("Conta", "Conta")
     Text(text = "Conta", modifier = Modifier.padding(paddingValues))
 }
 
