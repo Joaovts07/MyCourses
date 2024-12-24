@@ -2,9 +2,11 @@ package com.example.mycourses.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.mycourses.R
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -32,3 +34,4 @@ val Typography = Typography(
     )
     */
 )
+val caveatFont = FontFamily(Font(R.font.caveat, FontWeight.Normal))
