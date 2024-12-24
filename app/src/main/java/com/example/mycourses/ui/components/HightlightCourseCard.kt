@@ -78,7 +78,7 @@ fun HighlighCourseCard(
                 }
             ) {
                 Text(
-                    text = "Pedir",
+                    text = "Cadastrar",
                 )
             }
         }

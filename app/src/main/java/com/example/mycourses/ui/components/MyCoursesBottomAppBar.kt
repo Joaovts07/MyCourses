@@ -19,7 +19,7 @@ class BottomAppBarItem(
 )
 
 @Composable
-fun PanucciBottomAppBar(
+fun MyCoursesBottomAppBar(
     item: BottomAppBarItem,
     modifier: Modifier = Modifier,
     items: List<BottomAppBarItem> = emptyList(),
@@ -43,9 +43,9 @@ fun PanucciBottomAppBar(
 
 @Preview
 @Composable
-fun PanucciBottomAppBarPreview() {
+fun MyCoursesBottomAppBarPreview() {
     MyCoursesTheme {
-        PanucciBottomAppBar(
+        MyCoursesBottomAppBar(
             item = bottomAppBarItems.first(),
             items = bottomAppBarItems
         )

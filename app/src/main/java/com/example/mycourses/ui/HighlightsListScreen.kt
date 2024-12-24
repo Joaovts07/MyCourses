@@ -22,7 +22,7 @@ import com.example.mycourses.ui.theme.caveatFont
 @Composable
 fun HighlightsListScreen(
     modifier: Modifier = Modifier,
-    title: String = "Destaques do dia",
+    title: String = "Cursos Em Destaques",
     products: List<Course> = emptyList(),
     onNavigateToCheckout: () -> Unit = {},
     onNavigateToDetails: (Course) -> Unit = {}
@@ -68,7 +68,7 @@ fun HighlightsListScreenPreview() {
         Surface {
             HighlightsListScreen(
                 products = sampleCourses,
-                title = "Destaques do dia"
+                title = "Cursos Em Destaques"
             )
         }
     }
