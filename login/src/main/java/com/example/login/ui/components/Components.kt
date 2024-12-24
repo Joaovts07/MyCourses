@@ -1,4 +1,4 @@
-package com.example.mylogin.ui.components
+package com.example.login.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions

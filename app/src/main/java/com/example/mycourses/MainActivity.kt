@@ -15,16 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.login.LoginNavigation
 import com.example.login.firebase.auth
-import com.example.mycourses.ui.Conta
-import com.example.mycourses.ui.MeusCursos
-import com.example.mycourses.ui.Principal
-import com.example.mycourses.ui.TelaInicial
-import com.example.mycourses.ui.Telas
+import com.example.mycourses.navigation.AppDestination
+import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -76,14 +72,25 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun LoginToInitial(navController: NavHostController) {
     val paddingValues = remember { PaddingValues(0.dp) }
-    NavHost(navController = navController, startDestination = "initialScreen") {
-        composable("initialScreen") {
-            TelaInicial(navController)
+    val backStackEntryState by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntryState?.destination
+    val selectedItem by remember(currentDestination) {
+        val item = currentDestination?.let { destination ->
+            bottomAppBarItems.find {
+                it.destination.route == destination.route
+            }
+        } ?: bottomAppBarItems.first()
+        mutableStateOf(item)
+    }
+    val containsInBottomAppBarItems = currentDestination?.let { destination ->
+        bottomAppBarItems.find {
+            it.destination.route == destination.route
         }
-        composable(Telas.MEUS_CURSOS.rota) { MeusCursos(paddingValues) }
-        composable(Telas.PRINCIPAL.rota) { Principal(paddingValues) }
-        composable(Telas.CONTA.rota) { Conta(paddingValues) }
-
+    } != null
+    val isShowFab = when (currentDestination?.route) {
+        AppDestination.Account.route,
+        AppDestination.MyCourses.route -> true
+        else -> false
     }
 
 }

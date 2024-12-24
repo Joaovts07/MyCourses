@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+coilKtCoilCompose = "2.5.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -19,6 +20,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
+io-coil-kt-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilKtCoilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
