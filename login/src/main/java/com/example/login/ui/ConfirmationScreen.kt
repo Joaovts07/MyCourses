@@ -165,7 +165,7 @@ fun ConfirmationScreen(
                 ) {
                     Text(if (resendEnabled) "Reenviar" else "Reenviar ($timeLeft)")
                 }
-                Button(onClick = { /* Lógica para voltar */ }) {
+                Button(onClick = { navController.popBackStack() }) {
                     Text("Voltar")
                 }
             }

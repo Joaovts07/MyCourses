@@ -20,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.login.firebase.auth
 import com.example.login.ui.components.EmailInput
+import com.example.login.ui.components.LoadingButton
 import com.example.login.ui.components.PasswordInput
 import com.example.mylogin.validators.isValidEmail
 import com.example.mylogin.validators.isValidPassword
@@ -88,13 +90,14 @@ fun LoginScreen(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.error
                 )
             }
-
-            Button(
+            var isLoading by remember { mutableStateOf(false) }
+            LoadingButton(
                 onClick = {
+                    isLoading = true
                     isEmailError = !isValidEmail(email)
                     isPasswordError = !isValidPassword(password)
                     if (isEmailError || isPasswordError) {
-                        return@Button
+                        return@LoadingButton
                     }
 
                     signInWithEmailAndPassword(email, password) { success, isVerified ->
@@ -105,6 +108,7 @@ fun LoginScreen(navController: NavHostController) {
                                 showError = false
                             } else {
                                 val verificationId = ""
+                                auth.currentUser?.sendEmailVerification()
                                 navController.navigate("confirmationScreen/email/${email}/${verificationId}")
                             }
 
@@ -112,14 +116,15 @@ fun LoginScreen(navController: NavHostController) {
                             showError = true
                         }
                     }
+                    isLoading = false
                 },
+                isLoading = isLoading,
+                text = "Login",
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
-            ) {
-                Text("Login")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+            )
+            Spacer(modifier = Modifier.height(18.dp))
 
             Text(
                 text = "Não tem uma conta? Cadastre-se",
