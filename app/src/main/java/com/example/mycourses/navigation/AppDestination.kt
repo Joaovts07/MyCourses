@@ -11,6 +11,7 @@ sealed class AppDestination(val route: String) {
     data object Highlight : AppDestination("initialScreen")
     data object MyCourses : AppDestination("mycourses")
     data object Account : AppDestination("account")
+    data object CourseDetails : AppDestination("courseDetails")
 
 }
 

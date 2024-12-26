@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -23,20 +22,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.login.LoginNavigation
 import com.example.login.firebase.auth
+import com.example.login.ui.LoginNavigation
+import com.example.login.ui.LoginScreen
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.sampledata.sampleCourses
-import com.example.mycourses.ui.HighlightsListScreen
+import com.example.mycourses.ui.screens.HighlightsListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
+import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -61,8 +61,21 @@ class MainActivity : ComponentActivity() {
 
                     }
                 }
-                if (shouldNavigateToLogin) {
-                    LoginNavigation(navController)
+                if (shouldNavigateToLogin) {//passar a rota e a criação
+                    LoginNavigation(navController,AppDestination.Highlight.route,
+                        onLoginSuccess = {
+                            HighlightsListScreen(
+                                products = sampleCourses,
+                                onNavigateToDetails = { course ->
+                                    navController.navigate(
+                                    "${AppDestination.CourseDetails.route}/${course.id}"
+                                )
+                                },
+                                /*onNavigateToCheckout = {
+                                navController.navigate(AppDestination.Checkout.route)
+                            },*/
+                            )
+                    })
                 } else if (shouldNavigateToInitial) {
                     LoginToInitial(navController)
                 }
@@ -87,7 +100,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 @Composable
 fun LoginToInitial(navController: NavHostController) {
-    val paddingValues = remember { PaddingValues(0.dp) }
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -128,18 +140,47 @@ fun LoginToInitial(navController: NavHostController) {
             navController = navController,
             startDestination = AppDestination.Highlight.route
         ) {
+            composable("login") {
+                LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = {
+                        navController.navigate(AppDestination.Highlight.route) {
+                            popUpTo("login") {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
             composable(AppDestination.Highlight.route) {
                 HighlightsListScreen(
                     products = sampleCourses,
                     onNavigateToDetails = { course ->
-                        /*navController.navigate(
-                        "${AppDestination.CourseDetails.route}/${product.id}"
-                    )*/
+                        navController.navigate(
+                        "${AppDestination.CourseDetails.route}/${course.id}"
+                    )
                     },
                     /*onNavigateToCheckout = {
                     navController.navigate(AppDestination.Checkout.route)
                 },*/
                 )
+            }
+            composable(
+                "${AppDestination.CourseDetails.route}/{courseId}"
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("courseId")
+                sampleCourses.find {
+                    it.id == id
+                }?.let { course ->
+                    CourseDetailsScreen(
+                        course = course,
+                        onNavigateToCheckout = {
+                            //navController.navigate(AppDestination.Checkout.route)
+                        },
+                    )
+                } ?: LaunchedEffect(Unit) {
+                    navController.navigateUp()
+                }
             }
             /*
         composable(AppDestination.Menu.route) {
@@ -162,23 +203,7 @@ fun LoginToInitial(navController: NavHostController) {
                 },
             )
         }
-        composable(
-            "${AppDestination.ProductDetails.route}/{productId}"
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("productId")
-            sampleProducts.find {
-                it.id == id
-            }?.let { product ->
-                ProductDetailsScreen(
-                    product = product,
-                    onNavigateToCheckout = {
-                        navController.navigate(AppDestination.Checkout.route)
-                    },
-                )
-            } ?: LaunchedEffect(Unit) {
-                navController.navigateUp()
-            }
-        }
+
         composable(AppDestination.Checkout.route) {
             CheckoutScreen(
                 products = sampleProducts,

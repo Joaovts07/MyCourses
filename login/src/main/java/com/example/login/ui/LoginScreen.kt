@@ -1,11 +1,11 @@
 package com.example.login.ui
 
+import RegistrationBasicScreen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,36 +20,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.login.firebase.auth
 import com.example.login.ui.components.EmailInput
 import com.example.login.ui.components.LoadingButton
 import com.example.login.ui.components.PasswordInput
+import com.example.mylogin.ui.theme.MyLoginTheme
 import com.example.mylogin.validators.isValidEmail
 import com.example.mylogin.validators.isValidPassword
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserInfo
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
-    var isEmailError by remember { mutableStateOf(false) }
-    var isPasswordError by remember { mutableStateOf(false) }
 
-    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,Boolean?) -> Unit) {
+    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,UserInfo?) -> Unit) {
         val auth: FirebaseAuth = Firebase.auth
 
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    onResult(true,task.result?.user?.isEmailVerified)
+                    onResult(true,task.result?.user)
                 } else {
-                    onResult(false, false)
+                    onResult(false, task.result?.user)
                 }
             }
     }
@@ -88,24 +92,27 @@ fun LoginScreen(navController: NavHostController) {
                 Text(
                     "Email ou senha inválidos",
                     color = MaterialTheme.colorScheme.error
+
                 )
             }
             var isLoading by remember { mutableStateOf(false) }
             LoadingButton(
                 onClick = {
                     isLoading = true
-                    isEmailError = !isValidEmail(email)
-                    isPasswordError = !isValidPassword(password)
-                    if (isEmailError || isPasswordError) {
+                    val fields = verifyFields(email, password)
+                    if (fields) {
+                        isLoading = false
+                        showError = true
                         return@LoadingButton
                     }
 
-                    signInWithEmailAndPassword(email, password) { success, isVerified ->
+                    signInWithEmailAndPassword(email, password) { success, userInfo ->
                         if (success) {
-                            if (isVerified == true) {
+                            if (userInfo?.isEmailVerified == true) {
                                 showSnackbar = true
-                                snackbarMessage = "Login bem-sucedido!"
                                 showError = false
+                                onLoginSuccess()
+
                             } else {
                                 val verificationId = ""
                                 auth.currentUser?.sendEmailVerification()
@@ -114,9 +121,9 @@ fun LoginScreen(navController: NavHostController) {
 
                         } else {
                             showError = true
+                            isLoading = false
                         }
                     }
-                    isLoading = false
                 },
                 isLoading = isLoading,
                 text = "Login",
@@ -133,6 +140,63 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(top = 8.dp),
                 color = MaterialTheme.colorScheme.primary
             )
+        }
+    }
+}
+
+private fun verifyFields(
+    email: String,
+    password: String
+): Boolean {
+    val isEmailError = !isValidEmail(email)
+    val isPasswordError = !isValidPassword(password)
+    return isEmailError || isPasswordError
+}
+
+@Composable
+fun LoginNavigation(navController: NavHostController,routeSuccess: String, onLoginSuccess: @Composable () -> Unit) {
+    MyLoginTheme {
+        NavHost(navController = navController, startDestination = "login") {
+            composable(routeSuccess) {
+                onLoginSuccess()
+            }
+            composable("login") {
+                LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = {
+                        // Navegar para a rota desejada após o login
+                        navController.navigate(routeSuccess) {
+                            popUpTo("login") { inclusive = true } // Remover a tela de login da pilha
+                        }
+                    }
+                )
+            }
+            composable("basicForm") { RegistrationBasicScreen(navController) }
+            composable(
+                "choiseForm/{nome}/{dataNascimento}",
+                arguments = listOf(
+                    navArgument("nome") { type = NavType.StringType },
+                    navArgument("dataNascimento") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                RegistrationChoiseScreen(
+                    navController,
+                    backStackEntry.arguments?.getString("nome") ?: "",
+                    backStackEntry.arguments?.getString("dataNascimento") ?: ""
+                )
+
+            }
+            composable("confirmationScreen/{verificationType}/{id}/{verificationId}") { backStackEntry ->
+                val verificationType = backStackEntry.arguments?.getString("verificationType") ?: "email"
+                val id = backStackEntry.arguments?.getString("id") ?: ""
+                val verificationId = backStackEntry.arguments?.getString("verificationId") ?: ""
+                ConfirmationScreen(
+                    navController,
+                    verificationType = verificationType,
+                    id = id,
+                    verificationId = verificationId
+                )
+            }
         }
     }
 }
