@@ -39,7 +39,6 @@ fun HighlighCourseCard(
     modifier: Modifier = Modifier,
     onOrderClick: () -> Unit = {}
 ) {
-    var isFavorite by remember { mutableStateOf(false) }
     Card(
         modifier
             .clip(RoundedCornerShape(12.dp))
@@ -73,32 +72,7 @@ fun HighlighCourseCard(
                 )
             }
             Spacer(Modifier.height(18.dp))
-            Button(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 24.dp
-                    )
-                    .clickable {
-                        onOrderClick()
-                    }
-                    .align(Alignment.End),
-                onClick = {
-                    onOrderClick()
-                }
-            ) {
-                Text(
-                    text = "Cadastrar",
-                )
-            }
-            /*IconButton(onClick = { isFavorite = !isFavorite }) {
-                Icon(
-                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = "Favoritar curso",
-                    tint = if (isFavorite) Color.Red else Color.LightGray
-                )
-            }*/
+
         }
     }
 }

@@ -61,28 +61,35 @@ class MainActivity : ComponentActivity() {
 
                     }
                 }
-                if (shouldNavigateToLogin) {//passar a rota e a criação
-                    LoginNavigation(navController,AppDestination.Highlight.route,
+                if (shouldNavigateToLogin) {
+                    LoginNavigation(
+                        navController,
+                        AppDestination.Highlight.route,
                         onLoginSuccess = {
-                            HighlightsListScreen(
-                                products = sampleCourses,
-                                onNavigateToDetails = { course ->
-                                    navController.navigate(
-                                    "${AppDestination.CourseDetails.route}/${course.id}"
-                                )
-                                },
-                                /*onNavigateToCheckout = {
-                                navController.navigate(AppDestination.Checkout.route)
-                            },*/
-                            )
-                    })
-                } else if (shouldNavigateToInitial) {
+                            createHighlighListScreen(navController)
+                        })
+   0             } else if (shouldNavigateToInitial) {
                     LoginToInitial(navController)
                 }
 
             }
 
         }
+    }
+
+    @Composable
+    private fun createHighlighListScreen(navController: NavHostController) {
+        HighlightsListScreen(
+            products = sampleCourses,
+            onNavigateToDetails = { course ->
+                navController.navigate(
+                    "${AppDestination.CourseDetails.route}/${course.id}"
+                )
+            },
+            /*onNavigateToCheckout = {
+                                navController.navigate(AppDestination.Checkout.route)
+                            },*/
+        )
     }
 
     override fun onDestroy() {

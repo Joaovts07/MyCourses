@@ -3,9 +3,15 @@ package com.example.mycourses.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +29,7 @@ fun CourseDetailsScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {}
 ) {
+    var isFavorite by remember { mutableStateOf(false) }
     Column(
         modifier
             .fillMaxSize()
@@ -46,8 +53,32 @@ fun CourseDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(course.name, fontSize = 24.sp)
-            Text(course.price.toPlainString(), fontSize = 18.sp)
             Text(course.description)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(course.price.toPlainString(), fontSize = 18.sp)
+                Row {
+                    Text("4.5")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Avaliação",
+                        tint = Color.Yellow
+                    )
+                }
+
+                IconButton(onClick = { isFavorite = !isFavorite }) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = "Favoritar curso",
+                        tint = if (isFavorite) Color.Red else Color.LightGray
+                    )
+                }
+
+            }
             Button(
                 onClick = { onNavigateToCheckout() },
                 Modifier
@@ -56,13 +87,14 @@ fun CourseDetailsScreen(
             ) {
                 Text(text = "Cadastrar")
             }
+
         }
     }
 }
 
 @Preview
 @Composable
-fun ProductDetailsScreenPreview() {
+fun CourseDetailsScreenPreview() {
     MyCoursesTheme {
         Surface {
             CourseDetailsScreen(
