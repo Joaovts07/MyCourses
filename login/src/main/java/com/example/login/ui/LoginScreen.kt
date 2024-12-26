@@ -38,8 +38,6 @@ fun LoginScreen(navController: NavHostController) {
     var showError by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
-    var isEmailError by remember { mutableStateOf(false) }
-    var isPasswordError by remember { mutableStateOf(false) }
 
     fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,Boolean?) -> Unit) {
         val auth: FirebaseAuth = Firebase.auth
@@ -88,15 +86,17 @@ fun LoginScreen(navController: NavHostController) {
                 Text(
                     "Email ou senha inválidos",
                     color = MaterialTheme.colorScheme.error
+
                 )
             }
             var isLoading by remember { mutableStateOf(false) }
             LoadingButton(
                 onClick = {
                     isLoading = true
-                    isEmailError = !isValidEmail(email)
-                    isPasswordError = !isValidPassword(password)
-                    if (isEmailError || isPasswordError) {
+                    val fields = verifyFields(email, password)
+                    if (fields) {
+                        isLoading = false
+                        showError = true
                         return@LoadingButton
                     }
 
@@ -114,6 +114,7 @@ fun LoginScreen(navController: NavHostController) {
 
                         } else {
                             showError = true
+                            isLoading = false
                         }
                     }
                     isLoading = false
@@ -135,6 +136,15 @@ fun LoginScreen(navController: NavHostController) {
             )
         }
     }
+}
+
+private fun verifyFields(
+    email: String,
+    password: String
+): Boolean {
+    val isEmailError = !isValidEmail(email)
+    val isPasswordError = !isValidPassword(password)
+    return isEmailError || isPasswordError
 }
 
 
