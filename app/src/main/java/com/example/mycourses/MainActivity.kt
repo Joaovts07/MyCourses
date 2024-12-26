@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,9 +33,10 @@ import com.example.login.ui.LoginScreen
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.sampledata.sampleCourses
-import com.example.mycourses.ui.HighlightsListScreen
+import com.example.mycourses.ui.screens.HighlightsListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
+import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -65,9 +67,9 @@ class MainActivity : ComponentActivity() {
                             HighlightsListScreen(
                                 products = sampleCourses,
                                 onNavigateToDetails = { course ->
-                                    /*navController.navigate(
-                                    "${AppDestination.CourseDetails.route}/${product.id}"
-                                )*/
+                                    navController.navigate(
+                                    "${AppDestination.CourseDetails.route}/${course.id}"
+                                )
                                 },
                                 /*onNavigateToCheckout = {
                                 navController.navigate(AppDestination.Checkout.route)
@@ -142,12 +144,10 @@ fun LoginToInitial(navController: NavHostController) {
                 LoginScreen(
                     navController = navController,
                     onLoginSuccess = {
-                        // Navegar para a rota desejada após o login
-
                         navController.navigate(AppDestination.Highlight.route) {
                             popUpTo("login") {
                                 inclusive = true
-                            } // Remover a tela de login da pilha
+                            }
                         }
                     }
                 )
@@ -156,14 +156,31 @@ fun LoginToInitial(navController: NavHostController) {
                 HighlightsListScreen(
                     products = sampleCourses,
                     onNavigateToDetails = { course ->
-                        /*navController.navigate(
-                        "${AppDestination.CourseDetails.route}/${product.id}"
-                    )*/
+                        navController.navigate(
+                        "${AppDestination.CourseDetails.route}/${course.id}"
+                    )
                     },
                     /*onNavigateToCheckout = {
                     navController.navigate(AppDestination.Checkout.route)
                 },*/
                 )
+            }
+            composable(
+                "${AppDestination.CourseDetails.route}/{courseId}"
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("courseId")
+                sampleCourses.find {
+                    it.id == id
+                }?.let { course ->
+                    CourseDetailsScreen(
+                        course = course,
+                        onNavigateToCheckout = {
+                            //navController.navigate(AppDestination.Checkout.route)
+                        },
+                    )
+                } ?: LaunchedEffect(Unit) {
+                    navController.navigateUp()
+                }
             }
             /*
         composable(AppDestination.Menu.route) {
@@ -186,23 +203,7 @@ fun LoginToInitial(navController: NavHostController) {
                 },
             )
         }
-        composable(
-            "${AppDestination.ProductDetails.route}/{productId}"
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("productId")
-            sampleProducts.find {
-                it.id == id
-            }?.let { product ->
-                ProductDetailsScreen(
-                    product = product,
-                    onNavigateToCheckout = {
-                        navController.navigate(AppDestination.Checkout.route)
-                    },
-                )
-            } ?: LaunchedEffect(Unit) {
-                navController.navigateUp()
-            }
-        }
+
         composable(AppDestination.Checkout.route) {
             CheckoutScreen(
                 products = sampleProducts,

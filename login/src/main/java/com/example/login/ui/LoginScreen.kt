@@ -124,7 +124,6 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
                             isLoading = false
                         }
                     }
-                    isLoading = false
                 },
                 isLoading = isLoading,
                 text = "Login",

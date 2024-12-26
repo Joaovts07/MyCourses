@@ -9,14 +9,14 @@ private val loremName = LoremIpsum(Random.nextInt(10)).values.first()
 private val loremDesc = LoremIpsum(Random.nextInt(30)).values.first()
 
 val sampleCourseWithImage = Course(
-    name = LoremIpsum(10).values.first(),
+    name = "Curso Jetpack Compose",
     price = BigDecimal("9.99"),
     description = LoremIpsum(30).values.first(),
     image = "https://picsum.photos/1920/1080"
 )
 
 val sampleCourseWithoutImage = Course(
-    name = LoremIpsum(10).values.first(),
+    name = "Curso de Kotlin",
     price = BigDecimal("9.99"),
     description = LoremIpsum(30).values.first(),
 )
