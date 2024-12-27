@@ -22,6 +22,9 @@ import com.example.mycourses.R
 import com.example.mycourses.model.Course
 import com.example.mycourses.sampledata.sampleCourseWithImage
 import com.example.mycourses.ui.theme.MyCoursesTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun CourseDetailsScreen(
@@ -30,6 +33,19 @@ fun CourseDetailsScreen(
     onNavigateToCheckout: () -> Unit = {}
 ) {
     var isFavorite by remember { mutableStateOf(false) }
+
+    fun favoriteCourse(courseId: String) {
+        val db = Firebase.firestore
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userDocRef = db.collection("users").document(userId)
+        userDocRef.update("favoriteCourses.$courseId", true)
+            .addOnSuccessListener {
+                isFavorite = true
+            }
+            .addOnFailureListener { e ->
+                isFavorite = false
+            }
+    }
     Column(
         modifier
             .fillMaxSize()
@@ -70,7 +86,7 @@ fun CourseDetailsScreen(
                     )
                 }
 
-                IconButton(onClick = { isFavorite = !isFavorite }) {
+                IconButton(onClick = { favoriteCourse("1") }) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Favoritar curso",
@@ -90,7 +106,10 @@ fun CourseDetailsScreen(
 
         }
     }
+
 }
+
+
 
 @Preview
 @Composable
