@@ -95,33 +95,34 @@ fun CourseDetailsScreen(
                 course?.let {
                     Text(it.name, fontSize = 24.sp)
                     Text(it.description)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(it.price, fontSize = 18.sp)
+                        Row {
+                            Text("4.5")
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = "Avaliação",
+                                tint = Color.Yellow
+                            )
+                        }
+
+                        IconButton(onClick = { favoriteCourse(courseId) }) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = "Favoritar curso",
+                                tint = if (isFavorite) Color.Red else Color.LightGray
+                            )
+                        }
+
+                    }
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("R$ "+ course?.price?.toPlainString().toString(), fontSize = 18.sp)
-                    Row {
-                        Text("4.5")
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Avaliação",
-                            tint = Color.Yellow
-                        )
-                    }
 
-                    IconButton(onClick = { favoriteCourse("g1RVaeoX61FOWNOGAV6A ") }) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                            contentDescription = "Favoritar curso",
-                            tint = if (isFavorite) Color.Red else Color.LightGray
-                        )
-                    }
-
-                }
                 Button(
                     onClick = { onNavigateToCheckout() },
                     Modifier

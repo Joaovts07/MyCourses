@@ -29,7 +29,7 @@ import kotlinx.coroutines.tasks.await
 
 
 @Composable
-fun HighlightsListScreen(
+fun CoursesListScreen(
     modifier: Modifier = Modifier,
     title: String = "Cursos Em Destaques",
     onNavigateToCheckout: () -> Unit = {},
@@ -64,7 +64,17 @@ fun HighlightsListScreen(
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center
             )
+
         }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = "Porque a melhor maneira de aprender é ensinando",
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
+        )
         LazyColumn(
             modifier
                 .fillMaxSize(),
@@ -89,8 +99,8 @@ fun HighlightsListScreen(
 fun HighlightsListScreenPreview() {
     MyCoursesTheme {
         Surface {
-            HighlightsListScreen(
-                title = "Cursos Em Destaques"
+            CoursesListScreen(
+                title = "Cursos Em Destaques Porque a melhor maneira de aprender é ensinando"
             )
         }
     }

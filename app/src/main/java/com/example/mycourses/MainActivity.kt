@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +31,7 @@ import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
-import com.example.mycourses.sampledata.sampleCourses
-import com.example.mycourses.ui.screens.HighlightsListScreen
+import com.example.mycourses.ui.screens.CoursesListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
@@ -255,7 +253,7 @@ fun GreetingPreview() {
 
 @Composable
 private fun createHighlighListScreen(navController: NavHostController) {
-    HighlightsListScreen(
+    CoursesListScreen(
         onNavigateToDetails = { courseId ->
             navController.navigate(
                 "${AppDestination.CourseDetails.route}/${courseId}"
