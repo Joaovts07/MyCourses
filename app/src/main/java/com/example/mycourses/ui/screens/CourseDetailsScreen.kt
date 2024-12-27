@@ -24,6 +24,7 @@ import com.example.mycourses.model.Course
 import com.example.mycourses.model.getCourse
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -39,18 +40,32 @@ fun CourseDetailsScreen(
     var course by remember { mutableStateOf<Course?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
+    val db = Firebase.firestore
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val userDocRef = db.collection("users").document(userId)
 
     fun favoriteCourse(courseId: String) {
-        val db = Firebase.firestore
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val userDocRef = db.collection("users").document(userId)
-        userDocRef.update("favoriteCourses.$courseId", true)
-            .addOnSuccessListener {
-                isFavorite = true
-            }
-            .addOnFailureListener { e ->
-                isFavorite = false
-            }
+        if (isFavorite) {
+            userDocRef.update("favoriteCourses.$courseId", true)
+                .addOnSuccessListener {
+                    isFavorite = true
+                }
+                .addOnFailureListener { e ->
+                    isFavorite = false
+                }
+        } else {
+            val updates = hashMapOf<String, Any>(
+                "favoriteCourses.$courseId" to FieldValue.delete()
+            )
+            userDocRef.update(updates)
+                .addOnSuccessListener {
+                    isFavorite = false
+                }
+                .addOnFailureListener { e ->
+                    isFavorite = true
+                }
+        }
+
     }
     Column(
         modifier
@@ -102,7 +117,7 @@ fun CourseDetailsScreen(
                     ) {
                         Text(it.price, fontSize = 18.sp)
                         Row {
-                            Text("4.5")
+                            Text(it.rate)
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 imageVector = Icons.Filled.Star,
