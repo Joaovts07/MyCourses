@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.login.firebase.PhoneAuthState
 import com.example.login.firebase.PhoneAuthentication
+import com.example.login.firebase.auth
 import com.example.login.ui.components.EmailInput
 import com.example.login.ui.components.PasswordInput
 import com.example.mylogin.validators.PhoneNumberMaskTransformation
@@ -137,21 +138,7 @@ fun RegistrationChoiseScreen(navController: NavController, nome: String, dataNas
                         auth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    val db = Firebase.firestore
-                                    val usersRef = db.collection("users")
-                                    val newUser = hashMapOf(
-                                        "id" to auth.currentUser?.uid,
-                                        "nome" to nome,
-                                        "email" to email,
-                                        "birthday" to dataNascimento
-                                    )
-                                    usersRef.add(newUser)
-                                        .addOnSuccessListener { documentReference ->
-                                            Log.d("TAG", "Documento adicionado com ID: ${documentReference.id}")
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Log.w("TAG", "Erro ao adicionar documento", e)
-                                        }
+                                    createUser(nome, email, dataNascimento)
                                     auth.currentUser?.sendEmailVerification()
                                         ?.addOnCompleteListener { verificacaoTask ->
                                             if (verificacaoTask.isSuccessful) {
@@ -210,6 +197,25 @@ private fun validateWithEmail(
     val isEmailError1: Boolean = !isValidEmail(email)
     val isPasswordError1: Boolean = !isValidPassword(password)
     return isEmailError1 || isPasswordError1
+}
+
+fun createUser(nome: String, email: String, dataNascimento: String) {
+    val db = Firebase.firestore
+    val userId = auth.currentUser?.uid ?: return
+    val usersRef = db.collection("users").document(userId)
+    val newUser = hashMapOf(
+        "id" to userId,
+        "nome" to nome,
+        "email" to email,
+        "birthday" to dataNascimento
+    )
+    usersRef.set(newUser)
+        .addOnSuccessListener {
+            Log.d("TAG", "Documento adicionado com ID: $userId")
+        }
+        .addOnFailureListener { e ->
+            Log.w("TAG", "Erro ao adicionar documento", e)
+        }
 }
 
 
