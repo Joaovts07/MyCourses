@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +31,7 @@ import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
-import com.example.mycourses.sampledata.sampleCourses
-import com.example.mycourses.ui.screens.HighlightsListScreen
+import com.example.mycourses.ui.screens.CoursesListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
@@ -75,21 +73,6 @@ class MainActivity : ComponentActivity() {
             }
 
         }
-    }
-
-    @Composable
-    private fun createHighlighListScreen(navController: NavHostController) {
-        HighlightsListScreen(
-            products = sampleCourses,
-            onNavigateToDetails = { course ->
-                navController.navigate(
-                    "${AppDestination.CourseDetails.route}/${course.id}"
-                )
-            },
-            /*onNavigateToCheckout = {
-                                navController.navigate(AppDestination.Checkout.route)
-                            },*/
-        )
     }
 
     override fun onDestroy() {
@@ -160,35 +143,21 @@ fun LoginToInitial(navController: NavHostController) {
                 )
             }
             composable(AppDestination.Highlight.route) {
-                HighlightsListScreen(
-                    products = sampleCourses,
-                    onNavigateToDetails = { course ->
-                        navController.navigate(
-                        "${AppDestination.CourseDetails.route}/${course.id}"
-                    )
-                    },
-                    /*onNavigateToCheckout = {
-                    navController.navigate(AppDestination.Checkout.route)
-                },*/
-                )
+                createHighlighListScreen(navController)
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{courseId}"
             ) { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("courseId")
-                sampleCourses.find {
-                    it.id == id
-                }?.let { course ->
-                    CourseDetailsScreen(
-                        course = course,
-                        onNavigateToCheckout = {
-                            //navController.navigate(AppDestination.Checkout.route)
-                        },
-                    )
-                } ?: LaunchedEffect(Unit) {
-                    navController.navigateUp()
-                }
+                val id = backStackEntry.arguments?.getString("courseId") ?: ""
+                CourseDetailsScreen(
+                    courseId = id,
+                    onNavigateToCheckout = {
+                        //navController.navigate(AppDestination.Checkout.route)
+                    },
+                )
+
             }
+        }
             /*
         composable(AppDestination.Menu.route) {
             MenuListScreen(
@@ -219,7 +188,6 @@ fun LoginToInitial(navController: NavHostController) {
                 },
             )
         }*/
-        }
     }
 }
 
@@ -280,4 +248,19 @@ fun GreetingPreview() {
     MyCoursesTheme {
          Greeting("Android")
     }
-} 
+}
+
+
+@Composable
+private fun createHighlighListScreen(navController: NavHostController) {
+    CoursesListScreen(
+        onNavigateToDetails = { courseId ->
+            navController.navigate(
+                "${AppDestination.CourseDetails.route}/${courseId}"
+            )
+        },
+        /*onNavigateToCheckout = {
+                            navController.navigate(AppDestination.Checkout.route)
+                        },*/
+    )
+}

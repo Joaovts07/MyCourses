@@ -1,26 +1,13 @@
 package com.example.mycourses.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import com.example.mycourses.R
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,7 +22,7 @@ import com.example.mycourses.ui.theme.MyCoursesTheme
 
 @Composable
 fun HighlighCourseCard(
-    product: Course,
+    course: Course,
     modifier: Modifier = Modifier,
     onOrderClick: () -> Unit = {}
 ) {
@@ -45,7 +32,7 @@ fun HighlighCourseCard(
             .fillMaxWidth()
     ) {
         Column(Modifier.fillMaxWidth()) {
-            product.image?.let { image ->
+            course.image?.let { image ->
                 AsyncImage(
                     image,
                     contentDescription = null,
@@ -62,11 +49,11 @@ fun HighlighCourseCard(
                     vertical = 8.dp
                 )
             ) {
-                Text(text = product.name)
-                Text(text = product.price.toString())
+                Text(text = course.name)
+                Text(text = course.price.toString())
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = product.description,
+                    text = course.description,
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -82,7 +69,7 @@ fun HighlighCourseCard(
 private fun HighlightProductPreview() {
     MyCoursesTheme {
         HighlighCourseCard(
-            product = sampleCourseWithoutImage
+            course = sampleCourseWithoutImage
         )
     }
 }
@@ -92,7 +79,7 @@ private fun HighlightProductPreview() {
 private fun HighlightProductCardWithImagePreview() {
     MyCoursesTheme {
         HighlighCourseCard(
-            product = sampleCourseWithImage
+            course = sampleCourseWithImage
         )
     }
 }

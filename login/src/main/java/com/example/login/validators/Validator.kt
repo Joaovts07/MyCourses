@@ -1,4 +1,4 @@
-package com.example.mylogin.validators
+package com.example.login.validators
 
 import android.util.Patterns
 import androidx.compose.ui.text.AnnotatedString
@@ -80,7 +80,6 @@ class PhoneNumberMaskTransformation : VisualTransformation {
                     append(trimmed.substring(2).take(5))
                 }
                 append("-")
-                // Verifica se trimmed tem pelo menos 8 caracteres
                 if (trimmed.length >= 8) {
                     append(trimmed.substring(7))
                 }

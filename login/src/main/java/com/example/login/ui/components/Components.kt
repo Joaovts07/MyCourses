@@ -23,8 +23,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.mylogin.validators.isValidEmail
-import com.example.mylogin.validators.isValidPassword
+import com.example.login.validators.isValidEmail
+import com.example.login.validators.isValidPassword
 
 @Composable
 fun EmailInput(email: String, onEmailChange: (String) -> Unit) {
