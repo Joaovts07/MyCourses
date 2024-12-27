@@ -1,5 +1,6 @@
 package com.example.mycourses.model
 
+import com.google.firebase.firestore.DocumentSnapshot
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -9,4 +10,12 @@ data class Course(
     val price: BigDecimal? = 0.toBigDecimal(),
     val description: String,
     val image: String? = null
+)
+
+fun getCourse(document: DocumentSnapshot) = Course(
+    id = document.id,
+    name = document["name"] as String,
+    description = document["description"] as String,
+    image = document["image"] as String?,
+    price = BigDecimal(document["price"].toString()),
 )

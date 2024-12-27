@@ -17,8 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mycourses.sampledata.sampleCourses
 import com.example.mycourses.model.Course
+import com.example.mycourses.model.getCourse
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.example.mycourses.ui.theme.caveatFont
@@ -26,7 +26,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.math.BigDecimal
 
 
 @Composable
@@ -41,15 +40,9 @@ fun HighlightsListScreen(
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
-                val documents = Firebase.firestore.collection("cursos").get().await()
+                val documents = Firebase.firestore.collection("courses").get().await()
                 courses.addAll(documents.map { document ->
-                    Course(
-                        id = document.id,
-                        name = document["nome"] as String,
-                        description = document["descricao_curso"] as String,
-                        image = document["imagem"] as String?,
-                        price = BigDecimal(document["preco"].toString()),
-                    )
+                    getCourse(document)
                 })
             } catch (e: Exception) {
                 Log.e("cath", e.message.toString())

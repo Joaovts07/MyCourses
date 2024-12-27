@@ -21,14 +21,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.Course
-import com.example.mycourses.sampledata.sampleCourseWithImage
+import com.example.mycourses.model.getCourse
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.math.BigDecimal
 
 @Composable
 fun CourseDetailsScreen(
@@ -58,21 +57,15 @@ fun CourseDetailsScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        LaunchedEffect(courseId) { // Executa quando o courseId muda
+        LaunchedEffect(courseId) {
             coroutineScope.launch {
                 try {
-                    val document = Firebase.firestore.collection("cursos")
+                    val document = Firebase.firestore.collection("courses")
                         .document(courseId)
                         .get().await()
 
                     if (document.exists()) {
-                        course = Course(
-                            id = document.id,
-                            name = document["nome"] as String,
-                            description = document["descricao_curso"] as String,
-                            image = document["imagem"] as String?,
-                            price = BigDecimal(document["preco"].toString()),
-                        )
+                        course = getCourse(document)
                     } else {
                         Log.e("else","curso nao encontrado")
                     }
@@ -144,8 +137,6 @@ fun CourseDetailsScreen(
     }
 
 }
-
-
 
 @Preview
 @Composable
