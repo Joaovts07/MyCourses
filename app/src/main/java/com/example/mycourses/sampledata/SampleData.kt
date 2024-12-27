@@ -21,7 +21,7 @@ val sampleCourseWithoutImage = Course(
     description = LoremIpsum(30).values.first(),
 )
 
-val sampleCourses = List(10) { index ->
+val sampleCourses = List(1) { index ->
     Course(
         name = loremName,
         price = BigDecimal("9.99"),

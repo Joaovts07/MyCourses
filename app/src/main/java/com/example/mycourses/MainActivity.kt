@@ -77,21 +77,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    private fun createHighlighListScreen(navController: NavHostController) {
-        HighlightsListScreen(
-            products = sampleCourses,
-            onNavigateToDetails = { course ->
-                navController.navigate(
-                    "${AppDestination.CourseDetails.route}/${course.id}"
-                )
-            },
-            /*onNavigateToCheckout = {
-                                navController.navigate(AppDestination.Checkout.route)
-                            },*/
-        )
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         auth.removeAuthStateListener(authStateListener)
@@ -160,35 +145,21 @@ fun LoginToInitial(navController: NavHostController) {
                 )
             }
             composable(AppDestination.Highlight.route) {
-                HighlightsListScreen(
-                    products = sampleCourses,
-                    onNavigateToDetails = { course ->
-                        navController.navigate(
-                        "${AppDestination.CourseDetails.route}/${course.id}"
-                    )
-                    },
-                    /*onNavigateToCheckout = {
-                    navController.navigate(AppDestination.Checkout.route)
-                },*/
-                )
+                createHighlighListScreen(navController)
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{courseId}"
             ) { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("courseId")
-                sampleCourses.find {
-                    it.id == id
-                }?.let { course ->
-                    CourseDetailsScreen(
-                        course = course,
-                        onNavigateToCheckout = {
-                            //navController.navigate(AppDestination.Checkout.route)
-                        },
-                    )
-                } ?: LaunchedEffect(Unit) {
-                    navController.navigateUp()
-                }
+                val id = backStackEntry.arguments?.getString("courseId") ?: ""
+                CourseDetailsScreen(
+                    courseId = id,
+                    onNavigateToCheckout = {
+                        //navController.navigate(AppDestination.Checkout.route)
+                    },
+                )
+
             }
+        }
             /*
         composable(AppDestination.Menu.route) {
             MenuListScreen(
@@ -219,7 +190,6 @@ fun LoginToInitial(navController: NavHostController) {
                 },
             )
         }*/
-        }
     }
 }
 
@@ -280,4 +250,19 @@ fun GreetingPreview() {
     MyCoursesTheme {
          Greeting("Android")
     }
-} 
+}
+
+
+@Composable
+private fun createHighlighListScreen(navController: NavHostController) {
+    HighlightsListScreen(
+        onNavigateToDetails = { courseId ->
+            navController.navigate(
+                "${AppDestination.CourseDetails.route}/${courseId}"
+            )
+        },
+        /*onNavigateToCheckout = {
+                            navController.navigate(AppDestination.Checkout.route)
+                        },*/
+    )
+}

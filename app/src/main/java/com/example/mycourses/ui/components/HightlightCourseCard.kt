@@ -35,7 +35,7 @@ import com.example.mycourses.ui.theme.MyCoursesTheme
 
 @Composable
 fun HighlighCourseCard(
-    product: Course,
+    course: Course,
     modifier: Modifier = Modifier,
     onOrderClick: () -> Unit = {}
 ) {
@@ -45,7 +45,7 @@ fun HighlighCourseCard(
             .fillMaxWidth()
     ) {
         Column(Modifier.fillMaxWidth()) {
-            product.image?.let { image ->
+            course.image?.let { image ->
                 AsyncImage(
                     image,
                     contentDescription = null,
@@ -62,11 +62,11 @@ fun HighlighCourseCard(
                     vertical = 8.dp
                 )
             ) {
-                Text(text = product.name)
-                Text(text = product.price.toString())
+                Text(text = course.name)
+                Text(text = course.price.toString())
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = product.description,
+                    text = course.description,
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -82,7 +82,7 @@ fun HighlighCourseCard(
 private fun HighlightProductPreview() {
     MyCoursesTheme {
         HighlighCourseCard(
-            product = sampleCourseWithoutImage
+            course = sampleCourseWithoutImage
         )
     }
 }
@@ -92,7 +92,7 @@ private fun HighlightProductPreview() {
 private fun HighlightProductCardWithImagePreview() {
     MyCoursesTheme {
         HighlighCourseCard(
-            product = sampleCourseWithImage
+            course = sampleCourseWithImage
         )
     }
 }

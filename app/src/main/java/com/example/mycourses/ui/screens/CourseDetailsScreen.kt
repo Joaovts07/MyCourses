@@ -1,5 +1,6 @@
 package com.example.mycourses.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,14 +26,20 @@ import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.math.BigDecimal
 
 @Composable
 fun CourseDetailsScreen(
-    course: Course,
+    courseId : String,
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {}
 ) {
     var isFavorite by remember { mutableStateOf(false) }
+    var course by remember { mutableStateOf<Course?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
 
     fun favoriteCourse(courseId: String) {
         val db = Firebase.firestore
@@ -51,60 +58,89 @@ fun CourseDetailsScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        course.image?.let {
-            AsyncImage(
-                model = course.image,
-                contentDescription = null,
-                modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth(),
-                placeholder = painterResource(id = R.drawable.placeholder),
-                contentScale = ContentScale.Crop
-            )
-        }
-        Column(
-            Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(course.name, fontSize = 24.sp)
-            Text(course.description)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(course.price.toPlainString(), fontSize = 18.sp)
-                Row {
-                    Text("4.5")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "Avaliação",
-                        tint = Color.Yellow
-                    )
-                }
+        LaunchedEffect(courseId) { // Executa quando o courseId muda
+            coroutineScope.launch {
+                try {
+                    val document = Firebase.firestore.collection("cursos")
+                        .document(courseId)
+                        .get().await()
 
-                IconButton(onClick = { favoriteCourse("1") }) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = "Favoritar curso",
-                        tint = if (isFavorite) Color.Red else Color.LightGray
-                    )
+                    if (document.exists()) {
+                        course = Course(
+                            id = document.id,
+                            name = document["nome"] as String,
+                            description = document["descricao_curso"] as String,
+                            image = document["imagem"] as String?,
+                            price = BigDecimal(document["preco"].toString()),
+                        )
+                    } else {
+                        Log.e("else","curso nao encontrado")
+                    }
+                } catch (e: Exception) {
+                    Log.e("cath", e.message.toString())
                 }
-
             }
-            Button(
-                onClick = { onNavigateToCheckout() },
+        }
+        if(course != null ) {
+            course?.image?.let {
+                AsyncImage(
+                    model = course?.image,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth(),
+                    placeholder = painterResource(id = R.drawable.placeholder),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Column(
                 Modifier
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(text = "Cadastrar")
-            }
+                course?.let {
+                    Text(it.name, fontSize = 24.sp)
+                    Text(it.description)
+                }
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("R$ "+ course?.price?.toPlainString().toString(), fontSize = 18.sp)
+                    Row {
+                        Text("4.5")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Avaliação",
+                            tint = Color.Yellow
+                        )
+                    }
+
+                    IconButton(onClick = { favoriteCourse("g1RVaeoX61FOWNOGAV6A ") }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Favoritar curso",
+                            tint = if (isFavorite) Color.Red else Color.LightGray
+                        )
+                    }
+
+                }
+                Button(
+                    onClick = { onNavigateToCheckout() },
+                    Modifier
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "Cadastrar")
+                }
+
+            }
         }
+
     }
 
 }
@@ -117,7 +153,7 @@ fun CourseDetailsScreenPreview() {
     MyCoursesTheme {
         Surface {
             CourseDetailsScreen(
-                course = sampleCourseWithImage,
+                courseId = "1",
             )
         }
     }
