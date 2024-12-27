@@ -97,7 +97,7 @@ fun CourseDetailsScreen(
                     Text(it.description)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween, // Alinhamento horizontal
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(it.price, fontSize = 18.sp)

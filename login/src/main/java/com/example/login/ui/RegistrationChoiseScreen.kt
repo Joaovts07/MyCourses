@@ -36,9 +36,9 @@ import com.example.login.firebase.PhoneAuthentication
 import com.example.login.firebase.auth
 import com.example.login.ui.components.EmailInput
 import com.example.login.ui.components.PasswordInput
-import com.example.mylogin.validators.PhoneNumberMaskTransformation
-import com.example.mylogin.validators.isValidEmail
-import com.example.mylogin.validators.isValidPassword
+import com.example.login.validators.PhoneNumberMaskTransformation
+import com.example.login.validators.isValidEmail
+import com.example.login.validators.isValidPassword
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
