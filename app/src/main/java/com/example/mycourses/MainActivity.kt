@@ -35,6 +35,7 @@ import com.example.mycourses.ui.screens.CoursesListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
+import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -156,6 +157,9 @@ fun LoginToInitial(navController: NavHostController) {
                     },
                 )
 
+            }
+            composable(AppDestination.FavoriteCourses.route) {
+                CourseFavoriteScreen()
             }
         }
             /*

@@ -12,6 +12,7 @@ sealed class AppDestination(val route: String) {
     data object MyCourses : AppDestination("mycourses")
     data object Account : AppDestination("account")
     data object CourseDetails : AppDestination("courseDetails")
+    data object FavoriteCourses: AppDestination("favoriteCourses")
 
 }
 
@@ -29,6 +30,6 @@ val bottomAppBarItems = listOf(
     BottomAppBarItem(
         label = "Favoritos",
         icon = Icons.Outlined.Star,
-        destination = AppDestination.MyCourses
+        destination = AppDestination.FavoriteCourses
     ),
 )

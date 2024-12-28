@@ -22,3 +22,4 @@ fun getCourse(document: DocumentSnapshot) = Course(
     price = BigDecimal(document["price"].toString()).toBrazilianCurrency(),
     rate = document["rate"].toString()
 )
+
