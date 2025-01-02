@@ -49,12 +49,10 @@ fun AccountScreen(user: User) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Idade do usuário (se disponível)
-        if (user.age != null) {
-            Text(
-                text = "Idade: ${user.age}",
-                fontSize = 16.sp
-            )
-        }
+        Text(
+            text = "Idade: ${user.age}",
+            fontSize = 16.sp
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -69,9 +67,9 @@ fun AccountScreen(user: User) {
         Spacer(modifier = Modifier.height(8.dp))
 
         // Lista de cursos (substitua pela sua lógica de exibição)
-        for (course in user.enrolledCourses) {
+        /*for (course in user.enrolledCourses) {
             Text(text = course.name)
-        }
+        }*/
 
         // ... adicione outras informações e funcionalidades da conta ...
     }
