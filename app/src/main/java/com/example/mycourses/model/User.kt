@@ -5,6 +5,7 @@ data class User(
     val name: String = "",
     val email: String = "",
     val age: String = "",
+    val profilePictureUrl: String = "",
     private val _favoriteCourses: MutableMap<String, Boolean> = mutableMapOf()
 ) {
     val favoriteCourses: Map<String, Boolean>
