@@ -33,7 +33,8 @@ import com.example.login.validators.isValidEmail
 import com.example.login.validators.isValidPassword
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserInfo
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,16 +46,26 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,UserInfo?) -> Unit) {
+    fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,Boolean?) -> Unit) {
         val auth: FirebaseAuth = Firebase.auth
-
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    onResult(true,task.result?.user)
-                } else {
-                    onResult(false, task.result?.user)
+                    onResult(true, task.result.user?.isEmailVerified)
                 }
+            }
+            .addOnFailureListener { exception ->
+                if (exception is FirebaseAuthInvalidCredentialsException || exception is FirebaseAuthException) {
+                    snackbarMessage = when (exception.message) {
+                        "ERROR_USER_NOT_FOUND" -> "Usuário não encontrado."
+                        "ERROR_WRONG_PASSWORD" -> "Senha incorreta."
+                        "ERROR_INVALID_EMAIL" -> "Email inválido."
+                        else -> "Erro ao fazer login: ${exception.message}"
+                    }
+                } else {
+                    snackbarMessage = "Erro ao fazer login: ${exception.message}"
+                }
+                onResult(false, false)
             }
     }
 
@@ -105,10 +116,9 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
                         showError = true
                         return@LoadingButton
                     }
-
-                    signInWithEmailAndPassword(email, password) { success, userInfo ->
+                    signInWithEmailAndPassword(email, password) { success, emailVerified ->
                         if (success) {
-                            if (userInfo?.isEmailVerified == true) {
+                            if (emailVerified == true) {
                                 showSnackbar = true
                                 showError = false
                                 onLoginSuccess()
@@ -120,10 +130,12 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
                             }
 
                         } else {
-                            showError = true
+                            showSnackbar = true
                             isLoading = false
                         }
                     }
+
+
                 },
                 isLoading = isLoading,
                 text = "Login",
