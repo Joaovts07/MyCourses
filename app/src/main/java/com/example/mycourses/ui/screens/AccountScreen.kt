@@ -1,10 +1,13 @@
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -13,7 +16,7 @@ import coil.compose.AsyncImage
 import com.example.mycourses.model.User
 
 @Composable
-fun AccountScreen(user: User) {
+fun AccountScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -21,16 +24,41 @@ fun AccountScreen(user: User) {
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Foto do usuário (se disponível)
-        AsyncImage(
-            model = user.profilePictureUrl, // Substitua pelo campo da foto do usuário
-            contentDescription = "Foto do perfil",
-            modifier = Modifier.size(100.dp)
+        val user = User(
+            "1",
+            "Joao Vitor",
+            "john.marshall.harlan@examplepetstore.com",
+            "25",
+
         )
+
+        if (user.profilePictureUrl.isNotEmpty()) {
+            AsyncImage(
+                model = user.profilePictureUrl,
+                contentDescription = "Foto do perfil",
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape) // Torna a imagem redonda
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .background(Color.Blue),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = user.name.first().toString(),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Nome do usuário
         Text(
             text = user.name,
             fontSize = 24.sp,
@@ -39,7 +67,6 @@ fun AccountScreen(user: User) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Email do usuário
         Text(
             text = user.email,
             fontSize = 16.sp,
@@ -48,7 +75,6 @@ fun AccountScreen(user: User) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Idade do usuário (se disponível)
         Text(
             text = "Idade: ${user.age}",
             fontSize = 16.sp
@@ -56,7 +82,6 @@ fun AccountScreen(user: User) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Cursos cadastrados
         Text(
             text = "Cursos Cadastrados",
             fontSize = 20.sp,

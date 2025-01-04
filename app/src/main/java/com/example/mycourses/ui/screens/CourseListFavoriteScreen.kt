@@ -68,7 +68,7 @@ fun CourseFavoriteScreen(
             }
         }
         for (course in courseList) {
-            course?.image?.let {
+            course?.image?.let { 
                 AsyncImage(
                     model = course.image,
                     contentDescription = null,
