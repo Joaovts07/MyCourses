@@ -1,5 +1,6 @@
 package com.example.mycourses
 
+import AccountScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
                         navController,
                         AppDestination.Highlight.route,
                         onLoginSuccess = {
-                            createHighlighListScreen(navController)
+                            CreateHighlighListScreen(navController)
                         })
    0             } else if (shouldNavigateToInitial) {
                     LoginToInitial(navController)
@@ -144,7 +145,7 @@ fun LoginToInitial(navController: NavHostController) {
                 )
             }
             composable(AppDestination.Highlight.route) {
-                createHighlighListScreen(navController)
+                CreateHighlighListScreen(navController)
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{courseId}"
@@ -160,6 +161,9 @@ fun LoginToInitial(navController: NavHostController) {
             }
             composable(AppDestination.FavoriteCourses.route) {
                 CourseFavoriteScreen()
+            }
+            composable(AppDestination.Account.route) {
+                AccountScreen()
             }
         }
             /*
@@ -256,7 +260,7 @@ fun GreetingPreview() {
 
 
 @Composable
-private fun createHighlighListScreen(navController: NavHostController) {
+private fun CreateHighlighListScreen(navController: NavHostController) {
     CoursesListScreen(
         onNavigateToDetails = { courseId ->
             navController.navigate(
