@@ -2,6 +2,7 @@ package com.example.mycourses.model
 
 import com.example.mycourses.extensions.toBrazilianCurrency
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.gson.Gson
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -23,3 +24,12 @@ fun getCourse(document: DocumentSnapshot) = Course(
     rate = document["rate"].toString()
 )
 
+fun serializeCourse(course: Course): String {
+    val gson = Gson()
+    return gson.toJson(course)
+}
+
+fun deserializeCourse(courseJson: String): Course? {
+    val gson = Gson()
+    return gson.fromJson(courseJson, Course::class.java)
+}

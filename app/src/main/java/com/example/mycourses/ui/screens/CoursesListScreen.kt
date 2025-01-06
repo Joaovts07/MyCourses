@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mycourses.model.Course
 import com.example.mycourses.model.getCourse
+import com.example.mycourses.model.serializeCourse
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.example.mycourses.ui.theme.caveatFont
@@ -33,7 +34,7 @@ fun CoursesListScreen(
     modifier: Modifier = Modifier,
     title: String = "Cursos Em Destaques",
     onNavigateToCheckout: () -> Unit = {},
-    onNavigateToDetails: (String) -> Unit = {}
+    onNavigateToDetails: (Course) -> Unit = {}
 ) {
     val courses = remember { mutableStateListOf<Course>() }
     val coroutineScope = rememberCoroutineScope()
@@ -81,15 +82,16 @@ fun CoursesListScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(courses) { p ->
+            items(courses) { course ->
                 HighlighCourseCard(
-                    course = p,
+                    course = course,
                     Modifier.clickable {
-                        onNavigateToDetails(p.id)
+                        val course = course
+                        onNavigateToDetails(course)
                     },
                     onOrderClick = onNavigateToCheckout
                 )
-            }
+            }     
         }
     }
 }
