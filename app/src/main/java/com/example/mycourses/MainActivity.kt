@@ -33,6 +33,7 @@ import com.example.login.firebase.auth
 import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
 import com.example.mycourses.model.deserializeCourse
+import com.example.mycourses.model.serializeCourse
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.screens.CoursesListScreen
@@ -42,6 +43,7 @@ import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
+import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
@@ -267,9 +269,11 @@ fun GreetingPreview() {
 @Composable
 private fun CreateHighlighListScreen(navController: NavHostController) {
     CoursesListScreen(
-        onNavigateToDetails = { courseId ->
+        onNavigateToDetails = { course ->
+            val courseJson = serializeCourse(course)
+            val encodedCourseJson = URLEncoder.encode(courseJson, "UTF-8")
             navController.navigate(
-                "${AppDestination.CourseDetails.route}/${courseId}"
+                "${AppDestination.CourseDetails.route}/$encodedCourseJson"
             )
         },
         /*onNavigateToCheckout = {

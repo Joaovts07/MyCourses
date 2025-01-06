@@ -34,7 +34,7 @@ fun CoursesListScreen(
     modifier: Modifier = Modifier,
     title: String = "Cursos Em Destaques",
     onNavigateToCheckout: () -> Unit = {},
-    onNavigateToDetails: (String) -> Unit = {}
+    onNavigateToDetails: (Course) -> Unit = {}
 ) {
     val courses = remember { mutableStateListOf<Course>() }
     val coroutineScope = rememberCoroutineScope()
@@ -86,8 +86,8 @@ fun CoursesListScreen(
                 HighlighCourseCard(
                     course = course,
                     Modifier.clickable {
-                        val courseJson = serializeCourse(course)
-                        onNavigateToDetails(courseJson)
+                        val course = course
+                        onNavigateToDetails(course)
                     },
                     onOrderClick = onNavigateToCheckout
                 )
