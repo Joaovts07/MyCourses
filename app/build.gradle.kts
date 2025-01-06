@@ -51,13 +51,13 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.io.coil.kt.coil.compose)
     implementation(libs.gson)
-    
+
+    implementation(libs.firebase.firestore.ktx)
     implementation(platform(libs.androidx.compose.bom))
     implementation(platform(libs.firebase.bom))
 
