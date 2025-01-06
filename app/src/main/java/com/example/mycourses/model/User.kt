@@ -6,20 +6,18 @@ data class User(
     val email: String = "",
     val age: String = "",
     val profilePictureUrl: String = "",
-    private val _favoriteCourses: MutableMap<String, Boolean> = mutableMapOf()
+    val favoriteCourses: MutableMap<String, Boolean> = mutableMapOf()
 ) {
-    val favoriteCourses: Map<String, Boolean>
-        get() = _favoriteCourses.toMap()
 
     fun isFavorite(courseId: String): Boolean {
-        return _favoriteCourses[courseId] ?: false
+        return favoriteCourses[courseId] ?: false
     }
 
     fun addFavoriteCourse(courseId: String) {
-        _favoriteCourses[courseId] = true
+        favoriteCourses[courseId] = true
     }
 
     fun removeFavoriteCourse(courseId: String) {
-        _favoriteCourses.remove(courseId)
+        favoriteCourses.remove(courseId)
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.Course
+import com.example.mycourses.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -31,11 +32,15 @@ fun CourseDetailsScreen(
     onNavigateToCheckout: () -> Unit = {}
 ) {
     var isFavorite by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
     val db = Firebase.firestore
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     val userDocRef = db.collection("users").document(userId)
+
+    userDocRef.get().addOnSuccessListener {
+        val user = it.toObject(User::class.java)
+        isFavorite = user?.isFavorite(course?.id ?: "") ?: false
+    }
 
     fun favoriteCourse(courseId: String) {
         if (isFavorite) {
@@ -67,9 +72,9 @@ fun CourseDetailsScreen(
             .verticalScroll(rememberScrollState())
     ) {
         if(course != null ) {
-            course?.image?.let {
+            course.image?.let {
                 AsyncImage(
-                    model = course?.image,
+                    model = it,
                     contentDescription = null,
                     modifier = Modifier
                         .height(200.dp)
