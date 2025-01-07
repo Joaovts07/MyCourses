@@ -24,7 +24,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun AccountScreen(onEditClick: (Course) -> Unit) {
+fun AccountScreen(onEditClick: () -> Unit) {
     var user by remember { mutableStateOf(User("", "", "", "")) }
     var enrolledCourses = remember { mutableStateListOf<Course>() }
     var isLoading by remember { mutableStateOf(true) }
@@ -47,7 +47,6 @@ fun AccountScreen(onEditClick: (Course) -> Unit) {
         subscriptionsRef.whereEqualTo("userId", userId)
             .get()
             .addOnSuccessListener { subscriptionDocuments ->
-                // Cria uma lista de courseIds a partir das inscrições
                 val courseIds = mutableListOf<String>()
                 for (subscription in subscriptionDocuments) {
                     val courseId = subscription.getString("courseId")
@@ -56,7 +55,6 @@ fun AccountScreen(onEditClick: (Course) -> Unit) {
                     }
                 }
 
-                // Agora, para cada courseId, obtenha os detalhes do curso
                 val coursesRef = FirebaseFirestore.getInstance().collection("courses")
                 for (courseId in courseIds) {
                     coursesRef.document(courseId).get()
@@ -69,7 +67,6 @@ fun AccountScreen(onEditClick: (Course) -> Unit) {
                 isLoading = false
             }
             .addOnFailureListener { exception ->
-                // Trate erros aqui, como falha na consulta
                 Log.e("Firestore", "Erro ao buscar inscrições", exception)
             }
     }
@@ -84,7 +81,6 @@ fun AccountScreen(onEditClick: (Course) -> Unit) {
         if (isLoading) {
             CircularProgressIndicator()
         } else {
-            // Mostrar informações do usuário e cursos
             UserInfo(user, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
             EnrolledCourses(enrolledCourses)
