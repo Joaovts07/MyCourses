@@ -1,6 +1,7 @@
 package com.example.mycourses
 
 import AccountScreen
+import EditAccountScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,7 @@ import androidx.navigation.navArgument
 import com.example.login.firebase.auth
 import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
+import com.example.mycourses.model.User
 import com.example.mycourses.model.deserializeCourse
 import com.example.mycourses.model.serializeCourse
 import com.example.mycourses.navigation.AppDestination
@@ -71,9 +73,9 @@ class MainActivity : ComponentActivity() {
                         navController,
                         AppDestination.Highlight.route,
                         onLoginSuccess = {
-                            CreateHighlighListScreen(navController)
+                            NavitagionToHighlighListScreen(navController)
                         })
-   0             } else if (shouldNavigateToInitial) {
+                } else if (shouldNavigateToInitial) {
                     LoginToInitial(navController)
                 }
 
@@ -150,7 +152,7 @@ fun LoginToInitial(navController: NavHostController) {
                 )
             }
             composable(AppDestination.Highlight.route) {
-                CreateHighlighListScreen(navController)
+                NavitagionToHighlighListScreen(navController)
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{courseJson}",
@@ -169,8 +171,15 @@ fun LoginToInitial(navController: NavHostController) {
             composable(AppDestination.FavoriteCourses.route) {
                 CourseFavoriteScreen()
             }
+            composable(AppDestination.EditAccount.route) {
+
+                EditAccountScreen(
+                    navController = navController,
+                    User("","","" ,""),
+                )
+            }
             composable(AppDestination.Account.route) {
-                AccountScreen()
+                NavitateToAccountScreen(navController)
             }
         }
             /*
@@ -265,9 +274,8 @@ fun GreetingPreview() {
     }
 }
 
-
 @Composable
-private fun CreateHighlighListScreen(navController: NavHostController) {
+private fun NavitagionToHighlighListScreen(navController: NavHostController) {
     CoursesListScreen(
         onNavigateToDetails = { course ->
             val courseJson = serializeCourse(course)
@@ -279,5 +287,16 @@ private fun CreateHighlighListScreen(navController: NavHostController) {
         /*onNavigateToCheckout = {
                             navController.navigate(AppDestination.Checkout.route)
                         },*/
+    )
+}
+
+@Composable
+private fun NavitateToAccountScreen(navController: NavHostController) {
+    AccountScreen(
+        onEditClick = { course ->
+            val courseJson = serializeCourse(course)
+            val encodedCourseJson = URLEncoder.encode(courseJson, "UTF-8")
+            navController.navigate("${AppDestination.EditAccount.route}/$encodedCourseJson")
+        }
     )
 }
