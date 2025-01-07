@@ -1,6 +1,5 @@
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -25,7 +24,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun AccountScreen() {
+fun AccountScreen(onEditClick: (Course) -> Unit) {
     var user by remember { mutableStateOf(User("", "", "", "")) }
     var enrolledCourses = remember { mutableStateListOf<Course>() }
     var isLoading by remember { mutableStateOf(true) }
@@ -86,7 +85,7 @@ fun AccountScreen() {
             CircularProgressIndicator()
         } else {
             // Mostrar informações do usuário e cursos
-            UserInfo(user)
+            UserInfo(user, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
             EnrolledCourses(enrolledCourses)
         }
@@ -94,7 +93,7 @@ fun AccountScreen() {
 }
 
 @Composable
-fun UserInfo(user: User) {
+fun UserInfo(user: User, onEditClick: () -> Unit) {
     if (user.profilePictureUrl.isNotEmpty()) {
         AsyncImage(
             model = user.profilePictureUrl,
@@ -119,6 +118,20 @@ fun UserInfo(user: User) {
             )
         }
     }
+    /*IconButton(
+        onClick = {} , //onEditPictureClick,
+        modifier = Modifier
+            .offset(x = (36).dp, y = (-24).dp) // Ajuste o offset para sobrepor o círculo
+            .clip(CircleShape) // Faz o ícone se ajustar ao círculo
+            .size(28.dp)
+            .background(Color.Gray, CircleShape) // Adiciona um fundo para o ícone
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = "Editar foto",
+            tint = Color.White
+        )
+    }*/
 
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -142,6 +155,14 @@ fun UserInfo(user: User) {
         text = "Idade: ${user.age}",
         fontSize = 16.sp
     )
+    Spacer(modifier = Modifier.height(4.dp))
+
+    Button(onClick = { onEditClick() } ,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )) {
+        Text(text = "Editar Perfil")
+    }
 }
 
 @Composable
