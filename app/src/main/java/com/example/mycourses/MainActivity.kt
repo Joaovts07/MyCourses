@@ -35,7 +35,9 @@ import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
 import com.example.mycourses.model.User
 import com.example.mycourses.model.deserializeCourse
+import com.example.mycourses.model.deserializeUser
 import com.example.mycourses.model.serializeCourse
+import com.example.mycourses.model.serializeUser
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.screens.CoursesListScreen
@@ -128,9 +130,7 @@ fun LoginToInitial(navController: NavHostController) {
                 popUpTo(route)
             }
         },
-        onFabClick = {
-            //navController.navigate(AppDestination.Checkout.route)
-        },
+        onFabClick = {},
         isShowTopBar = containsInBottomAppBarItems,
         isShowBottomBar = containsInBottomAppBarItems,
         isShowFab = isShowFab
@@ -171,47 +171,21 @@ fun LoginToInitial(navController: NavHostController) {
             composable(AppDestination.FavoriteCourses.route) {
                 CourseFavoriteScreen()
             }
-            composable(AppDestination.EditAccount.route) {
-
+            composable("${AppDestination.EditAccount.route}/{userJson}",
+                arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
+            ) { backStackEntry ->
+                val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
+                val user = deserializeUser(userJson) ?: User()
                 EditAccountScreen(
                     navController = navController,
-                    User("","","" ,""),
+                    user,
                 )
             }
             composable(AppDestination.Account.route) {
                 NavitateToAccountScreen(navController)
             }
         }
-            /*
-        composable(AppDestination.Menu.route) {
-            MenuListScreen(
-                products = sampleProducts,
-                onNavigateToDetails = { product ->
-                    navController.navigate(
-                        "${AppDestination.ProductDetails.route}/${product.id}"
-                    )
-                },
-            )
-        }
-        composable(AppDestination.Drinks.route) {
-            DrinksListScreen(
-                products = sampleProducts,
-                onNavigateToDetails = { product ->
-                    navController.navigate(
-                        "${AppDestination.ProductDetails.route}/${product.id}"
-                    )
-                },
-            )
-        }
 
-        composable(AppDestination.Checkout.route) {
-            CheckoutScreen(
-                products = sampleProducts,
-                onPopBackStack = {
-                    navController.navigateUp()
-                },
-            )
-        }*/
     }
 }
 
@@ -283,20 +257,17 @@ private fun NavitagionToHighlighListScreen(navController: NavHostController) {
             navController.navigate(
                 "${AppDestination.CourseDetails.route}/$encodedCourseJson"
             )
-        },
-        /*onNavigateToCheckout = {
-                            navController.navigate(AppDestination.Checkout.route)
-                        },*/
+        }
     )
 }
 
 @Composable
 private fun NavitateToAccountScreen(navController: NavHostController) {
     AccountScreen(
-        onEditClick = { course ->
-            val courseJson = serializeCourse(course)
-            val encodedCourseJson = URLEncoder.encode(courseJson, "UTF-8")
-            navController.navigate("${AppDestination.EditAccount.route}/$encodedCourseJson")
+        onEditClick = { user ->
+            val userJson = serializeUser(user)
+            val encodedUserJson = URLEncoder.encode(userJson, "UTF-8")
+            navController.navigate("${AppDestination.EditAccount.route}/$encodedUserJson")
         }
     )
 }
