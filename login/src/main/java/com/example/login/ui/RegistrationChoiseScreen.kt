@@ -40,9 +40,12 @@ import com.example.login.validators.PhoneNumberMaskTransformation
 import com.example.login.validators.isValidEmail
 import com.example.login.validators.isValidPassword
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -203,11 +206,15 @@ fun createUser(nome: String, email: String, dataNascimento: String) {
     val db = Firebase.firestore
     val userId = auth.currentUser?.uid ?: return
     val usersRef = db.collection("users").document(userId)
+
+    val formateData = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
+    val dateBirthday = formateData.parse(dataNascimento)
+    val datebirthdayTimestamp = dateBirthday?.let { Timestamp(it) }
     val newUser = hashMapOf(
         "id" to userId,
         "nome" to nome,
         "email" to email,
-        "birthday" to dataNascimento
+        "birthday" to datebirthdayTimestamp
     )
     usersRef.set(newUser)
         .addOnSuccessListener {

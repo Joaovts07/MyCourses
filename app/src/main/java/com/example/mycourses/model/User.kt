@@ -3,13 +3,14 @@ package com.example.mycourses.model
 import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 data class User(
     val id: String = "",
     val name: String = "",
     val email: String = "",
-    val age: Timestamp = Timestamp.now(),
+    val age: Date = Date(),
     val profilePictureUrl: String = "",
     val favoriteCourses: MutableMap<String, Boolean> = mutableMapOf()
 ) {
@@ -27,8 +28,8 @@ data class User(
     }
 
     fun getFormattedAge(): String {
-        val formato = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
-        return formato.format(this.age.toDate())
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
+        return format.format(this.age)
     }
 }
 
