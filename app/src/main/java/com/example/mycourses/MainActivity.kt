@@ -266,8 +266,7 @@ private fun NavitateToAccountScreen(navController: NavHostController) {
     AccountScreen(
         onEditClick = { user ->
             val userJson = serializeUser(user)
-            val encodedUserJson = URLEncoder.encode(userJson, "UTF-8")
-            navController.navigate("${AppDestination.EditAccount.route}/$encodedUserJson")
+            navController.navigate("${AppDestination.EditAccount.route}/$userJson")
         }
     )
 }
