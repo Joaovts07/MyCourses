@@ -1,8 +1,8 @@
 package com.example.mycourses.model
 
-import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -30,6 +30,12 @@ data class User(
     fun getFormattedAge(): String {
         val format = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
         return format.format(this.age)
+    }
+
+    fun getYears(): Int {
+        val format = SimpleDateFormat("yyyy", Locale("pt", "BR"))
+        val year = format.format(this.age)
+        return Calendar.getInstance().get(Calendar.YEAR) - year.toInt()
     }
 }
 
