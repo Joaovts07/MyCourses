@@ -33,11 +33,11 @@ import androidx.navigation.navArgument
 import com.example.login.firebase.auth
 import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
-import com.example.mycourses.model.User
-import com.example.mycourses.model.deserializeCourse
-import com.example.mycourses.model.deserializeUser
-import com.example.mycourses.model.serializeCourse
-import com.example.mycourses.model.serializeUser
+import com.example.mycourses.model.entities.User
+import com.example.mycourses.model.entities.deserializeCourse
+import com.example.mycourses.model.entities.deserializeUser
+import com.example.mycourses.model.entities.serializeCourse
+import com.example.mycourses.model.entities.serializeUser
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.screens.CoursesListScreen

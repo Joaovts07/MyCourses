@@ -1,4 +1,4 @@
-package com.example.mycourses.model
+package com.example.mycourses.model.entities
 
 import com.example.mycourses.extensions.toBrazilianCurrency
 import com.google.firebase.firestore.DocumentSnapshot
