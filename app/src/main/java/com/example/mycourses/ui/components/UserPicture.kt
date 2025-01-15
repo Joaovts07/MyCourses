@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mycourses.model.User
+import com.example.mycourses.model.entities.User
 
 @Composable
 fun UserPicture(user: User, isEditable: Boolean, onEditPictureClick:(User) -> Unit = {}) {

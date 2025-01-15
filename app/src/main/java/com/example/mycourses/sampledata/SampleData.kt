@@ -1,7 +1,7 @@
 package com.example.mycourses.sampledata
 
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
-import com.example.mycourses.model.Course
+import com.example.mycourses.model.entities.Course
 
 val sampleCourseWithImage = Course(
     name = "Curso Jetpack Compose",

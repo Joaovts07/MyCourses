@@ -1,4 +1,4 @@
-package com.example.mycourses.model
+package com.example.mycourses.model.entities
 
 import com.google.gson.Gson
 import java.text.SimpleDateFormat

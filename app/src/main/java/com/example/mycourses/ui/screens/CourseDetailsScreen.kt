@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.mycourses.R
-import com.example.mycourses.model.Course
-import com.example.mycourses.model.User
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore

@@ -10,9 +10,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mycourses.model.Course
-import com.example.mycourses.model.User
-import com.example.mycourses.model.getCourse
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.User
+import com.example.mycourses.model.entities.getCourse
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
 import com.google.firebase.auth.FirebaseAuth

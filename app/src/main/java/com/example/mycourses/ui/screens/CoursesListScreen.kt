@@ -17,8 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mycourses.model.Course
-import com.example.mycourses.model.getCourse
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.getCourse
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.example.mycourses.ui.theme.caveatFont

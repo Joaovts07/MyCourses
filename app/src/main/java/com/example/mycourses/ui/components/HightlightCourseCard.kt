@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mycourses.sampledata.sampleCourseWithImage
 import com.example.mycourses.sampledata.sampleCourseWithoutImage
 import coil.compose.AsyncImage
-import com.example.mycourses.model.Course
+import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.theme.MyCoursesTheme
 
 
