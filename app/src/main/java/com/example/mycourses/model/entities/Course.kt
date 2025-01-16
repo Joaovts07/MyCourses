@@ -12,7 +12,7 @@ data class Course(
     val price: String = "",
     val description: String = "",
     val image: String? = null,
-    val rate: String = ""
+    val rating: String = ""
 )
 
 fun getCourse(document: DocumentSnapshot) = Course(
@@ -21,7 +21,7 @@ fun getCourse(document: DocumentSnapshot) = Course(
     description = document["description"] as String,
     image = document["image"] as String?,
     price = BigDecimal(document["price"].toString()).toBrazilianCurrency(),
-    rate = document["rate"].toString()
+    rating = document["rate"].toString()
 )
 
 fun serializeCourse(course: Course): String {
