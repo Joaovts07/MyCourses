@@ -8,8 +8,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) {
     suspend fun getCurrentUser(): User? {
         val userId = auth.currentUser?.uid ?: return null
@@ -20,4 +20,5 @@ class UserRepository @Inject constructor(
         val document = firestore.collection("users").document(userId).get().await()
         return document.toObject<User>()
     }
+
 }
