@@ -82,7 +82,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 }
 
 @Composable
-fun EnrolledCourses(enrolledCourses: List<Course>) {
+fun EnrolledCourses(enrolledCourses: List<Course?>) {
     Text(
         text = "Cursos Cadastrados",
         fontSize = 20.sp,

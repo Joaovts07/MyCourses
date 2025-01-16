@@ -99,7 +99,7 @@ fun CourseDetailsScreen(
                     ) {
                         Text(it.price, fontSize = 18.sp)
                         Row {
-                            Text(it.rate)
+                            Text(it.rate.toString())
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 imageVector = Icons.Filled.Star,

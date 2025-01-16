@@ -17,6 +17,7 @@ firebaseAuthKtx = "23.1.0"
 material3 = "1.3.1"
 hiltNavigationCompose = "1.2.0"
 hiltAndroid = "2.49"
+kotlinxSerializationJson = "1.5.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 
 

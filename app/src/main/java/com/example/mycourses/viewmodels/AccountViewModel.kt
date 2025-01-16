@@ -22,7 +22,7 @@ class AccountViewModel @Inject constructor(
 
     var user by mutableStateOf<User?>(null)
         private set
-    var enrolledCourses by mutableStateOf<List<Course>>(emptyList())
+    var enrolledCourses by mutableStateOf<List<Course?>>(emptyList())
         private set
     var isLoading by mutableStateOf(true)
         private set
