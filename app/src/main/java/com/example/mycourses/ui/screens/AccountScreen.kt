@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,63 +9,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
-import com.example.mycourses.model.entities.getCourse
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.mycourses.viewmodels.AccountViewModel
 
 @Composable
-fun AccountScreen(onEditClick: (User) -> Unit) {
-    val enrolledCourses = remember { mutableStateListOf<Course>() }
-    var isLoading by remember { mutableStateOf(true) }
+fun AccountScreen(onEditClick: (User) -> Unit, viewModel: AccountViewModel = hiltViewModel()) {
 
-    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-    var user by remember { mutableStateOf(User()) }
-
-    LaunchedEffect(userId) {
-        val userDocRef = Firebase.firestore.collection("users").document(userId)
-        userDocRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    user = document.toObject(User::class.java)!!
-                }
-            }
-            .addOnFailureListener { exception ->
-                println("Erro ao buscar dados do usuário: ${exception.message}")
-            }
-
-        val subscriptionsRef = FirebaseFirestore.getInstance().collection("subscription")
-        subscriptionsRef.whereEqualTo("userId", userId)
-            .get()
-            .addOnSuccessListener { subscriptionDocuments ->
-                val courseIds = mutableListOf<String>()
-                for (subscription in subscriptionDocuments) {
-                    val courseId = subscription.getString("courseId")
-                    if (courseId != null) {
-                        courseIds.add(courseId)
-                    }
-                }
-
-                val coursesRef = FirebaseFirestore.getInstance().collection("courses")
-                for (courseId in courseIds) {
-                    coursesRef.document(courseId).get()
-                        .addOnSuccessListener { courseDocument ->
-                            enrolledCourses.add(getCourse(courseDocument))
-
-
-                        }
-                }
-                isLoading = false
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Erro ao buscar inscrições", exception)
-            }
-    }
+    val user = viewModel.user
+    val enrolledCourses = viewModel.enrolledCourses
+    val isLoading = viewModel.isLoading
+    val errorMessage = viewModel.errorMessage
 
     Column(
         modifier = Modifier
@@ -77,7 +33,9 @@ fun AccountScreen(onEditClick: (User) -> Unit) {
     ) {
         if (isLoading) {
             CircularProgressIndicator()
-        } else {
+        } else if (errorMessage != null) {
+            Text(text = errorMessage, color = Color.Red)
+        } else if (user != null) {
             UserInfo(user, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
             EnrolledCourses(enrolledCourses)
@@ -115,7 +73,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     )
     Spacer(modifier = Modifier.height(4.dp))
 
-    Button(onClick = { onEditClick(user) } ,
+    Button(onClick = { onEditClick(user) },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
         )) {
@@ -124,7 +82,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 }
 
 @Composable
-fun EnrolledCourses(enrolledCourses: List<Course>) {
+fun EnrolledCourses(enrolledCourses: List<Course?>) {
     Text(
         text = "Cursos Cadastrados",
         fontSize = 20.sp,

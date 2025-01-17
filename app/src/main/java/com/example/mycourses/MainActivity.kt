@@ -47,8 +47,10 @@ import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLEncoder
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -267,6 +269,7 @@ private fun NavitateToAccountScreen(navController: NavHostController) {
         onEditClick = { user ->
             val userJson = serializeUser(user)
             navController.navigate("${AppDestination.EditAccount.route}/$userJson")
+
         }
     )
 }

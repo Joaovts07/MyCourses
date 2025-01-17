@@ -16,122 +16,82 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.entities.Course
-import com.example.mycourses.model.entities.User
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.mycourses.viewmodels.CourseDetailsViewModel
+
 
 @Composable
 fun CourseDetailsScreen(
-    course : Course?,
+    course: Course?,
     modifier: Modifier = Modifier,
-    onNavigateToCheckout: () -> Unit = {}
+    onNavigateToCheckout: () -> Unit = {},
+    viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
-    var isFavorite by remember { mutableStateOf(false) }
+    val isFavorite = viewModel.isFavorite
 
-    val db = Firebase.firestore
-    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-    val userDocRef = db.collection("users").document(userId)
-
-    userDocRef.get().addOnSuccessListener {
-        val user = it.toObject(User::class.java)
-        isFavorite = user?.isFavorite(course?.id ?: "") ?: false
+    LaunchedEffect(course) {
+        course?.let { viewModel.initialize(it) }
     }
 
-    fun favoriteCourse(courseId: String) {
-        if (isFavorite) {
-            val updates = hashMapOf<String, Any>(
-                "favoriteCourses.$courseId" to FieldValue.delete()
-            )
-            userDocRef.update(updates)
-                .addOnSuccessListener {
-                    isFavorite = false
-                }
-                .addOnFailureListener { e ->
-                    isFavorite = true
-                }
-
-        } else {
-            userDocRef.update("favoriteCourses.$courseId", true)
-                .addOnSuccessListener {
-                    isFavorite = true
-                }
-                .addOnFailureListener { e ->
-                    isFavorite = false
-                }
-        }
-
-    }
     Column(
         modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        if(course != null ) {
-            course.image?.let {
-                AsyncImage(
-                    model = it,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth(),
-                    placeholder = painterResource(id = R.drawable.placeholder),
-                    contentScale = ContentScale.Crop
-                )
-            }
+        if (course != null) {
+            AsyncImage(
+                model = course.image,
+                contentDescription = null,
+                modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth(),
+                placeholder = painterResource(id = R.drawable.placeholder),
+                contentScale = ContentScale.Crop
+            )
             Column(
                 Modifier
                     .padding(16.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                course?.let {
-                    Text(it.name, fontSize = 24.sp)
-                    Text(it.description)
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(it.price, fontSize = 18.sp)
-                        Row {
-                            Text(it.rate)
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = Icons.Filled.Star,
-                                contentDescription = "Avaliação",
-                                tint = Color.Yellow
-                            )
-                        }
+                Text(course.name, fontSize = 24.sp)
+                Text(course.description)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    //Text(course.instructor, fontSize = 18.sp)
+                    Row {
+                        Text(course.rating)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Avaliação",
+                            tint = Color.Yellow
+                        )
+                    }
 
-                        IconButton(onClick = { favoriteCourse(course.id) }) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = "Favoritar curso",
-                                tint = if (isFavorite) Color.Red else Color.LightGray
-                            )
-                        }
-
+                    IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Favoritar curso",
+                            tint = if (isFavorite) Color.Red else Color.LightGray
+                        )
                     }
                 }
 
-
                 Button(
                     onClick = { onNavigateToCheckout() },
-                    Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text(text = "Cadastrar")
                 }
-
             }
         }
-
     }
-
 }
