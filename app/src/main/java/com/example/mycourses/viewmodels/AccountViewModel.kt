@@ -12,6 +12,7 @@ import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +22,8 @@ class AccountViewModel @Inject constructor(
 ) : ViewModel() {
 
     var user by mutableStateOf<User?>(null)
+        private set
+    var editedUser by mutableStateOf(User())
         private set
     var enrolledCourses by mutableStateOf<List<Course?>>(emptyList())
         private set
@@ -46,6 +49,33 @@ class AccountViewModel @Inject constructor(
                 Log.e("AccountViewModel", "Erro ao carregar dados da conta", e)
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun initialize(user: User) {
+        editedUser = user.copy()
+    }
+
+    fun updateName(name: String) {
+        editedUser = editedUser.copy(name = name)
+    }
+
+    fun updateEmail(email: String) {
+        editedUser = editedUser.copy(email = email)
+    }
+
+    fun updateAge(age: Date) {
+        editedUser = editedUser.copy(age = age)
+    }
+
+    fun saveChanges(onSuccess: (User?) -> Unit, onFailure: (Exception) -> Unit) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateUser(editedUser)
+                onSuccess(editedUser)
+            } catch (e: Exception) {
+                onFailure(e)
             }
         }
     }

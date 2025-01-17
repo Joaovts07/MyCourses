@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -46,6 +47,7 @@ import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
+import com.example.mycourses.viewmodels.AccountViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLEncoder
@@ -175,12 +177,11 @@ fun LoginToInitial(navController: NavHostController) {
             }
             composable("${AppDestination.EditAccount.route}/{userJson}",
                 arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
-            ) { backStackEntry ->
-                val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
-                val user = deserializeUser(userJson) ?: User()
+            ) {
+                val accountViewModel: AccountViewModel = hiltViewModel()
                 EditAccountScreen(
                     navController = navController,
-                    user,
+                    accountViewModel,
                 )
             }
             composable(AppDestination.Account.route) {

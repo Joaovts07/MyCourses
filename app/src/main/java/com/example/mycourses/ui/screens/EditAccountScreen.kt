@@ -18,7 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.ui.components.UserPicture
-import com.example.mycourses.viewmodels.EditAccountViewModel
+import com.example.mycourses.viewmodels.AccountViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -28,14 +28,13 @@ import java.util.Locale
 @Composable
 fun EditAccountScreen(
     navController: NavController,
-    user: User,
-    viewModel: EditAccountViewModel = hiltViewModel()
+    viewModel: AccountViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(user) {
-        viewModel.initialize(user)
+    LaunchedEffect(key1 = viewModel.user) {
+        viewModel.initialize(viewModel.user ?: User())
     }
 
     Scaffold(
@@ -90,7 +89,9 @@ fun EditAccountScreen(
                         viewModel.saveChanges(
                             onSuccess = {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("Perfil atualizado com sucesso")
+                                    snackbarHostState.showSnackbar(
+                                        "Perfil atualizado com sucesso",
+                                        duration = SnackbarDuration.Long)
                                 }
                                 navController.popBackStack()
                             },
@@ -175,7 +176,7 @@ fun EditableFieldDate(
 
     TextField(
         value = dataNascimento,
-        onValueChange = { }, // Impede a edição direta
+        onValueChange = { },
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
