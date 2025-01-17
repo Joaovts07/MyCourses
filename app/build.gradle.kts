@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -67,6 +68,8 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler )
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(project(":login"))
 
