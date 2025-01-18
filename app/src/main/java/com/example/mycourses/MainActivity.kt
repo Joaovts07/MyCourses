@@ -34,10 +34,8 @@ import androidx.navigation.navArgument
 import com.example.login.firebase.auth
 import com.example.login.ui.LoginNavigation
 import com.example.login.ui.LoginScreen
-import com.example.mycourses.model.entities.User
-import com.example.mycourses.model.entities.deserializeCourse
-import com.example.mycourses.model.entities.deserializeUser
-import com.example.mycourses.model.entities.serializeCourse
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.CourseType
 import com.example.mycourses.model.entities.serializeUser
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
@@ -46,11 +44,11 @@ import com.example.mycourses.ui.components.BottomAppBarItem
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
+import com.example.mycourses.ui.screens.UploadPhotoScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import java.net.URLEncoder
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -105,6 +103,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 @Composable
 fun LoginToInitial(navController: NavHostController) {
+    val accountViewModel: AccountViewModel = hiltViewModel()
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -143,6 +142,7 @@ fun LoginToInitial(navController: NavHostController) {
             navController = navController,
             startDestination = AppDestination.Highlight.route
         ) {
+
             composable("login") {
                 LoginScreen(
                     navController = navController,
@@ -155,15 +155,15 @@ fun LoginToInitial(navController: NavHostController) {
                     }
                 )
             }
+
             composable(AppDestination.Highlight.route) {
                 NavitagionToHighlighListScreen(navController)
             }
             composable(
-                "${AppDestination.CourseDetails.route}/{courseJson}",
-                arguments = listOf(navArgument("courseJson") { type = NavType.StringType })
+                "${AppDestination.CourseDetails.route}/{course}",
+                arguments = listOf(navArgument("course") { type = CourseType() })
             ) { backStackEntry ->
-                val courseJson = backStackEntry.arguments?.getString("courseJson") ?: ""
-                val course = deserializeCourse(courseJson)
+                val course = backStackEntry.arguments?.getParcelable<Course>("course")
                 CourseDetailsScreen(
                     course = course,
                     onNavigateToCheckout = {
@@ -178,14 +178,16 @@ fun LoginToInitial(navController: NavHostController) {
             composable("${AppDestination.EditAccount.route}/{userJson}",
                 arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
             ) {
-                val accountViewModel: AccountViewModel = hiltViewModel()
                 EditAccountScreen(
                     navController = navController,
-                    accountViewModel,
+                    viewModel = accountViewModel,
                 )
             }
             composable(AppDestination.Account.route) {
                 NavitateToAccountScreen(navController)
+            }
+            composable(AppDestination.UploadUserProfile.route) {
+                UploadPhotoScreen(accountViewModel, navController)
             }
         }
 
@@ -255,10 +257,8 @@ fun GreetingPreview() {
 private fun NavitagionToHighlighListScreen(navController: NavHostController) {
     CoursesListScreen(
         onNavigateToDetails = { course ->
-            val courseJson = serializeCourse(course)
-            val encodedCourseJson = URLEncoder.encode(courseJson, "UTF-8")
             navController.navigate(
-                "${AppDestination.CourseDetails.route}/$encodedCourseJson"
+                "${AppDestination.CourseDetails.route}/$course"
             )
         }
     )

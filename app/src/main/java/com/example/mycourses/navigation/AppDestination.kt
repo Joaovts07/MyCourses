@@ -14,6 +14,7 @@ sealed class AppDestination(val route: String) {
     data object CourseDetails : AppDestination("courseDetails")
     data object FavoriteCourses: AppDestination("favoriteCourses")
     data object EditAccount: AppDestination("editAccount")
+    data object UploadUserProfile: AppDestination("uploadPhoto")
 
 }
 
