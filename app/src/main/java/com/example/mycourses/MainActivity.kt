@@ -55,6 +55,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.net.URLEncoder
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private val coursesListViewModel: CoursesListViewModel by lazy {
@@ -393,6 +394,7 @@ private fun NavitateToAccountScreen(navController: NavHostController) {
         onEditClick = { user ->
             val userJson = serializeUser(user)
             navController.navigate("${AppDestination.EditAccount.route}/$userJson")
+
         }
     )
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.material3.ExposedDropdownMenuDefaults.outlinedTextFieldColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,9 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.ui.components.UserPicture
+import com.example.mycourses.viewmodels.EditAccountViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -26,86 +28,99 @@ import java.util.Locale
 @Composable
 fun EditAccountScreen(
     navController: NavController,
-    user: User
+    user: User,
+    viewModel: EditAccountViewModel = hiltViewModel()
 ) {
-    var editedUser by remember { mutableStateOf(user.copy()) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            contentAlignment = Alignment.BottomEnd
+    LaunchedEffect(user) {
+        viewModel.initialize(user)
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            UserPicture(editedUser, true)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        EditableField(
-            value = editedUser.name,
-            onValueChange = { editedUser = editedUser.copy(name = it) },
-            label = "Nome"
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        EditableField(
-            value = editedUser.email,
-            onValueChange = { editedUser = editedUser.copy(email = it) },
-            label = "Email",
-            readOnly = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        EditableFieldDate(
-            value = editedUser.getFormattedAge() ?: "",
-            onValueChange = { date ->
-                editedUser = editedUser.copy(age = date ?: Date())
-            },
-            label = "Idade"
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Button(
-                onClick = { onEditClick(editedUser) },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF007FFF)
-                )
-            ) {
-                Text("Salvar", color = Color.White)
+            Box(contentAlignment = Alignment.BottomEnd) {
+                UserPicture(viewModel.editedUser, true)
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray
-                )
+            EditableField(
+                value = viewModel.editedUser.name,
+                onValueChange = { viewModel.updateName(it) },
+                label = "Nome"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            EditableField(
+                value = viewModel.editedUser.email,
+                onValueChange = { viewModel.updateEmail(it) },
+                label = "Email",
+                readOnly = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            EditableFieldDate(
+                value = viewModel.editedUser.getFormattedAge(),
+                onValueChange = { date -> viewModel.updateAge(date ?: Date()) },
+                label = "Idade"
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text("Cancelar", color = Color.White)
+                Button(
+                    onClick = {
+                        viewModel.saveChanges(
+                            onSuccess = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Perfil atualizado com sucesso")
+                                }
+                                navController.popBackStack()
+                            },
+                            onFailure = { exception ->
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Erro ao atualizar perfil: ${exception.message}")
+                                }
+                            }
+                        )
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007FFF))
+                ) {
+                    Text("Salvar", color = Color.White)
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Button(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                ) {
+                    Text("Cancelar", color = Color.White)
+                }
             }
         }
     }
 }
 
-fun onEditClick(editedUser: User) {
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditableField(
     value: String,
@@ -120,16 +135,16 @@ fun EditableField(
         onValueChange = onValueChange,
         label = { Text(label, color = Color.White) },
         modifier = Modifier.fillMaxWidth(),
-        colors = outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             cursorColor = Color.White,
-            focusedBorderColor = Color(0xFF007FFF), // Azul claro
-            unfocusedBorderColor = Color.LightGray
+            focusedBorderColor = Color(0xFF007FFF),
+            unfocusedBorderColor = Color.LightGray,
         ),
         keyboardOptions = keyboardOptions,
-        singleLine = true, // Garante que o campo seja de linha única
+        singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(
-            fontWeight = FontWeight.Normal, // Define o peso da fonte como normal
-            fontSize = 18.sp // Define o tamanho da fonte
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp
         )
     )
 }
@@ -141,28 +156,37 @@ fun EditableFieldDate(
     label: String
 ) {
     var dataNascimento by remember { mutableStateOf(value) }
-    var dataTimestamp by remember { mutableStateOf<Date?>(null) }
     val context = LocalContext.current
-    val calendar = Calendar.getInstance()
 
     val datePickerDialog = android.app.DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            val calendar = Calendar.getInstance()
             calendar.set(year, month, dayOfMonth)
             val data = calendar.time
             val formato = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
             dataNascimento = formato.format(data)
-            onValueChange(dataTimestamp)
+            onValueChange(data)
         },
-        calendar.get(Calendar.YEAR),
-        calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_MONTH)
+        Calendar.getInstance().get(Calendar.YEAR),
+        Calendar.getInstance().get(Calendar.MONTH),
+        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     )
 
     TextField(
         value = dataNascimento,
         onValueChange = { }, // Impede a edição direta
         label = { Text(label) },
-        modifier = Modifier.clickable { datePickerDialog.show() }
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { datePickerDialog.show() },
+        readOnly = true,
+        enabled = false,
+        colors = TextFieldDefaults.colors(
+            disabledTextColor = LocalContentColor.current,
+            disabledContainerColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     )
 }

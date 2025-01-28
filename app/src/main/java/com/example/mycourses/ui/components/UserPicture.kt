@@ -32,6 +32,7 @@ fun UserPicture(user: User, isEditable: Boolean, onEditPictureClick:(User) -> Un
                 .clip(CircleShape)
         )
     } else {
+        val firstLetter: String = (user.name.firstOrNull() ?: "").toString()
         Box(
             modifier = Modifier
                 .size(100.dp)
@@ -40,7 +41,7 @@ fun UserPicture(user: User, isEditable: Boolean, onEditPictureClick:(User) -> Un
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = user.name.first().toString(),
+                text = firstLetter,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

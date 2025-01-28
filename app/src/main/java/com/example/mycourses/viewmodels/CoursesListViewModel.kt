@@ -26,7 +26,6 @@ class CoursesListViewModel (
     var errorMessage by mutableStateOf<String?>(null)
 
     init {
-        Log.d("CoursesListViewModel", "ViewModel criada")
         loadCourses()
     }
 
@@ -41,26 +40,35 @@ class CoursesListViewModel (
             } catch (e: Exception) {
                 errorMessage = e.message
             } finally {
-                isLoading = false
-            }
-        }
-    }
-
-    fun loadFavoriteCourses() {
-        viewModelScope.launch {
-            try {
-                isLoading = true
-                favoriteCourses.clear()
-                val user = userRepository.getCurrentUser()
-                if (user != null) {
-                    favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
+                viewModelScope.launch {
+                    try {
+                        isLoading = true
+                        courses.addAll(courseRepository.getHighlightedCourses())
+                    } catch (e: Exception) {
+                        errorMessage = e.message
+                    } finally {
+                        isLoading = false
+                    }
                 }
-            } catch (e: Exception) {
-                errorMessage = e.message
-                Log.e("CoursesListViewModel", "Erro ao carregar cursos favoritos", e)
-            } finally {
-                isLoading = false
+            }
+
+            fun loadFavoriteCourses() {
+                viewModelScope.launch {
+                    try {
+                        isLoading = true
+                        favoriteCourses.clear()
+                        val user = userRepository.getCurrentUser()
+                        if (user != null) {
+                            favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
+                        }
+                    } catch (e: Exception) {
+                        errorMessage = e.message
+                    } finally {
+                        isLoading = false
+                    }
+                }
             }
         }
+
     }
 }
