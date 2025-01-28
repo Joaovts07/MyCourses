@@ -55,7 +55,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.net.URLEncoder
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private val coursesListViewModel: CoursesListViewModel by lazy {
@@ -174,6 +173,7 @@ fun LoginToInitial(navController: NavHostController, viewModel: CoursesListViewM
                     onNavigateToCheckout = {
                         //navController.navigate(AppDestination.Checkout.route)
                     },
+
                 )
 
             }
@@ -219,96 +219,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-@Composable
-fun LoginToInitial(navController: NavHostController) {
-    val backStackEntryState by navController.currentBackStackEntryAsState()
-    val currentDestination = backStackEntryState?.destination
-    val selectedItem by remember(currentDestination) {
-        val item = currentDestination?.let { destination ->
-            bottomAppBarItems.find {
-                it.destination.route == destination.route
-            }
-        } ?: bottomAppBarItems.first()
-        mutableStateOf(item)
-    }
-    val containsInBottomAppBarItems = currentDestination?.let { destination ->
-        bottomAppBarItems.find {
-            it.destination.route == destination.route
-        }
-    } != null
-    val isShowFab = when (currentDestination?.route) {
-        AppDestination.Account.route,
-        AppDestination.MyCourses.route -> true
-        else -> false
-    }
-    MyCoursesApp(
-        bottomAppBarItemSelected = selectedItem,
-        onBottomAppBarItemSelectedChange = {
-            val route = it.destination.route
-            navController.navigate(route) {
-                launchSingleTop = true
-                popUpTo(route)
-            }
-        },
-        onFabClick = {},
-        isShowTopBar = containsInBottomAppBarItems,
-        isShowBottomBar = containsInBottomAppBarItems,
-        isShowFab = isShowFab
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = AppDestination.Highlight.route
-        ) {
-            composable("login") {
-                LoginScreen(
-                    navController = navController,
-                    onLoginSuccess = {
-                        navController.navigate(AppDestination.Highlight.route) {
-                            popUpTo("login") {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
-            composable(AppDestination.Highlight.route) {
-                NavitagionToHighlighListScreen(navController)
-            }
-            composable(
-                "${AppDestination.CourseDetails.route}/{courseJson}",
-                arguments = listOf(navArgument("courseJson") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val courseJson = backStackEntry.arguments?.getString("courseJson") ?: ""
-                val course = deserializeCourse(courseJson)
-                CourseDetailsScreen(
-                    course = course,
-                    onNavigateToCheckout = {
-                        //navController.navigate(AppDestination.Checkout.route)
-                    },
-                )
-
-            }
-            composable(AppDestination.FavoriteCourses.route) {
-                CourseFavoriteScreen()
-            }
-            composable("${AppDestination.EditAccount.route}/{userJson}",
-                arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
-            ) { backStackEntry ->
-                val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
-                val user = deserializeUser(userJson) ?: User()
-                EditAccountScreen(
-                    navController = navController,
-                    user,
-                )
-            }
-            composable(AppDestination.Account.route) {
-                NavitateToAccountScreen(navController)
-            }
-        }
-
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCoursesApp(

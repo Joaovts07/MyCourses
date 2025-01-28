@@ -1,6 +1,5 @@
 package com.example.mycourses.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +29,6 @@ class CoursesListViewModel (
     }
 
     private fun loadCourses() {
-        Log.d("CoursesListViewModel", "Carregando cursos destacados")
         if (isLoading) return
         viewModelScope.launch {
             try {
@@ -52,23 +50,24 @@ class CoursesListViewModel (
                 }
             }
 
-            fun loadFavoriteCourses() {
-                viewModelScope.launch {
-                    try {
-                        isLoading = true
-                        favoriteCourses.clear()
-                        val user = userRepository.getCurrentUser()
-                        if (user != null) {
-                            favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
-                        }
-                    } catch (e: Exception) {
-                        errorMessage = e.message
-                    } finally {
-                        isLoading = false
-                    }
-                }
-            }
+
         }
 
+    }
+    fun loadFavoriteCourses() {
+        viewModelScope.launch {
+            try {
+                isLoading = true
+                favoriteCourses.clear()
+                val user = userRepository.getCurrentUser()
+                if (user != null) {
+                    favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
+                }
+            } catch (e: Exception) {
+                errorMessage = e.message
+            } finally {
+                isLoading = false
+            }
+        }
     }
 }

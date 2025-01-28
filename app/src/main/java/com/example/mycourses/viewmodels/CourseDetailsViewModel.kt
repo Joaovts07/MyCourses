@@ -10,13 +10,10 @@ import com.example.mycourses.model.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-@HiltViewModel
-class CourseDetailsViewModel @Inject constructor(
+class CourseDetailsViewModel(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore

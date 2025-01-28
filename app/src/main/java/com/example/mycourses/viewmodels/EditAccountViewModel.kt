@@ -8,13 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Date
-import javax.inject.Inject
 
-@HiltViewModel
-class EditAccountViewModel @Inject constructor(
+class EditAccountViewModel (
     private val userRepository: UserRepository,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
