@@ -31,78 +31,69 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun CoursesListScreen(
     modifier: Modifier = Modifier,
-    title: String = "Cursos Em Destaques",
     onNavigateToCheckout: () -> Unit = {},
-    onNavigateToDetails: (Course) -> Unit = {}
+    onNavigateToDetails: (Course) -> Unit = {},
+    viewModel: CoursesListViewModel
 ) {
-    val courses = remember { mutableStateListOf<Course>() }
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                val documents = Firebase.firestore.collection("courses").get().await()
-                courses.addAll(documents.map { document ->
-                    getCourse(document)
-                })
-            } catch (e: Exception) {
-                Log.e("cath", e.message.toString())
-            }
-        }
-    }
-
+    val courses = viewModel.courses
+    val isLoading = viewModel.isLoading
+    val errorMessage = viewModel.errorMessage
+    Log.d("CoursesListScreen", "Composable chamado")
     Column(
-        modifier
-            .fillMaxSize()
+        modifier.fillMaxSize()
     ) {
         Surface {
             Text(
-                text = title,
-                Modifier
+                text = "Cursos Em Destaques",
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 fontFamily = caveatFont,
                 fontSize = 32.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary
             )
-
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "Porque a melhor maneira de aprender é ensinando",
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             fontSize = 18.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
         )
-        LazyColumn(
-            modifier
-                .fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(courses) { course ->
-                HighlighCourseCard(
-                    course = course,
-                    Modifier.clickable {
-                        val course = course
-                        onNavigateToDetails(course)
-                    },
-                    onOrderClick = onNavigateToCheckout
-                )
-            }     
-        }
-    }
-}
+        Spacer(modifier = Modifier.height(8.dp))
 
-@Preview
-@Composable
-fun HighlightsListScreenPreview() {
-    MyCoursesTheme {
-        Surface {
-            CoursesListScreen(
-                title = "Cursos Em Destaques Porque a melhor maneira de aprender é ensinando"
-            )
+        when {
+            isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            errorMessage != null -> {
+                Text(
+                    text = "Erro ao carregar cursos: $errorMessage",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(courses) { course ->
+                        HighlighCourseCard(
+                            course = course,
+                            modifier = Modifier.clickable { onNavigateToDetails(course) },
+                            onOrderClick = onNavigateToCheckout
+                        )
+                    }
+                }
+            }
         }
     }
 }
