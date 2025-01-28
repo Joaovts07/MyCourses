@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mycourses.model.entities.User
+import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 import kotlinx.coroutines.launch
@@ -49,7 +50,9 @@ fun EditAccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(contentAlignment = Alignment.BottomEnd) {
-                UserPicture(viewModel.editedUser, true)
+                UserPicture(viewModel.editedUser, true) {
+                    navController.navigate(AppDestination.UploadUserProfile.route)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,9 +94,9 @@ fun EditAccountScreen(
                                 scope.launch {
                                     snackbarHostState.showSnackbar(
                                         "Perfil atualizado com sucesso",
-                                        duration = SnackbarDuration.Long)
+                                        duration = SnackbarDuration.Short)
+                                    navController.popBackStack()
                                 }
-                                navController.popBackStack()
                             },
                             onFailure = { exception ->
                                 scope.launch {

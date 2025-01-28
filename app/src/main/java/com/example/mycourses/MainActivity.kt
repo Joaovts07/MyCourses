@@ -1,8 +1,8 @@
 package com.example.mycourses
-
 import AccountScreen
 import EditAccountScreen
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,9 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +49,7 @@ import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.screens.UploadPhotoScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.example.mycourses.viewmodels.AccountViewModel
+import com.example.mycourses.viewmodels.CoursesListViewModel
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,31 +63,34 @@ class MainActivity : ComponentActivity() {
             MyCoursesTheme {
                 val navController = rememberNavController()
                 val auth = FirebaseAuth.getInstance()
-                var shouldNavigateToLogin by remember { mutableStateOf(false) }
-                var shouldNavigateToInitial by remember { mutableStateOf(false) }
 
-                auth.addAuthStateListener { firebaseAuth ->
-                    val user = firebaseAuth.currentUser
-                    if (user != null) {
-                        shouldNavigateToInitial = true
-                    } else {
-                        shouldNavigateToLogin = true
+                var navigationState by rememberSaveable { mutableStateOf("CHECK_AUTH") }
 
+                LaunchedEffect(auth) {
+                    val user = auth.currentUser
+                    navigationState = if (user != null) "INITIAL" else "LOGIN"
+                }
+
+                when (navigationState) {
+                    "LOGIN" -> {
+                        LoginNavigation(
+                            navController = navController,
+                            routeSuccess = AppDestination.Highlight.route,
+                            onLoginSuccess = {
+                                navigationState = "INITIAL"
+                            }
+                        )
+                    }
+                    "INITIAL" -> {
+                        LaunchedEffect(Unit) {
+                            navController.navigate(AppDestination.Highlight.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                        LoginToInitial(navController)
                     }
                 }
-                if (shouldNavigateToLogin) {
-                    LoginNavigation(
-                        navController,
-                        AppDestination.Highlight.route,
-                        onLoginSuccess = {
-                            NavitagionToHighlighListScreen(navController)
-                        })
-                } else if (shouldNavigateToInitial) {
-                    LoginToInitial(navController)
-                }
-
             }
-
         }
     }
 
@@ -104,6 +110,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun LoginToInitial(navController: NavHostController) {
     val accountViewModel: AccountViewModel = hiltViewModel()
+    val coursesListViewModel: CoursesListViewModel = hiltViewModel()
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -157,7 +164,15 @@ fun LoginToInitial(navController: NavHostController) {
             }
 
             composable(AppDestination.Highlight.route) {
-                NavitagionToHighlighListScreen(navController)
+                Log.d("CoursesListScreen", "Instanciando ViewModel no NavHost")
+                CoursesListScreen(
+                    onNavigateToDetails = { course ->
+                        navController.navigate(
+                            "${AppDestination.CourseDetails.route}/$course"
+                        )
+                    },
+                    viewModel = coursesListViewModel
+                )
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{course}",
@@ -184,7 +199,7 @@ fun LoginToInitial(navController: NavHostController) {
                 )
             }
             composable(AppDestination.Account.route) {
-                NavitateToAccountScreen(navController)
+                NavigateToAccountScreen(navController)
             }
             composable(AppDestination.UploadUserProfile.route) {
                 UploadPhotoScreen(accountViewModel, navController)
@@ -253,19 +268,10 @@ fun GreetingPreview() {
     }
 }
 
-@Composable
-private fun NavitagionToHighlighListScreen(navController: NavHostController) {
-    CoursesListScreen(
-        onNavigateToDetails = { course ->
-            navController.navigate(
-                "${AppDestination.CourseDetails.route}/$course"
-            )
-        }
-    )
-}
+
 
 @Composable
-private fun NavitateToAccountScreen(navController: NavHostController) {
+private fun NavigateToAccountScreen(navController: NavHostController) {
     AccountScreen(
         onEditClick = { user ->
             val userJson = serializeUser(user)

@@ -29,19 +29,21 @@ class CoursesListViewModel @Inject constructor(
     var errorMessage by mutableStateOf<String?>(null)
 
     init {
+        Log.d("CoursesListViewModel", "ViewModel criada")
         loadCourses()
     }
 
     private fun loadCourses() {
+        Log.d("CoursesListViewModel", "Carregando cursos destacados")
+        if (isLoading) return
         viewModelScope.launch {
-            try{
+            try {
                 isLoading = true
+                courses.clear()
                 courses.addAll(courseRepository.getHighlightedCourses())
-            }
-            catch (e: Exception){
+            } catch (e: Exception) {
                 errorMessage = e.message
-            }
-            finally {
+            } finally {
                 isLoading = false
             }
         }
@@ -64,6 +66,4 @@ class CoursesListViewModel @Inject constructor(
             }
         }
     }
-
-
 }
