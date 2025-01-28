@@ -10,12 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CoursesListViewModel @Inject constructor(
+class CoursesListViewModel (
     private val courseRepository: CourseRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
