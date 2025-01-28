@@ -25,12 +25,11 @@ fun CoursesListScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
     onNavigateToDetails: (Course) -> Unit = {},
-    viewModel: CoursesListViewModel = hiltViewModel()
+    viewModel: CoursesListViewModel
 ) {
     val courses = viewModel.courses
     val isLoading = viewModel.isLoading
     val errorMessage = viewModel.errorMessage
-
     Column(
         modifier.fillMaxSize()
     ) {

@@ -4,3 +4,4 @@ data class Subscription(
     val courseId: String = "",
     val userId: String = "",
 )
+

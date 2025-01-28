@@ -10,12 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class CoursesListViewModel @Inject constructor(
+class CoursesListViewModel (
     private val courseRepository: CourseRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
@@ -33,37 +30,45 @@ class CoursesListViewModel @Inject constructor(
     }
 
     private fun loadCourses() {
-        viewModelScope.launch {
-            try{
-                isLoading = true
-                courses.addAll(courseRepository.getHighlightedCourses())
-            }
-            catch (e: Exception){
-                errorMessage = e.message
-            }
-            finally {
-                isLoading = false
-            }
-        }
-    }
-
-    fun loadFavoriteCourses() {
+        Log.d("CoursesListViewModel", "Carregando cursos destacados")
+        if (isLoading) return
         viewModelScope.launch {
             try {
                 isLoading = true
-                favoriteCourses.clear()
-                val user = userRepository.getCurrentUser()
-                if (user != null) {
-                    favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
-                }
+                courses.clear()
+                courses.addAll(courseRepository.getHighlightedCourses())
             } catch (e: Exception) {
                 errorMessage = e.message
-                Log.e("CoursesListViewModel", "Erro ao carregar cursos favoritos", e)
             } finally {
-                isLoading = false
+                viewModelScope.launch {
+                    try {
+                        isLoading = true
+                        courses.addAll(courseRepository.getHighlightedCourses())
+                    } catch (e: Exception) {
+                        errorMessage = e.message
+                    } finally {
+                        isLoading = false
+                    }
+                }
+            }
+
+            fun loadFavoriteCourses() {
+                viewModelScope.launch {
+                    try {
+                        isLoading = true
+                        favoriteCourses.clear()
+                        val user = userRepository.getCurrentUser()
+                        if (user != null) {
+                            favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
+                        }
+                    } catch (e: Exception) {
+                        errorMessage = e.message
+                    } finally {
+                        isLoading = false
+                    }
+                }
             }
         }
+
     }
-
-
 }

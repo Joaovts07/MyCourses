@@ -17,9 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +40,8 @@ import com.example.mycourses.model.entities.deserializeCourse
 import com.example.mycourses.model.entities.deserializeUser
 import com.example.mycourses.model.entities.serializeCourse
 import com.example.mycourses.model.entities.serializeUser
+import com.example.mycourses.model.repositories.CourseRepository
+import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.screens.CoursesListScreen
@@ -46,13 +50,20 @@ import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
+import com.example.mycourses.viewmodels.CoursesListViewModel
 import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.AndroidEntryPoint
+import com.google.firebase.firestore.FirebaseFirestore
 import java.net.URLEncoder
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private val coursesListViewModel: CoursesListViewModel by lazy {
+        val courseRepository = CourseRepository(FirebaseFirestore.getInstance())
+        val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
+        CoursesListViewModel(courseRepository, userRepository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,31 +71,34 @@ class MainActivity : ComponentActivity() {
             MyCoursesTheme {
                 val navController = rememberNavController()
                 val auth = FirebaseAuth.getInstance()
-                var shouldNavigateToLogin by remember { mutableStateOf(false) }
-                var shouldNavigateToInitial by remember { mutableStateOf(false) }
 
-                auth.addAuthStateListener { firebaseAuth ->
-                    val user = firebaseAuth.currentUser
-                    if (user != null) {
-                        shouldNavigateToInitial = true
-                    } else {
-                        shouldNavigateToLogin = true
+                var navigationState by rememberSaveable { mutableStateOf("CHECK_AUTH") }
 
+                LaunchedEffect(auth) {
+                    val user = auth.currentUser
+                    navigationState = if (user != null) "INITIAL" else "LOGIN"
+                }
+
+                when (navigationState) {
+                    "LOGIN" -> {
+                        LoginNavigation(
+                            navController = navController,
+                            routeSuccess = AppDestination.Highlight.route,
+                            onLoginSuccess = {
+                                navigationState = "INITIAL"
+                            }
+                        )
+                    }
+                    "INITIAL" -> {
+                        LaunchedEffect(Unit) {
+                            navController.navigate(AppDestination.Highlight.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                        LoginToInitial(navController, coursesListViewModel)
                     }
                 }
-                if (shouldNavigateToLogin) {
-                    LoginNavigation(
-                        navController,
-                        AppDestination.Highlight.route,
-                        onLoginSuccess = {
-                            NavitagionToHighlighListScreen(navController)
-                        })
-                } else if (shouldNavigateToInitial) {
-                    LoginToInitial(navController)
-                }
-
             }
-
         }
     }
 
@@ -92,6 +106,110 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         auth.removeAuthStateListener(authStateListener)
     }
+}
+
+@Composable
+fun LoginToInitial(navController: NavHostController, viewModel: CoursesListViewModel) {
+    val backStackEntryState by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntryState?.destination
+    val selectedItem by remember(currentDestination) {
+        val item = currentDestination?.let { destination ->
+            bottomAppBarItems.find {
+                it.destination.route == destination.route
+            }
+        } ?: bottomAppBarItems.first()
+        mutableStateOf(item)
+    }
+    val containsInBottomAppBarItems = currentDestination?.let { destination ->
+        bottomAppBarItems.find {
+            it.destination.route == destination.route
+        }
+    } != null
+    val isShowFab = when (currentDestination?.route) {
+        AppDestination.Account.route,
+        AppDestination.MyCourses.route -> true
+        else -> false
+    }
+    MyCoursesApp(
+        bottomAppBarItemSelected = selectedItem,
+        onBottomAppBarItemSelectedChange = {
+            val route = it.destination.route
+            navController.navigate(route) {
+                launchSingleTop = true
+                popUpTo(route)
+            }
+        },
+        onFabClick = {},
+        isShowTopBar = containsInBottomAppBarItems,
+        isShowBottomBar = containsInBottomAppBarItems,
+        isShowFab = isShowFab
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = AppDestination.Highlight.route
+        ) {
+            composable("login") {
+                LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = {
+                        navController.navigate(AppDestination.Highlight.route) {
+                            popUpTo("login") {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+            composable(AppDestination.Highlight.route) {
+                NavitagionToHighlighListScreen(navController, viewModel)
+            }
+            composable(
+                "${AppDestination.CourseDetails.route}/{courseJson}",
+                arguments = listOf(navArgument("courseJson") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val courseJson = backStackEntry.arguments?.getString("courseJson") ?: ""
+                val course = deserializeCourse(courseJson)
+                CourseDetailsScreen(
+                    course = course,
+                    onNavigateToCheckout = {
+                        //navController.navigate(AppDestination.Checkout.route)
+                    },
+                )
+
+            }
+            composable(AppDestination.FavoriteCourses.route) {
+                CourseFavoriteScreen()
+            }
+            composable("${AppDestination.EditAccount.route}/{userJson}",
+                arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
+            ) { backStackEntry ->
+                val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
+                val user = deserializeUser(userJson) ?: User()
+                EditAccountScreen(
+                    navController = navController,
+                    user,
+                )
+            }
+            composable(AppDestination.Account.route) {
+                NavitateToAccountScreen(navController)
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun NavitagionToHighlighListScreen(navController: NavHostController, viewModel: CoursesListViewModel) {
+    CoursesListScreen(
+        onNavigateToDetails = { course ->
+            val courseJson = serializeCourse(course)
+            val encodedCourseJson = URLEncoder.encode(courseJson, "UTF-8")
+            navController.navigate(
+                "${AppDestination.CourseDetails.route}/$encodedCourseJson"
+            )
+        },
+        viewModel = viewModel
+    )
 }
 
 @Composable
@@ -252,6 +370,12 @@ fun GreetingPreview() {
 
 @Composable
 private fun NavitagionToHighlighListScreen(navController: NavHostController) {
+    val courseRepository = CourseRepository(FirebaseFirestore.getInstance())
+    val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
+    val coursesListViewModel = CoursesListViewModel(
+        courseRepository,
+        userRepository
+    )
     CoursesListScreen(
         onNavigateToDetails = { course ->
             val courseJson = serializeCourse(course)
@@ -259,7 +383,8 @@ private fun NavitagionToHighlighListScreen(navController: NavHostController) {
             navController.navigate(
                 "${AppDestination.CourseDetails.route}/$encodedCourseJson"
             )
-        }
+        },
+        viewModel = coursesListViewModel
     )
 }
 
