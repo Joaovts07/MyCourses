@@ -50,6 +50,7 @@ import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
+import com.example.mycourses.viewmodels.CourseDetailsViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,6 +62,11 @@ class MainActivity : ComponentActivity() {
         val courseRepository = CourseRepository(FirebaseFirestore.getInstance())
         val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
         CoursesListViewModel(courseRepository, userRepository)
+    }
+    private val courseDetailsViewModel: CourseDetailsViewModel by lazy {
+        val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
+        CourseDetailsViewModel(userRepository, auth, FirebaseFirestore.getInstance())
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +100,7 @@ class MainActivity : ComponentActivity() {
                                 popUpTo(0) { inclusive = true }
                             }
                         }
-                        LoginToInitial(navController, coursesListViewModel)
+                        LoginToInitial(navController, coursesListViewModel, courseDetailsViewModel)
                     }
                 }
             }
@@ -108,7 +114,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginToInitial(navController: NavHostController, viewModel: CoursesListViewModel) {
+fun LoginToInitial(
+    navController: NavHostController,
+    coursesListViewModel: CoursesListViewModel,
+    couserDetailsViewModel: CourseDetailsViewModel
+) {
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -160,7 +170,7 @@ fun LoginToInitial(navController: NavHostController, viewModel: CoursesListViewM
                 )
             }
             composable(AppDestination.Highlight.route) {
-                NavitagionToHighlighListScreen(navController, viewModel)
+                NavitagionToHighlighListScreen(navController, coursesListViewModel)
             }
             composable(
                 "${AppDestination.CourseDetails.route}/{courseJson}",
@@ -173,7 +183,7 @@ fun LoginToInitial(navController: NavHostController, viewModel: CoursesListViewM
                     onNavigateToCheckout = {
                         //navController.navigate(AppDestination.Checkout.route)
                     },
-
+                    viewModel = couserDetailsViewModel
                 )
 
             }
