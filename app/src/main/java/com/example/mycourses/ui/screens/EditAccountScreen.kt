@@ -14,7 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.ui.components.UserPicture
@@ -29,7 +28,7 @@ import java.util.Locale
 fun EditAccountScreen(
     navController: NavController,
     user: User,
-    viewModel: EditAccountViewModel = hiltViewModel()
+    viewModel: EditAccountViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()

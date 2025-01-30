@@ -50,8 +50,10 @@ import com.example.mycourses.ui.components.MyCoursesBottomAppBar
 import com.example.mycourses.ui.screens.CourseDetailsScreen
 import com.example.mycourses.ui.screens.CourseFavoriteScreen
 import com.example.mycourses.ui.theme.MyCoursesTheme
+import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
+import com.example.mycourses.viewmodels.EditAccountViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.net.URLEncoder
@@ -66,6 +68,16 @@ class MainActivity : ComponentActivity() {
     private val courseDetailsViewModel: CourseDetailsViewModel by lazy {
         val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
         CourseDetailsViewModel(userRepository, auth, FirebaseFirestore.getInstance())
+
+    }
+    private val editAccountViewModel: EditAccountViewModel by lazy {
+        val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
+        EditAccountViewModel(userRepository)
+
+    }
+    private val accountViewModel: AccountViewModel by lazy {
+        val userRepository = UserRepository(FirebaseFirestore.getInstance(), auth)
+        AccountViewModel(userRepository, CourseRepository(FirebaseFirestore.getInstance()))
 
     }
 
@@ -100,7 +112,13 @@ class MainActivity : ComponentActivity() {
                                 popUpTo(0) { inclusive = true }
                             }
                         }
-                        LoginToInitial(navController, coursesListViewModel, courseDetailsViewModel)
+                        LoginToInitial(
+                            navController,
+                            coursesListViewModel,
+                            courseDetailsViewModel,
+                            editAccountViewModel,
+                            accountViewModel
+                            )
                     }
                 }
             }
@@ -117,7 +135,9 @@ class MainActivity : ComponentActivity() {
 fun LoginToInitial(
     navController: NavHostController,
     coursesListViewModel: CoursesListViewModel,
-    couserDetailsViewModel: CourseDetailsViewModel
+    couserDetailsViewModel: CourseDetailsViewModel,
+    editAccountViewModel: EditAccountViewModel,
+    accountViewModel: AccountViewModel
 ) {
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
@@ -188,7 +208,7 @@ fun LoginToInitial(
 
             }
             composable(AppDestination.FavoriteCourses.route) {
-                CourseFavoriteScreen()
+                CourseFavoriteScreen(viewModel = coursesListViewModel)
             }
             composable("${AppDestination.EditAccount.route}/{userJson}",
                 arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
@@ -198,10 +218,11 @@ fun LoginToInitial(
                 EditAccountScreen(
                     navController = navController,
                     user,
+                    editAccountViewModel
                 )
             }
             composable(AppDestination.Account.route) {
-                NavitateToAccountScreen(navController)
+                NavitateToAccountScreen(navController, accountViewModel)
             }
         }
 
@@ -309,12 +330,14 @@ private fun NavitagionToHighlighListScreen(navController: NavHostController) {
 }
 
 @Composable
-private fun NavitateToAccountScreen(navController: NavHostController) {
+private fun NavitateToAccountScreen(navController: NavHostController, accountViewModel: AccountViewModel) {
     AccountScreen(
         onEditClick = { user ->
             val userJson = serializeUser(user)
             navController.navigate("${AppDestination.EditAccount.route}/$userJson")
 
-        }
+        },
+        accountViewModel
+
     )
 }
