@@ -7,13 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.UserRepository
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import java.util.Date
 
 class EditAccountViewModel (
     private val userRepository: UserRepository,
-    private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
     var editedUser by mutableStateOf(User())
