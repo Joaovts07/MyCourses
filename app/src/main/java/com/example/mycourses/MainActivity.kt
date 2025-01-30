@@ -2,7 +2,6 @@ package com.example.mycourses
 import AccountScreen
 import EditAccountScreen
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -56,6 +55,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -66,11 +66,13 @@ class MainActivity : ComponentActivity() {
 
                 var navigationState by rememberSaveable { mutableStateOf("CHECK_AUTH") }
 
+                // Verifica o estado de autenticação uma vez
                 LaunchedEffect(auth) {
                     val user = auth.currentUser
                     navigationState = if (user != null) "INITIAL" else "LOGIN"
                 }
 
+                // Navega com base no estado
                 when (navigationState) {
                     "LOGIN" -> {
                         LoginNavigation(
@@ -78,15 +80,13 @@ class MainActivity : ComponentActivity() {
                             routeSuccess = AppDestination.Highlight.route,
                             onLoginSuccess = {
                                 navigationState = "INITIAL"
+                                navController.navigate(AppDestination.Highlight.route) {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             }
                         )
                     }
                     "INITIAL" -> {
-                        LaunchedEffect(Unit) {
-                            navController.navigate(AppDestination.Highlight.route) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
                         LoginToInitial(navController)
                     }
                 }
@@ -101,16 +101,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-@Composable
 fun LoginToInitial(navController: NavHostController) {
     val accountViewModel: AccountViewModel = hiltViewModel()
     val coursesListViewModel: CoursesListViewModel = hiltViewModel()
+
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -149,22 +143,17 @@ fun LoginToInitial(navController: NavHostController) {
             navController = navController,
             startDestination = AppDestination.Highlight.route
         ) {
-
             composable("login") {
                 LoginScreen(
                     navController = navController,
                     onLoginSuccess = {
                         navController.navigate(AppDestination.Highlight.route) {
-                            popUpTo("login") {
-                                inclusive = true
-                            }
+                            popUpTo("login") { inclusive = true }
                         }
                     }
                 )
             }
-
             composable(AppDestination.Highlight.route) {
-                Log.d("CoursesListScreen", "Instanciando ViewModel no NavHost")
                 CoursesListScreen(
                     onNavigateToDetails = { course ->
                         navController.navigate(
@@ -185,13 +174,12 @@ fun LoginToInitial(navController: NavHostController) {
                         //navController.navigate(AppDestination.Checkout.route)
                     },
                 )
-
             }
             composable(AppDestination.FavoriteCourses.route) {
                 CourseFavoriteScreen()
             }
             composable("${AppDestination.EditAccount.route}/{userJson}",
-                arguments = listOf(navArgument("userJson") {type = NavType.StringType} )
+                arguments = listOf(navArgument("userJson") { type = NavType.StringType })
             ) {
                 EditAccountScreen(
                     navController = navController,
@@ -205,7 +193,6 @@ fun LoginToInitial(navController: NavHostController) {
                 UploadPhotoScreen(accountViewModel, navController)
             }
         }
-
     }
 }
 
@@ -259,16 +246,6 @@ fun MyCoursesApp(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyCoursesTheme {
-         Greeting("Android")
-    }
-}
-
-
 
 @Composable
 private fun NavigateToAccountScreen(navController: NavHostController) {
