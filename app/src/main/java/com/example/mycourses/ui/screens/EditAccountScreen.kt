@@ -14,10 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mycourses.model.entities.User
+import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.ui.components.UserPicture
-import com.example.mycourses.viewmodels.EditAccountViewModel
+import com.example.mycourses.viewmodels.AccountViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -27,14 +29,13 @@ import java.util.Locale
 @Composable
 fun EditAccountScreen(
     navController: NavController,
-    user: User,
-    viewModel: EditAccountViewModel
+    viewModel: AccountViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(user) {
-        viewModel.initialize(user)
+    LaunchedEffect(key1 = viewModel.user) {
+        viewModel.initialize(viewModel.user ?: User())
     }
 
     Scaffold(
@@ -49,7 +50,9 @@ fun EditAccountScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(contentAlignment = Alignment.BottomEnd) {
-                UserPicture(viewModel.editedUser, true)
+                UserPicture(viewModel.editedUser, true) {
+                    navController.navigate(AppDestination.UploadUserProfile.route)
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -174,7 +177,7 @@ fun EditableFieldDate(
 
     TextField(
         value = dataNascimento,
-        onValueChange = { }, // Impede a edição direta
+        onValueChange = { },
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()

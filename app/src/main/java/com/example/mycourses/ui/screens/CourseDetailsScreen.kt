@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.entities.Course
@@ -27,7 +28,7 @@ fun CourseDetailsScreen(
     course: Course?,
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
-    viewModel: CourseDetailsViewModel
+    viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
     val isFavorite = viewModel.isFavorite
 

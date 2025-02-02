@@ -9,9 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CoursesListViewModel (
+@HiltViewModel
+class CoursesListViewModel @Inject constructor(
     private val courseRepository: CourseRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
@@ -38,22 +41,11 @@ class CoursesListViewModel (
             } catch (e: Exception) {
                 errorMessage = e.message
             } finally {
-                viewModelScope.launch {
-                    try {
-                        isLoading = true
-                        courses.addAll(courseRepository.getHighlightedCourses())
-                    } catch (e: Exception) {
-                        errorMessage = e.message
-                    } finally {
-                        isLoading = false
-                    }
-                }
+                isLoading = false
             }
-
-
         }
-
     }
+
     fun loadFavoriteCourses() {
         viewModelScope.launch {
             try {

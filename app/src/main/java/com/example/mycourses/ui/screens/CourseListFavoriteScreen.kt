@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.viewmodels.CoursesListViewModel
@@ -17,7 +18,7 @@ fun CourseFavoriteScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
     onNavigateToDetails: (Course) -> Unit = {},
-    viewModel: CoursesListViewModel
+    viewModel: CoursesListViewModel = hiltViewModel()
 ) {
     val favoriteCourses = viewModel.favoriteCourses
     val isLoading = viewModel.isLoading

@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.ui.components.HighlighCourseCard
@@ -16,8 +17,10 @@ import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
 @Composable
-fun AccountScreen(onEditClick: (User) -> Unit, accountViewModel: AccountViewModel) {
-
+fun AccountScreen(
+    onEditClick: (User) -> Unit,
+    accountViewModel: AccountViewModel = hiltViewModel()
+) {
     val user = accountViewModel.user
     val enrolledCourses = accountViewModel.enrolledCourses
     val isLoading = accountViewModel.isLoading
