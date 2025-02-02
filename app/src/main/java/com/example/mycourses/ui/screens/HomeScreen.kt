@@ -20,11 +20,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.components.MyCoursesBottomAppBar
-import com.example.mycourses.viewmodels.CoursesListViewModel
+import com.google.gson.Gson
+import java.net.URLEncoder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController, viewModel: CoursesListViewModel) {
+fun HomeScreen(navController: NavHostController) {
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
     val selectedItem by remember(currentDestination) {
@@ -63,9 +64,9 @@ fun HomeScreen(navController: NavHostController, viewModel: CoursesListViewModel
         Box(modifier = Modifier.padding(paddingValues)) {
             CoursesListScreen(
                 onNavigateToDetails = { course ->
-                    navController.navigate("${AppDestination.CourseDetails.route}/$course")
-                },
-                viewModel = viewModel
+                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
+                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                }
             )
         }
     }

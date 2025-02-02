@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.theme.caveatFont
@@ -24,7 +25,7 @@ fun CoursesListScreen(
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
     onNavigateToDetails: (Course) -> Unit = {},
-    viewModel: CoursesListViewModel
+    viewModel: CoursesListViewModel = hiltViewModel()
 ) {
     val courses = viewModel.courses
     val isLoading = viewModel.isLoading
