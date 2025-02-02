@@ -20,10 +20,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -39,6 +37,7 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.CourseType
 import com.example.mycourses.model.entities.serializeUser
 import com.example.mycourses.navigation.AppDestination
+import com.example.mycourses.navigation.AppNavigation
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.screens.CoursesListScreen
 import com.example.mycourses.ui.components.BottomAppBarItem
@@ -63,32 +62,22 @@ class MainActivity : ComponentActivity() {
             MyCoursesTheme {
                 val navController = rememberNavController()
                 val auth = FirebaseAuth.getInstance()
+                var isUserAuthenticated by remember { mutableStateOf(false) }
 
-                var navigationState by rememberSaveable { mutableStateOf("CHECK_AUTH") }
-
-                // Verifica o estado de autenticação uma vez
                 LaunchedEffect(auth) {
-                    val user = auth.currentUser
-                    navigationState = if (user != null) "INITIAL" else "LOGIN"
+                    isUserAuthenticated = auth.currentUser != null
                 }
 
-                // Navega com base no estado
-                when (navigationState) {
-                    "LOGIN" -> {
-                        LoginNavigation(
-                            navController = navController,
-                            routeSuccess = AppDestination.Highlight.route,
-                            onLoginSuccess = {
-                                navigationState = "INITIAL"
-                                navController.navigate(AppDestination.Highlight.route) {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            }
-                        )
-                    }
-                    "INITIAL" -> {
-                        LoginToInitial(navController)
-                    }
+                if (isUserAuthenticated) {
+                    AppNavigation(navController)
+                } else {
+                    LoginNavigation(
+                        navController = navController,
+                        routeSuccess = "home",
+                        onLoginSuccess = {
+                            isUserAuthenticated = true
+                        }
+                    )
                 }
             }
         }
