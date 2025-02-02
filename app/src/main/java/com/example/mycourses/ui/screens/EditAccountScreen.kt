@@ -92,11 +92,9 @@ fun EditAccountScreen(
                         viewModel.saveChanges(
                             onSuccess = {
                                 scope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        "Perfil atualizado com sucesso",
-                                        duration = SnackbarDuration.Short)
-                                    navController.popBackStack()
+                                    snackbarHostState.showSnackbar("Perfil atualizado com sucesso")
                                 }
+                                navController.popBackStack()
                             },
                             onFailure = { exception ->
                                 scope.launch {

@@ -1,6 +1,5 @@
 package com.example.mycourses.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +28,10 @@ class CoursesListViewModel @Inject constructor(
     var errorMessage by mutableStateOf<String?>(null)
 
     init {
-        Log.d("CoursesListViewModel", "ViewModel criada")
         loadCourses()
     }
 
     private fun loadCourses() {
-        Log.d("CoursesListViewModel", "Carregando cursos destacados")
         if (isLoading) return
         viewModelScope.launch {
             try {
@@ -60,7 +57,6 @@ class CoursesListViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 errorMessage = e.message
-                Log.e("CoursesListViewModel", "Erro ao carregar cursos favoritos", e)
             } finally {
                 isLoading = false
             }

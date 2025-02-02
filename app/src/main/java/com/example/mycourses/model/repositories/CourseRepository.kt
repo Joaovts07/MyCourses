@@ -6,9 +6,8 @@ import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-class CourseRepository @Inject constructor(
+class CourseRepository(
     private val firestore: FirebaseFirestore
 ) {
 
