@@ -1,15 +1,19 @@
 package com.example.mycourses.model.entities
 
 import com.google.gson.Gson
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@Serializable
 data class User(
     val id: String = "",
     val name: String = "",
     val email: String = "",
+    @Contextual
     val age: Date = Date(),
     val profilePictureUrl: String = "",
     val favoriteCourses: MutableMap<String, Boolean> = mutableMapOf()

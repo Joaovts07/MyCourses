@@ -17,12 +17,14 @@ import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
 @Composable
-fun AccountScreen(onEditClick: (User) -> Unit, viewModel: AccountViewModel = hiltViewModel()) {
-
-    val user = viewModel.user
-    val enrolledCourses = viewModel.enrolledCourses
-    val isLoading = viewModel.isLoading
-    val errorMessage = viewModel.errorMessage
+fun AccountScreen(
+    onEditClick: (User) -> Unit,
+    accountViewModel: AccountViewModel = hiltViewModel()
+) {
+    val user = accountViewModel.user
+    val enrolledCourses = accountViewModel.enrolledCourses
+    val isLoading = accountViewModel.isLoading
+    val errorMessage = accountViewModel.errorMessage
 
     Column(
         modifier = Modifier
