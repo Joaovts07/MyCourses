@@ -15,6 +15,9 @@ import com.example.mycourses.model.entities.serializeUser
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
+import com.google.gson.Gson
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -26,12 +29,13 @@ fun AppNavigation(navController: NavHostController) {
         startDestination = AppDestination.Home.route
     ) {
         composable(AppDestination.Home.route) {
-            HomeScreen(navController, coursesListViewModel)
+            HomeScreen(navController)
         }
         composable(AppDestination.Highlight.route) {
             CoursesListScreen(
                 onNavigateToDetails = { course ->
-                    navController.navigate("${AppDestination.CourseDetails.route}/$course")
+                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
+                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
                 },
                 viewModel = coursesListViewModel
             )
@@ -40,7 +44,10 @@ fun AppNavigation(navController: NavHostController) {
             "${AppDestination.CourseDetails.route}/{course}",
             arguments = listOf(navArgument("course") { type = NavType.StringType })
         ) { backStackEntry ->
-            val course = backStackEntry.arguments?.getParcelable<Course>("course")
+            val courseJson = backStackEntry.arguments?.getString("course") ?: ""
+            val decodedJson = URLDecoder.decode(courseJson, "UTF-8")
+            val course = Gson().fromJson(decodedJson, Course::class.java)
+
             CourseDetailsScreen(
                 course = course,
                 onNavigateToCheckout = {}
