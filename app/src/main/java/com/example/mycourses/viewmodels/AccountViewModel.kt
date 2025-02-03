@@ -86,25 +86,12 @@ class AccountViewModel @Inject constructor(
     fun uploadProfilePicture(imageUri: Uri?, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                imageUri?.let { uri ->
-                    val storageRef = Firebase.storage.reference
+                imageUri?.let {
                     var user = user
-                    val fileRef = storageRef.child("profile_pictures/${user?.id}.jpg")
-                    val uploadTask = fileRef.putFile(uri)
-
-                    uploadTask.addOnSuccessListener {
-                        fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                            val updatedUser = user?.copy(profilePictureUrl = downloadUri.toString())
-                            updatedUser?.let {
-                                viewModelScope.launch {
-                                    userRepository.updateUser(it)
-                                    user = it
-                                }
-                            }
-                            onComplete(true)
-                        }
-                    }.addOnFailureListener {
-                        onComplete(false)
+                    val updatedUser = user?.copy()
+                    updatedUser?.let {
+                        userRepository.updateUser(it, imageUri)
+                        user = it
                     }
                 }
             } catch (e: Exception) {
