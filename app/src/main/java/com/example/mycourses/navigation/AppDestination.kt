@@ -9,7 +9,7 @@ import com.example.mycourses.ui.components.BottomAppBarItem
 
 sealed class AppDestination(val route: String) {
     data object Home : AppDestination("initialScreen")
-    data object Highlight : AppDestination("initialScreen")
+    data object Highlight : AppDestination("courses")
     data object MyCourses : AppDestination("mycourses")
     data object Account : AppDestination("account")
     data object CourseDetails : AppDestination("courseDetails")

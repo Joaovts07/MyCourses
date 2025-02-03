@@ -37,6 +37,7 @@ fun HomeScreen(navController: NavHostController) {
 
     val isShowFab = currentDestination?.route in listOf(
         AppDestination.Account.route,
+        AppDestination.Home.route,
         AppDestination.MyCourses.route
     )
 
