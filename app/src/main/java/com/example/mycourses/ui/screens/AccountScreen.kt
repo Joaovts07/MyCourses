@@ -72,7 +72,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     Spacer(modifier = Modifier.height(16.dp))
 
     Text(
-        text = "Idade: ${user.getYears()}",
+        text = "Idade: ${user.getYears()} Anos",
         fontSize = 16.sp
     )
     Spacer(modifier = Modifier.height(4.dp))
