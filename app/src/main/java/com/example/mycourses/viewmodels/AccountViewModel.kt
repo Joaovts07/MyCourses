@@ -11,8 +11,6 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -86,25 +84,13 @@ class AccountViewModel @Inject constructor(
     fun uploadProfilePicture(imageUri: Uri?, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                imageUri?.let { uri ->
-                    val storageRef = Firebase.storage.reference
+                imageUri?.let {
                     var user = user
-                    val fileRef = storageRef.child("profile_pictures/${user?.id}.jpg")
-                    val uploadTask = fileRef.putFile(uri)
-
-                    uploadTask.addOnSuccessListener {
-                        fileRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                            val updatedUser = user?.copy(profilePictureUrl = downloadUri.toString())
-                            updatedUser?.let {
-                                viewModelScope.launch {
-                                    userRepository.updateUser(it)
-                                    user = it
-                                }
-                            }
-                            onComplete(true)
-                        }
-                    }.addOnFailureListener {
-                        onComplete(false)
+                    val updatedUser = user?.copy()
+                    updatedUser?.let {
+                        userRepository.updateUser(it, imageUri)
+                        user = it
+                        onComplete(true)
                     }
                 }
             } catch (e: Exception) {

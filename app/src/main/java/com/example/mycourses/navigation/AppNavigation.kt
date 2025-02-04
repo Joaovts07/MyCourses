@@ -56,18 +56,13 @@ fun AppNavigation(navController: NavHostController) {
         composable(AppDestination.FavoriteCourses.route) {
             CourseFavoriteScreen()
         }
-        composable("${AppDestination.EditAccount.route}/{userJson}",
-            arguments = listOf(navArgument("userJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val userJson = backStackEntry.arguments?.getString("userJson") ?: ""
-            val user = deserializeUser(userJson)
+        composable(AppDestination.EditAccount.route) {
             EditAccountScreen(navController, accountViewModel )
         }
         composable(AppDestination.Account.route) {
             AccountScreen(
-                onEditClick = { user ->
-                    val userJson = serializeUser(user)
-                    navController.navigate("${AppDestination.EditAccount.route}/$userJson")
+                onEditClick = {
+                    navController.navigate(AppDestination.EditAccount.route)
                 }
             )
         }
