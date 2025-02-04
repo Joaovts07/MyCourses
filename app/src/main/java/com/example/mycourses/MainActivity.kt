@@ -4,11 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.login.firebase.auth
 import com.example.login.ui.LoginNavigation
@@ -29,21 +34,32 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val auth = FirebaseAuth.getInstance()
                 var isUserAuthenticated by remember { mutableStateOf(false) }
-
+                var authState by remember { mutableStateOf(AuthState.LOADING) }
                 LaunchedEffect(auth) {
-                    isUserAuthenticated = auth.currentUser != null
+                    authState = if (auth.currentUser != null) AuthState.AUTHENTICATED else AuthState.UNAUTHENTICATED
                 }
 
-                if (isUserAuthenticated) {
-                    AppNavigation(navController)
-                } else {
-                    LoginNavigation(
-                        navController = navController,
-                        routeSuccess = "home",
-                        onLoginSuccess = {
-                            isUserAuthenticated = true
+                when (authState) {
+                    AuthState.LOADING -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
-                    )
+                    }
+                    AuthState.AUTHENTICATED -> {
+                        AppNavigation(navController)
+                    }
+                    AuthState.UNAUTHENTICATED -> {
+                        LoginNavigation(
+                            navController = navController,
+                            routeSuccess = "home",
+                            onLoginSuccess = {
+                                authState = AuthState.AUTHENTICATED
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -53,4 +69,9 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         auth.removeAuthStateListener(authStateListener)
     }
+
+}
+
+enum class AuthState {
+    LOADING, AUTHENTICATED, UNAUTHENTICATED
 }

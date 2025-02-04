@@ -1,3 +1,4 @@
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,9 +17,11 @@ import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
+
 @Composable
 fun AccountScreen(
     onEditClick: (User) -> Unit,
+    onCourseClicked: (Course?) -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val user = accountViewModel.user
@@ -29,7 +32,8 @@ fun AccountScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .windowInsetsPadding(WindowInsets.systemBars)
+            .padding(top = 18.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -40,7 +44,7 @@ fun AccountScreen(
         } else if (user != null) {
             UserInfo(user, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
-            EnrolledCourses(enrolledCourses)
+            EnrolledCourses(enrolledCourses, onCourseClicked)
         }
     }
 }
@@ -68,7 +72,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     Spacer(modifier = Modifier.height(16.dp))
 
     Text(
-        text = "Idade: ${user.getYears()}",
+        text = "Idade: ${user.getYears()} Anos",
         fontSize = 16.sp
     )
     Spacer(modifier = Modifier.height(4.dp))
@@ -82,7 +86,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 }
 
 @Composable
-fun EnrolledCourses(enrolledCourses: List<Course?>) {
+fun EnrolledCourses(enrolledCourses: List<Course?>, onNavigateToDetails: (Course?) -> Unit) {
     Text(
         text = "Cursos Cadastrados",
         fontSize = 20.sp,
@@ -93,6 +97,9 @@ fun EnrolledCourses(enrolledCourses: List<Course?>) {
     Spacer(modifier = Modifier.height(12.dp))
 
     for (course in enrolledCourses) {
-        HighlighCourseCard(course)
+        HighlighCourseCard(
+            course = course,
+            modifier = Modifier.clickable { onNavigateToDetails(course) }
+        )
     }
 }

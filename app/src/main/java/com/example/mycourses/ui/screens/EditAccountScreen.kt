@@ -78,7 +78,7 @@ fun EditAccountScreen(
             EditableFieldDate(
                 value = viewModel.editedUser.getFormattedAge(),
                 onValueChange = { date -> viewModel.updateAge(date ?: Date()) },
-                label = "Idade"
+                label = "Data de Nascimento"
             )
 
             Spacer(modifier = Modifier.height(32.dp))
