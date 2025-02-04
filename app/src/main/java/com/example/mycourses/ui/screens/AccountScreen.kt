@@ -47,9 +47,7 @@ fun AccountScreen(
 
 @Composable
 fun UserInfo(user: User, onEditClick: (User) -> Unit) {
-    UserPicture(user, false) {
-
-    }
+    UserPicture(user, false)
 
     Spacer(modifier = Modifier.height(16.dp))
 

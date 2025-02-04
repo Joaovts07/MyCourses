@@ -11,8 +11,6 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -92,6 +90,7 @@ class AccountViewModel @Inject constructor(
                     updatedUser?.let {
                         userRepository.updateUser(it, imageUri)
                         user = it
+                        onComplete(true)
                     }
                 }
             } catch (e: Exception) {

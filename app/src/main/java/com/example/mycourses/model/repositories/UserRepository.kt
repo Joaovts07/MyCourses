@@ -3,10 +3,11 @@ package com.example.mycourses.model.repositories
 import android.net.Uri
 import android.util.Log
 import com.example.mycourses.model.entities.User
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
 
 class UserRepository (
@@ -27,7 +28,10 @@ class UserRepository (
         return try {
             val userId = auth.currentUser?.uid ?: return false
 
-            val photoUrl = imageUri?.let { uploadUserPhoto(userId, it) }
+            val photoUrl = imageUri?.let {
+                val url = uploadUserPhoto(userId, it)
+                url ?: return false
+            }
 
             val updatedUser = user.copy(profilePictureUrl = photoUrl ?: user.profilePictureUrl)
 
@@ -41,12 +45,11 @@ class UserRepository (
 
     private suspend fun uploadUserPhoto(userId: String, imageUri: Uri): String? {
         return try {
-            val firebaseStorage = FirebaseStorage.getInstance()
-            val storageRef = firebaseStorage.reference.child("users/$userId/profile.jpg")
+            val storageRef = Firebase.storage.reference.child("user_photos/${userId}.jpg")
             val uploadTask = storageRef.putFile(imageUri).await()
             storageRef.downloadUrl.await().toString()
         } catch (e: Exception) {
-            Log.e("UserRepository", "Erro ao fazer upload da foto", e)
+            Log.e("Upload", "Erro ao fazer upload da foto", e)
             null
         }
     }
