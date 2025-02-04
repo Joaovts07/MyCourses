@@ -1,6 +1,11 @@
 package com.example.login.ui
 
 import RegistrationBasicScreen
+import android.app.Activity
+import android.content.Context
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.dp
@@ -19,32 +24,57 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.login.BuildConfig
 import com.example.login.firebase.auth
 import com.example.login.ui.components.EmailInput
+import com.example.login.ui.components.GoogleSignInButton
 import com.example.login.ui.components.LoadingButton
 import com.example.login.ui.components.PasswordInput
 import com.example.mylogin.ui.theme.MyLoginTheme
 import com.example.login.validators.isValidEmail
 import com.example.login.validators.isValidPassword
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
+fun LoginScreen(navController: NavHostController, context: Context, onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            if (task.isSuccessful) {
+                handleSignInResult(task, onLoginSuccess)
+            } else {
+                Log.e("GoogleSignIn", "Falha ao obter conta: ${task.exception?.message}")
+                task.exception?.printStackTrace()
+            }
+        } else {
+            Log.e("GoogleSignIn", "Resultado cancelado ou falha: ${result.resultCode}")
+        }
+    }
 
     fun signInWithEmailAndPassword(email: String, password: String, onResult: (Boolean,Boolean?) -> Unit) {
         val auth: FirebaseAuth = Firebase.auth
@@ -145,6 +175,18 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(18.dp))
 
+            GoogleSignInButton(onClick = {
+                val googleClientId = BuildConfig.GOOGLE_CLIENT_ID
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(googleClientId)
+                    .requestEmail()
+                    .build()
+                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                launcher.launch(googleSignInClient.signInIntent)
+            })
+
+            Spacer(modifier = Modifier.height(18.dp))
+
             Text(
                 text = "Não tem uma conta? Cadastre-se",
                 modifier = Modifier
@@ -155,7 +197,24 @@ fun LoginScreen(navController: NavHostController, onLoginSuccess: () -> Unit) {
         }
     }
 }
-
+private fun handleSignInResult(task: Task<GoogleSignInAccount>, onLoginSuccess: () -> Unit) {
+    try {
+        val account = task.getResult(ApiException::class.java)
+        account?.idToken?.let { idToken ->
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            Firebase.auth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        onLoginSuccess()
+                    } else {
+                        // Tratar erro
+                    }
+                }
+        }
+    } catch (e: ApiException) {
+        // Tratar erro
+    }
+}
 private fun verifyFields(
     email: String,
     password: String
@@ -176,11 +235,11 @@ fun LoginNavigation(navController: NavHostController,routeSuccess: String, onLog
                 LoginScreen(
                     navController = navController,
                     onLoginSuccess = {
-                        // Navegar para a rota desejada após o login
                         navController.navigate(routeSuccess) {
                             popUpTo("login") { inclusive = true } // Remover a tela de login da pilha
                         }
-                    }
+                    },
+                    context = LocalContext.current
                 )
             }
             composable("basicForm") { RegistrationBasicScreen(navController) }
@@ -212,5 +271,3 @@ fun LoginNavigation(navController: NavHostController,routeSuccess: String, onLog
         }
     }
 }
-
-
