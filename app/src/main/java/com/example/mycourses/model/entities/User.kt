@@ -37,9 +37,16 @@ data class User(
     }
 
     fun getYears(): Int {
-        val format = SimpleDateFormat("yyyy", Locale("pt", "BR"))
-        val year = format.format(this.age)
-        return Calendar.getInstance().get(Calendar.YEAR) - year.toInt()
+        val birthDate = Calendar.getInstance().apply {
+            time = age
+        }
+        val today = Calendar.getInstance()
+        var age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
+        if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+            age--
+        }
+
+        return age
     }
 }
 
