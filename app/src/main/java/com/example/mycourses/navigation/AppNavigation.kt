@@ -63,6 +63,10 @@ fun AppNavigation(navController: NavHostController) {
             AccountScreen(
                 onEditClick = {
                     navController.navigate(AppDestination.EditAccount.route)
+                },
+                onCourseClicked = { course ->
+                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
+                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
                 }
             )
         }

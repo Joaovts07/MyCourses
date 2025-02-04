@@ -80,7 +80,7 @@ fun CoursesListScreen(
                         HighlighCourseCard(
                             course = course,
                             modifier = Modifier.clickable { onNavigateToDetails(course) },
-                            onOrderClick = onNavigateToCheckout
+                            //onOrderClick = onNavigateToCheckout
                         )
                     }
                 }

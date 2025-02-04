@@ -67,7 +67,7 @@ fun CourseFavoriteScreen(
                         HighlighCourseCard(
                             course = favoriteCourses[course],
                             modifier = Modifier.clickable { onNavigateToDetails(favoriteCourses[course]) },
-                            onOrderClick = onNavigateToCheckout
+                            //onOrderClick = onNavigateToCheckout
                         )
                     }
                 }
