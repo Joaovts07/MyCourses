@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 coilKtCoilCompose = "2.5.0"
+credentials = "1.3.0"
 gson = "2.10.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
@@ -20,9 +21,13 @@ hiltAndroid = "2.49"
 kotlinxSerializationJson = "1.5.1"
 material = "1.12.0"
 firebaseStorageKtx = "21.0.1"
+playServicesAuth = "21.3.0"
+playServicesBase = "18.5.0"
+googleid = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx" }
@@ -51,6 +56,8 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 
 
