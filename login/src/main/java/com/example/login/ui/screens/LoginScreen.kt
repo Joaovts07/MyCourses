@@ -1,6 +1,5 @@
-package com.example.login.ui
+package com.example.login.ui.screens
 
-import RegistrationBasicScreen
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts

@@ -1,4 +1,4 @@
-package com.example.login.ui
+package com.example.login.ui.screens
 
 import android.app.Activity
 import android.util.Log
