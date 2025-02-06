@@ -24,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +32,6 @@ class MainActivity : ComponentActivity() {
             MyCoursesTheme {
                 val navController = rememberNavController()
                 val auth = FirebaseAuth.getInstance()
-                var isUserAuthenticated by remember { mutableStateOf(false) }
                 var authState by remember { mutableStateOf(AuthState.LOADING) }
                 LaunchedEffect(auth) {
                     authState = if (auth.currentUser != null) AuthState.AUTHENTICATED else AuthState.UNAUTHENTICATED
@@ -65,10 +63,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        auth.removeAuthStateListener(authStateListener)
-    }
+
 
 }
 

@@ -199,13 +199,22 @@ fun LoginScreen(navController: NavHostController, context: Context, onLoginSucce
 }
 private fun handleSignInResult(task: Task<GoogleSignInAccount>, onLoginSuccess: () -> Unit) {
     try {
-        val account = task.getResult(ApiException::class.java)
-        account?.idToken?.let { idToken ->
+        val googleAccount = task.getResult(ApiException::class.java)
+        googleAccount?.idToken?.let { idToken ->
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             Firebase.auth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        onLoginSuccess()
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: throw Exception("ID do usuário não disponível")
+                        checkIfUserExists(userId) { userExists ->
+                            if (!userExists) {
+                                val displayName = googleAccount.displayName ?: ""
+                                val email = googleAccount.email ?: ""
+                                createUser(displayName, email,"")
+                            }
+                            onLoginSuccess()
+                        }
+
                     } else {
                         // Tratar erro
                     }
@@ -215,6 +224,8 @@ private fun handleSignInResult(task: Task<GoogleSignInAccount>, onLoginSuccess: 
         // Tratar erro
     }
 }
+
+
 private fun verifyFields(
     email: String,
     password: String
