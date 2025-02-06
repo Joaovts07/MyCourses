@@ -43,6 +43,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -206,13 +207,17 @@ fun createUser(nome: String, email: String, dataNascimento: String) {
     val db = Firebase.firestore
     val userId = auth.currentUser?.uid ?: return
     val usersRef = db.collection("users").document(userId)
+    val datebirthdayTimestamp = try {
+        val formateData = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
+        val dateBirthday = formateData.parse(dataNascimento)
+        dateBirthday?.let { Timestamp(it) }
+    } catch (ex: Exception) {
+        ""
+    }
 
-    val formateData = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
-    val dateBirthday = formateData.parse(dataNascimento)
-    val datebirthdayTimestamp = dateBirthday?.let { Timestamp(it) }
     val newUser = hashMapOf(
         "id" to userId,
-        "nome" to nome,
+        "name" to nome,
         "email" to email,
         "birthday" to datebirthdayTimestamp
     )
@@ -222,6 +227,21 @@ fun createUser(nome: String, email: String, dataNascimento: String) {
         }
         .addOnFailureListener { e ->
             Log.w("TAG", "Erro ao adicionar documento", e)
+        }
+}
+
+
+fun checkIfUserExists(userId: String, onResult: (Boolean) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("users")
+        .document(userId)
+        .get()
+        .addOnSuccessListener { document ->
+            onResult(document.exists())
+        }
+        .addOnFailureListener { e ->
+            Log.e("Firestore", "Erro ao verificar usuário: ${e.message}")
+            onResult(false)
         }
 }
 
