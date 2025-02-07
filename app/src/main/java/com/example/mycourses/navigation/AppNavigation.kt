@@ -9,9 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mycourses.model.entities.Course
-import com.example.mycourses.model.entities.deserializeUser
-import com.example.mycourses.model.entities.serializeUser
+import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
@@ -41,15 +39,15 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable(
-            "${AppDestination.CourseDetails.route}/{course}",
-            arguments = listOf(navArgument("course") { type = NavType.StringType })
+            "${AppDestination.CourseDetails.route}/{enrolledCourse}",
+            arguments = listOf(navArgument("enrolledCourse") { type = NavType.StringType })
         ) { backStackEntry ->
-            val courseJson = backStackEntry.arguments?.getString("course") ?: ""
-            val decodedJson = URLDecoder.decode(courseJson, "UTF-8")
-            val course = Gson().fromJson(decodedJson, Course::class.java)
+            val enrolledCourseJson = backStackEntry.arguments?.getString("enrolledCourse") ?: ""
+            val decodedJson = URLDecoder.decode(enrolledCourseJson, "UTF-8")
+            val enrolledCourse = Gson().fromJson(decodedJson, EnrolledCourse::class.java)
 
             CourseDetailsScreen(
-                course = course,
+                enrolledCourse = enrolledCourse,
                 onNavigateToCheckout = {}
             )
         }

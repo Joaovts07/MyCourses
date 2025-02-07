@@ -14,18 +14,6 @@ class CourseRepository(
     private val firestore: FirebaseFirestore
 ) {
 
-    /*suspend fun getEnrolledCourses(userId: String): List<Course?> {
-        val subscriptions = firestore.collection("subscription")
-            .whereEqualTo("userId", userId)
-            .get()
-            .await()
-            .toObjects(Subscription::class.java)
-
-        return subscriptions.mapNotNull { it.courseId }.map { courseId ->
-            getCourseById(courseId)
-        }
-    }*/
-
     fun getEnrolledCourses(userId: String): Flow<List<EnrolledCourse>> = flow {
         val subscriptionsSnapshot = firestore.collection("subscription")
             .whereEqualTo("userId", userId)
