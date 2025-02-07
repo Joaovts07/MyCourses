@@ -15,8 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.login.firebase.auth
-import com.example.login.ui.LoginNavigation
+import com.example.login.ui.screens.LoginNavigation
 import com.example.mycourses.navigation.AppNavigation
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
