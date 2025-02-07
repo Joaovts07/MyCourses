@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -19,11 +20,13 @@ import javax.inject.Inject
 class CourseDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val courseRepository: CourseRepository
 ) : ViewModel() {
 
     var isFavorite by mutableStateOf(false)
         private set
+
 
     fun initialize(course: Course) {
         checkIfCourseIsFavorite(course.id)
@@ -61,6 +64,12 @@ class CourseDetailsViewModel @Inject constructor(
                     // Tratar erro
                 }
             }
+        }
+    }
+
+    fun updateRating(subscriptionId: String, newRating: Float) {
+        viewModelScope.launch {
+            courseRepository.updateRating(subscriptionId, newRating)
         }
     }
 }

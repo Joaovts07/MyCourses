@@ -59,7 +59,8 @@ fun CourseDetailsScreen(
             ) {
                 Text(course.name, fontSize = 24.sp)
                 Text(course.description)
-                RatingBar(rating = course.rating.toFloat()) { newRating ->
+                RatingBar(rating = 3f) { newRating ->
+                    viewModel.updateRating(course.id, newRating)
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

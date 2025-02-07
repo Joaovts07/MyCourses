@@ -7,11 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
+import com.example.mycourses.model.states.EnrolledCoursesState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -22,11 +25,12 @@ class AccountViewModel @Inject constructor(
     private val courseRepository: CourseRepository
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow<EnrolledCoursesState>(EnrolledCoursesState.Loading)
+    val uiState: StateFlow<EnrolledCoursesState> = _uiState.asStateFlow()
+
     var user by mutableStateOf<User?>(null)
         private set
     var editedUser by mutableStateOf(User())
-        private set
-    var enrolledCourses by mutableStateOf<List<Course?>>(emptyList())
         private set
     var isLoading by mutableStateOf(true)
         private set
@@ -43,10 +47,13 @@ class AccountViewModel @Inject constructor(
                 isLoading = true
                 user = userRepository.getCurrentUser()
                 user?.let {
-                    enrolledCourses = courseRepository.getEnrolledCourses(it.id)
+                    courseRepository.getEnrolledCourses(it.id).collect { enrolledCourses ->
+                        _uiState.value = EnrolledCoursesState.Success(enrolledCourses)
+                    }
                 }
             } catch (e: Exception) {
                 errorMessage = "Erro ao carregar dados: ${e.message}"
+                _uiState.value = EnrolledCoursesState.Error(e.message.toString())
                 Log.e("AccountViewModel", "Erro ao carregar dados da conta", e)
             } finally {
                 isLoading = false
