@@ -20,8 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
-
 
 @Composable
 fun CourseDetailsScreen(
@@ -59,6 +59,8 @@ fun CourseDetailsScreen(
             ) {
                 Text(course.name, fontSize = 24.sp)
                 Text(course.description)
+                RatingBar(rating = course.rating.toFloat()) { newRating ->
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,6 +68,7 @@ fun CourseDetailsScreen(
                 ) {
                     //Text(course.instructor, fontSize = 18.sp)
                     Row {
+
                         Text(course.rating)
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
