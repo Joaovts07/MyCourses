@@ -1,6 +1,7 @@
 package com.example.login.ui.components
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -23,6 +24,7 @@ fun LoadingButton(
     Button(
         onClick = onClick,
         modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
         enabled = enabled,
         colors = colors
     ) {

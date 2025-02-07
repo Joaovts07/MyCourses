@@ -124,7 +124,7 @@ fun GoogleSignInButton(onClick:() -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(48.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.Gray)
