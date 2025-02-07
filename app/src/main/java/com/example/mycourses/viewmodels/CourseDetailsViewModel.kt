@@ -12,6 +12,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -27,6 +30,8 @@ class CourseDetailsViewModel @Inject constructor(
     var isFavorite by mutableStateOf(false)
         private set
 
+    private val _ratingUpdated = MutableStateFlow<Boolean>(false)
+    val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
     fun initialize(course: Course) {
         checkIfCourseIsFavorite(course.id)
@@ -69,7 +74,17 @@ class CourseDetailsViewModel @Inject constructor(
 
     fun updateRating(subscriptionId: String, newRating: Float) {
         viewModelScope.launch {
-            courseRepository.updateRating(subscriptionId, newRating)
+            viewModelScope.launch {
+                try {
+                    courseRepository.updateRating(subscriptionId, newRating)
+                    _ratingUpdated.value = true
+                } catch (e: Exception) {
+                    // Tratar erro
+                }
+            }
         }
+    }
+    fun resetRatingUpdated() {
+        _ratingUpdated.value = false
     }
 }

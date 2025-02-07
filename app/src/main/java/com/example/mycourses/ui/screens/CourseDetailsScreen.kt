@@ -31,6 +31,7 @@ fun CourseDetailsScreen(
     viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
     val isFavorite = viewModel.isFavorite
+    val ratingUpdated by viewModel.ratingUpdated.collectAsState()
 
     LaunchedEffect(enrolledCourse?.course) {
         enrolledCourse?.course?.let { viewModel.initialize(it) }
@@ -59,8 +60,11 @@ fun CourseDetailsScreen(
             ) {
                 Text(enrolledCourse.course.name, fontSize = 24.sp)
                 Text(enrolledCourse.course.description)
-                RatingBar(rating = 3f) { newRating ->
-                    viewModel.updateRating(enrolledCourse.course.id, newRating)
+                RatingBar(rating = enrolledCourse.rating.toFloat()) { newRating ->
+                    viewModel.updateRating(enrolledCourse.subscriptionIid, newRating)
+                }
+                if (ratingUpdated) {
+                    viewModel.resetRatingUpdated()
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

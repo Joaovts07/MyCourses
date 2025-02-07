@@ -29,7 +29,7 @@ class CourseRepository(
 
             if (courseId != null) {
                 val course = getCourseById(courseId)
-                enrolledCourses.add(EnrolledCourse(subscriptionId, course))
+                enrolledCourses.add(EnrolledCourse(subscriptionId, course, subscription.rate))
             }
         }
 
