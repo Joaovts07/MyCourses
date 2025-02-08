@@ -11,21 +11,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
+import com.example.mycourses.model.states.EnrolledCoursesState
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
-
 @Composable
 fun AccountScreen(
     onEditClick: (User) -> Unit,
-    onCourseClicked: (Course?) -> Unit,
+    onCourseClicked: (EnrolledCourse?) -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val user = accountViewModel.user
-    val enrolledCourses = accountViewModel.enrolledCourses
+    val uiState by accountViewModel.uiState.collectAsState()
+
     val isLoading = accountViewModel.isLoading
     val errorMessage = accountViewModel.errorMessage
 
@@ -44,7 +45,20 @@ fun AccountScreen(
         } else if (user != null) {
             UserInfo(user, onEditClick = onEditClick)
             Spacer(modifier = Modifier.height(16.dp))
-            EnrolledCourses(enrolledCourses, onCourseClicked)
+        }
+
+        when (uiState) {
+            is EnrolledCoursesState.Loading -> {
+                CircularProgressIndicator()
+            }
+            is EnrolledCoursesState.Success -> {
+                val enrolledCourses = (uiState as EnrolledCoursesState.Success).enrolledCourses
+                EnrolledCourses(enrolledCourses, onCourseClicked)
+            }
+            is EnrolledCoursesState.Error -> {
+                val errorMessage = (uiState as EnrolledCoursesState.Error).message
+                Text(text = errorMessage)
+            }
         }
     }
 }
@@ -86,7 +100,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 }
 
 @Composable
-fun EnrolledCourses(enrolledCourses: List<Course?>, onNavigateToDetails: (Course?) -> Unit) {
+fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails: (EnrolledCourse?) -> Unit) {
     Text(
         text = "Cursos Cadastrados",
         fontSize = 20.sp,
@@ -96,10 +110,10 @@ fun EnrolledCourses(enrolledCourses: List<Course?>, onNavigateToDetails: (Course
 
     Spacer(modifier = Modifier.height(12.dp))
 
-    for (course in enrolledCourses) {
+    for (enrolledCourse in enrolledCourses) {
         HighlighCourseCard(
-            course = course,
-            modifier = Modifier.clickable { onNavigateToDetails(course) }
+            course = enrolledCourse?.course,
+            modifier = Modifier.clickable { onNavigateToDetails(enrolledCourse) }
         )
     }
 }
