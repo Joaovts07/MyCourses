@@ -6,11 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -19,11 +23,15 @@ import javax.inject.Inject
 class CourseDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val courseRepository: CourseRepository
 ) : ViewModel() {
 
     var isFavorite by mutableStateOf(false)
         private set
+
+    private val _ratingUpdated = MutableStateFlow<Boolean>(false)
+    val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
     fun initialize(course: Course) {
         checkIfCourseIsFavorite(course.id)
@@ -62,5 +70,21 @@ class CourseDetailsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateRating(subscriptionId: String, newRating: Float) {
+        viewModelScope.launch {
+            viewModelScope.launch {
+                try {
+                    courseRepository.updateRating(subscriptionId, newRating)
+                    _ratingUpdated.value = true
+                } catch (e: Exception) {
+                    // Tratar erro
+                }
+            }
+        }
+    }
+    fun resetRatingUpdated() {
+        _ratingUpdated.value = false
     }
 }

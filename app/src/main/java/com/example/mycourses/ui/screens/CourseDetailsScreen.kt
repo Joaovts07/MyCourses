@@ -19,21 +19,22 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
-import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.EnrolledCourse
+import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
-
 
 @Composable
 fun CourseDetailsScreen(
-    course: Course?,
+    enrolledCourse: EnrolledCourse?,
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
     viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
     val isFavorite = viewModel.isFavorite
+    val ratingUpdated by viewModel.ratingUpdated.collectAsState()
 
-    LaunchedEffect(course) {
-        course?.let { viewModel.initialize(it) }
+    LaunchedEffect(enrolledCourse?.course) {
+        enrolledCourse?.course?.let { viewModel.initialize(it) }
     }
 
     Column(
@@ -41,9 +42,9 @@ fun CourseDetailsScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        if (course != null) {
+        if (enrolledCourse?.course != null) {
             AsyncImage(
-                model = course.image,
+                model = enrolledCourse.course.image,
                 contentDescription = null,
                 modifier = Modifier
                     .height(200.dp)
@@ -57,8 +58,14 @@ fun CourseDetailsScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(course.name, fontSize = 24.sp)
-                Text(course.description)
+                Text(enrolledCourse.course.name, fontSize = 24.sp)
+                Text(enrolledCourse.course.description)
+                RatingBar(rating = enrolledCourse.rating.toFloat()) { newRating ->
+                    viewModel.updateRating(enrolledCourse.subscriptionIid, newRating)
+                }
+                if (ratingUpdated) {
+                    viewModel.resetRatingUpdated()
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,7 +73,8 @@ fun CourseDetailsScreen(
                 ) {
                     //Text(course.instructor, fontSize = 18.sp)
                     Row {
-                        Text(course.rating)
+
+                        Text(enrolledCourse.course.rating)
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.Filled.Star,
@@ -75,7 +83,7 @@ fun CourseDetailsScreen(
                         )
                     }
 
-                    IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
+                    IconButton(onClick = { viewModel.toggleFavorite(enrolledCourse.course.id) }) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = "Favoritar curso",
