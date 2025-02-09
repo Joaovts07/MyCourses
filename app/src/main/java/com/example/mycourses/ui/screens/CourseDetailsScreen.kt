@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
-import com.example.mycourses.model.entities.EnrolledCourse
+import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
 @Composable
 fun CourseDetailsScreen(
-    enrolledCourse: EnrolledCourse?,
+    course: Course?,
     modifier: Modifier = Modifier,
     onNavigateToCheckout: () -> Unit = {},
     viewModel: CourseDetailsViewModel = hiltViewModel()
@@ -33,8 +33,8 @@ fun CourseDetailsScreen(
     val isFavorite = viewModel.isFavorite
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
 
-    LaunchedEffect(enrolledCourse?.course) {
-        enrolledCourse?.course?.let { viewModel.initialize(it) }
+    LaunchedEffect(course) {
+        course?.let { viewModel.initialize(it) }
     }
 
     Column(
@@ -42,9 +42,9 @@ fun CourseDetailsScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        if (enrolledCourse?.course != null) {
+        if (course != null) {
             AsyncImage(
-                model = enrolledCourse.course.image,
+                model = course.image,
                 contentDescription = null,
                 modifier = Modifier
                     .height(200.dp)
@@ -58,14 +58,17 @@ fun CourseDetailsScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(enrolledCourse.course.name, fontSize = 24.sp)
-                Text(enrolledCourse.course.description)
-                RatingBar(rating = enrolledCourse.rating.toFloat()) { newRating ->
-                    viewModel.updateRating(enrolledCourse.subscriptionIid, newRating)
+                Text(course.name, fontSize = 24.sp)
+                Text(course.description)
+                if () {
+                    RatingBar(rating = enrolledCourse.rating.toFloat()) { newRating ->
+                        viewModel.updateRating(enrolledCourse.subscriptionIid, newRating)
+                    }
+                    if (ratingUpdated) {
+                        viewModel.resetRatingUpdated()
+                    }
                 }
-                if (ratingUpdated) {
-                    viewModel.resetRatingUpdated()
-                }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -74,7 +77,7 @@ fun CourseDetailsScreen(
                     //Text(course.instructor, fontSize = 18.sp)
                     Row {
 
-                        Text(enrolledCourse.course.rating)
+                        Text(course.rating)
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.Filled.Star,
@@ -83,7 +86,7 @@ fun CourseDetailsScreen(
                         )
                     }
 
-                    IconButton(onClick = { viewModel.toggleFavorite(enrolledCourse.course.id) }) {
+                    IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = "Favoritar curso",
