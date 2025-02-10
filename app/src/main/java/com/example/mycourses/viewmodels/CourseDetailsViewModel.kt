@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
+import com.example.mycourses.model.states.SubscriptionState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,11 +31,16 @@ class CourseDetailsViewModel @Inject constructor(
     var isFavorite by mutableStateOf(false)
         private set
 
-    private val _ratingUpdated = MutableStateFlow<Boolean>(false)
+    private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
+
+    private val _isUserEnrolled = MutableStateFlow(false)
+    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.Idle)
+    val uiState: StateFlow<SubscriptionState> = _uiState.asStateFlow()
 
     fun initialize(course: Course) {
         checkIfCourseIsFavorite(course.id)
+        checkUserEnrollment(firebaseAuth.currentUser?.uid ?: "", course.id)
     }
 
     private fun checkIfCourseIsFavorite(courseId: String) {
@@ -86,5 +92,16 @@ class CourseDetailsViewModel @Inject constructor(
     }
     fun resetRatingUpdated() {
         _ratingUpdated.value = false
+    }
+
+    private fun checkUserEnrollment(userId: String, courseId: String) {
+        viewModelScope.launch {
+            userRepository.getUserSubscription(userId, courseId).collect { subscription ->
+                subscription?.let {
+                    _isUserEnrolled.value = true
+                    _uiState.value = SubscriptionState.Success(subscription)
+                }
+            }
+        }
     }
 }
