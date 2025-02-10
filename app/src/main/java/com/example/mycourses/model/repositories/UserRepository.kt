@@ -2,12 +2,15 @@ package com.example.mycourses.model.repositories
 
 import android.net.Uri
 import android.util.Log
+import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.storage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 class UserRepository (
@@ -52,6 +55,17 @@ class UserRepository (
             Log.e("Upload", "Erro ao fazer upload da foto", e)
             null
         }
+    }
+
+    fun getUserSubscription(userId: String, courseId: String): Flow<Subscription?> = flow {
+        val querySnapshot = firestore.collection("subscription")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("courseId", courseId)
+            .get()
+            .await()
+
+        val subscription = querySnapshot.documents.firstOrNull()?.toObject(Subscription::class.java)
+        emit(subscription)
     }
 
 }
