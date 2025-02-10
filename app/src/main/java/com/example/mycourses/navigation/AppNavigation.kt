@@ -45,11 +45,7 @@ fun AppNavigation(navController: NavHostController) {
             val courseJson = backStackEntry.arguments?.getString("course") ?: ""
             val decodedJson = URLDecoder.decode(courseJson, "UTF-8")
             val course = Gson().fromJson(decodedJson, Course::class.java)
-
-            CourseDetailsScreen(
-                course = course,
-                onNavigateToCheckout = {}
-            )
+            CourseDetailsScreen(course = course)
         }
         composable(AppDestination.FavoriteCourses.route) {
             CourseFavoriteScreen()
