@@ -64,8 +64,8 @@ fun CourseDetailsScreen(
                 Text(course.name, fontSize = 24.sp)
                 Text(course.description)
                 when (uiState) {
-                    is SubscriptionState.Loading -> {
-                        CircularProgressIndicator()
+                    is SubscriptionState.Idle -> {
+                        EnrollButton(onNavigateToCheckout)
                     }
                     is SubscriptionState.Success -> {
                         val subscription = (uiState as SubscriptionState.Success).subscription
@@ -80,8 +80,6 @@ fun CourseDetailsScreen(
                         Text(text = errorMessage)
                     }
                 }
-
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,13 +106,7 @@ fun CourseDetailsScreen(
                     }
                 }
 
-                Button(
-                    onClick = { onNavigateToCheckout() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text(text = "Cadastrar")
-                }
+
             }
         }
     }
@@ -134,4 +126,15 @@ fun CreateCourseDetails(
             viewModel.resetRatingUpdated()
         }
 
+}
+
+@Composable
+fun EnrollButton(onNavigateToCheckout: () -> Unit) {
+    Button(
+        onClick = { onNavigateToCheckout() },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+    ) {
+        Text(text = "Cadastrar")
+    }
 }

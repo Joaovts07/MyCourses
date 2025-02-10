@@ -35,9 +35,7 @@ class CourseDetailsViewModel @Inject constructor(
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
     private val _isUserEnrolled = MutableStateFlow(false)
-    val isUserEnrolled: StateFlow<Boolean> = _isUserEnrolled.asStateFlow()
-
-    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.Loading)
+    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.Idle)
     val uiState: StateFlow<SubscriptionState> = _uiState.asStateFlow()
 
     fun initialize(course: Course) {
