@@ -98,6 +98,11 @@ fun CourseContent(
             Text(course.name, fontSize = 24.sp)
             Text(course.description)
 
+            if(subscription != null) {
+                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
+                if (ratingUpdated) onResetRating()
+            }
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,9 +129,6 @@ fun CourseContent(
 
             if (subscription == null) {
                 EnrollButton(onEnrollClick)
-            } else {
-                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
-                if (ratingUpdated) onResetRating()
             }
         }
     }
