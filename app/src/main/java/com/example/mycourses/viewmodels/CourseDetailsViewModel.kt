@@ -10,7 +10,6 @@ import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.model.states.CourseUiState
 import com.example.mycourses.model.states.DialogState
-import com.example.mycourses.model.states.SubscriptionState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -35,9 +34,6 @@ class CourseDetailsViewModel @Inject constructor(
 
     private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
-
-    private val _susbcriptionUiState = MutableStateFlow<SubscriptionState>(SubscriptionState.NoSubscription)
-    val susbcriptionUiState: StateFlow<SubscriptionState> = _susbcriptionUiState.asStateFlow()
 
     private val _uiState = MutableStateFlow<CourseUiState>(CourseUiState.Loading)
     val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
