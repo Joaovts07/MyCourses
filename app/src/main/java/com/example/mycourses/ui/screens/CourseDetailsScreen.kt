@@ -64,55 +64,79 @@ fun CourseDetailsScreen(
                 Text(course.name, fontSize = 24.sp)
                 Text(course.description)
                 when (uiState) {
-                    is SubscriptionState.Idle -> {
+                    is SubscriptionState.NoSubscription -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            //Text(course.instructor, fontSize = 18.sp)
+                            Row {
+
+                                Text(course.rating)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Avaliação",
+                                    tint = Color.Yellow
+                                )
+                            }
+
+                            IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                    contentDescription = "Favoritar curso",
+                                    tint = if (isFavorite) Color.Red else Color.LightGray
+                                )
+                            }
+                        }
                         EnrollButton(onNavigateToCheckout)
                     }
                     is SubscriptionState.Success -> {
                         val subscription = (uiState as SubscriptionState.Success).subscription
-                          CreateCourseDetails(
+                          RateCourse(
                             subscription = subscription,
                             ratingUpdated = ratingUpdated,
                             viewModel = viewModel
                         )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            //Text(course.instructor, fontSize = 18.sp)
+                            Row {
+
+                                Text(course.rating)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = "Avaliação",
+                                    tint = Color.Yellow
+                                )
+                            }
+
+                            IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                    contentDescription = "Favoritar curso",
+                                    tint = if (isFavorite) Color.Red else Color.LightGray
+                                )
+                            }
+                        }
                     }
                     is SubscriptionState.Error -> {
                         val errorMessage = (uiState as SubscriptionState.Error).message
                         Text(text = errorMessage)
                     }
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    //Text(course.instructor, fontSize = 18.sp)
-                    Row {
-
-                        Text(course.rating)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Avaliação",
-                            tint = Color.Yellow
-                        )
-                    }
-
-                    IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                            contentDescription = "Favoritar curso",
-                            tint = if (isFavorite) Color.Red else Color.LightGray
-                        )
-                    }
-                }
-
 
             }
         }
     }
 }
 @Composable
-fun CreateCourseDetails(
+fun RateCourse(
     subscription: Subscription?,
     ratingUpdated: Boolean,
     viewModel: CourseDetailsViewModel

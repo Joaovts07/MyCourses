@@ -34,8 +34,7 @@ class CourseDetailsViewModel @Inject constructor(
     private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
-    private val _isUserEnrolled = MutableStateFlow(false)
-    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.Idle)
+    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.NoSubscription)
     val uiState: StateFlow<SubscriptionState> = _uiState.asStateFlow()
 
     fun initialize(course: Course) {
@@ -98,7 +97,6 @@ class CourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.getUserSubscription(userId, courseId).collect { subscription ->
                 subscription?.let {
-                    _isUserEnrolled.value = true
                     _uiState.value = SubscriptionState.Success(subscription)
                 }
             }
