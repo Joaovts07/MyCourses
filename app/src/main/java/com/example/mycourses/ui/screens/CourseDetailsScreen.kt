@@ -20,6 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.Subscription
+import com.example.mycourses.model.states.SubscriptionState
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
@@ -32,6 +34,7 @@ fun CourseDetailsScreen(
 ) {
     val isFavorite = viewModel.isFavorite
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(course) {
         course?.let { viewModel.initialize(it) }
@@ -60,14 +63,24 @@ fun CourseDetailsScreen(
             ) {
                 Text(course.name, fontSize = 24.sp)
                 Text(course.description)
-                if () {
-                    RatingBar(rating = enrolledCourse.rating.toFloat()) { newRating ->
-                        viewModel.updateRating(enrolledCourse.subscriptionIid, newRating)
+                when (uiState) {
+                    is SubscriptionState.Loading -> {
+                        CircularProgressIndicator()
                     }
-                    if (ratingUpdated) {
-                        viewModel.resetRatingUpdated()
+                    is SubscriptionState.Success -> {
+                        val subscription = (uiState as SubscriptionState.Success).subscription
+                          CreateCourseDetails(
+                            subscription = subscription,
+                            ratingUpdated = ratingUpdated,
+                            viewModel = viewModel
+                        )
+                    }
+                    is SubscriptionState.Error -> {
+                        val errorMessage = (uiState as SubscriptionState.Error).message
+                        Text(text = errorMessage)
                     }
                 }
+
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -105,4 +118,20 @@ fun CourseDetailsScreen(
             }
         }
     }
+}
+@Composable
+fun CreateCourseDetails(
+    subscription: Subscription?,
+    ratingUpdated: Boolean,
+    viewModel: CourseDetailsViewModel
+) {
+        subscription?.let {
+            RatingBar(rating = subscription.rate.toFloat()) { newRating ->
+                viewModel.updateRating(subscription.id, newRating)
+            }
+        }
+        if (ratingUpdated) {
+            viewModel.resetRatingUpdated()
+        }
+
 }
