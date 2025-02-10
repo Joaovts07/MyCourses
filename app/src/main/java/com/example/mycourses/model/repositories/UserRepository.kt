@@ -9,10 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.storage
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-
+import kotlin.Result
 class UserRepository (
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
@@ -57,15 +55,39 @@ class UserRepository (
         }
     }
 
-    fun getUserSubscription(userId: String, courseId: String): Flow<Subscription?> = flow {
-        val querySnapshot = firestore.collection("subscription")
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("courseId", courseId)
-            .get()
-            .await()
+    suspend fun getUserSubscription(userId: String, courseId: String): Subscription? {
+        return try {
+            val querySnapshot = firestore.collection("subscription")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .await()
+            val subscription = querySnapshot.documents.firstOrNull()?.toObject(Subscription::class.java)
+            subscription
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Erro ao obter inscrição do usuário", e)
+            null
+        }
 
-        val subscription = querySnapshot.documents.firstOrNull()?.toObject(Subscription::class.java)
-        emit(subscription)
+   }
+
+    suspend fun subscribleCourse(courseId: String): Result<Boolean> {
+        return try {
+            val userId = auth.currentUser?.uid ?:  ""
+            val subscription = Subscription(
+                id = "",
+                userId = userId,
+                courseId = courseId,
+                rating = "0.0"
+            )
+
+            val documentReference = firestore.collection("subscriptions").document()
+            val subscriptionWithId = subscription.copy(id = documentReference.id)
+
+            documentReference.set(subscriptionWithId).await()
+            Result.success(true)
+        } catch (exception: Exception) {
+            Result.failure(exception)
+        }
     }
-
 }
