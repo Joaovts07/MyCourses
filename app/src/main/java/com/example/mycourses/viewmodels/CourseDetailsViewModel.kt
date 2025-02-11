@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.model.states.CourseUiState
@@ -43,12 +44,17 @@ class CourseDetailsViewModel @Inject constructor(
 
     fun initialize(course: Course) {
         viewModelScope.launch {
-            val userId = firebaseAuth.currentUser?.uid ?: ""
-            val user = userRepository.getUserById(userId)
+            val user = getUser()
             val isFavorite = user?.isFavorite(course.id) ?: false
             val subscription = userRepository.getUserSubscription(userId, course.id)
             _uiState.value = CourseUiState.Success(course, isFavorite, subscription)
         }
+    }
+
+    suspend fun getUser(): User? {
+        val userId = firebaseAuth.currentUser?.uid ?: ""
+        val user = userRepository.getUserById(userId)
+        return user
     }
 
     fun toggleFavorite(courseId: String) {

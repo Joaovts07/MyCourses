@@ -15,7 +15,7 @@ class CourseRepository(
 ) {
 
     fun getEnrolledCourses(userId: String): Flow<List<EnrolledCourse>> = flow {
-        val subscriptionsSnapshot = firestore.collection("subscription")
+        val subscriptionsSnapshot = firestore.collection("subscriptions")
             .whereEqualTo("userId", userId)
             .get()
             .await()
@@ -72,7 +72,7 @@ class CourseRepository(
 
     suspend fun updateRating(subscriptionId: String, newRating: Float) {
         try {
-            firestore.collection("subscription")
+            firestore.collection("subscriptions")
                 .document(subscriptionId).update("rate", newRating).await()
 
         } catch (e: Exception) {
