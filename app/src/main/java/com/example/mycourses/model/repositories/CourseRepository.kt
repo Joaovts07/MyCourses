@@ -101,11 +101,11 @@ class CourseRepository(
         return try {
             firestore.collection("comments")
                 .whereEqualTo("courseId", courseId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
                 .documents.mapNotNull { it.toObject<Comment>() }
         } catch (e: Exception) {
+            Log.e("CourseRepository", "Erro ao buscar comentários", e)
             emptyList()
         }
     }

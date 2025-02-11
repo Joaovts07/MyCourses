@@ -1,8 +1,6 @@
 package com.example.mycourses.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -135,15 +133,12 @@ fun CourseContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Exibir comentários
             Text("Comentários", style = MaterialTheme.typography.titleMedium)
-            LazyColumn {
-                items(comments) { comment ->
-                    CommentItem(comment)
+            comments.forEach {
+                    comment ->
+                CommentItem(comment)
 
-                }
             }
-
             if (subscription == null) {
                 EnrollButton(onEnrollClick)
             }
