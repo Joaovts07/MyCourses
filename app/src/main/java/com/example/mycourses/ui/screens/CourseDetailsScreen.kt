@@ -21,144 +21,163 @@ import coil.compose.AsyncImage
 import com.example.mycourses.R
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.Subscription
-import com.example.mycourses.model.states.SubscriptionState
+import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.model.states.DialogState
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
 @Composable
 fun CourseDetailsScreen(
-    course: Course?,
-    modifier: Modifier = Modifier,
-    onNavigateToCheckout: () -> Unit = {},
+    course: Course,
     viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
-    val isFavorite = viewModel.isFavorite
-    val ratingUpdated by viewModel.ratingUpdated.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val ratingUpdated by viewModel.ratingUpdated.collectAsState()
+    val dialogState by viewModel.dialogState.collectAsState()
 
-    LaunchedEffect(course) {
-        course?.let { viewModel.initialize(it) }
+    viewModel.initialize(course)
+
+    when (uiState) {
+        is CourseUiState.Loading -> LoadingScreen()
+        is CourseUiState.Success -> {
+            val course = (uiState as CourseUiState.Success).course
+            val isFavorite = (uiState as CourseUiState.Success).isFavorite
+            val subscription = (uiState as CourseUiState.Success).subscription
+            CourseContent(
+                course = course,
+                isFavorite = isFavorite,
+                subscription = subscription,
+                onToggleFavorite = { viewModel.toggleFavorite(course.id) },
+                onEnrollClick = { viewModel.subscribeCourse(course.id) },
+                onRatingUpdate = { newRating ->
+                    subscription?.let { viewModel.updateRating(it.id, newRating) }
+                },
+                ratingUpdated = ratingUpdated,
+                onResetRating = { viewModel.resetRatingUpdated() }
+            )
+        }
+        is CourseUiState.Error -> {
+            val message = (uiState as CourseUiState.Error).message
+            //ErrorScreen(message)
+        }
+
     }
 
+    DialogHandler(
+        dialogState = dialogState,
+        onDismiss = { viewModel.dismissDialog() }
+    )
+}
+@Composable
+fun CourseContent(
+    course: Course,
+    isFavorite: Boolean,
+    subscription: Subscription?,
+    onToggleFavorite: () -> Unit,
+    onEnrollClick: () -> Unit,
+    onRatingUpdate: (Float) -> Unit,
+    ratingUpdated: Boolean,
+    onResetRating: () -> Unit
+) {
     Column(
-        modifier
+        Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        if (course != null) {
-            AsyncImage(
-                model = course.image,
-                contentDescription = null,
-                modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth(),
-                placeholder = painterResource(id = R.drawable.placeholder),
-                contentScale = ContentScale.Crop
-            )
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+        AsyncImage(
+            model = course.image,
+            contentDescription = null,
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth(),
+            placeholder = painterResource(id = R.drawable.placeholder),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(Modifier.padding(16.dp)) {
+            Text(course.name, fontSize = 24.sp)
+            Text(course.description)
+
+            if(subscription != null) {
+                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
+                if (ratingUpdated) onResetRating()
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(course.name, fontSize = 24.sp)
-                Text(course.description)
-                when (uiState) {
-                    is SubscriptionState.NoSubscription -> {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            //Text(course.instructor, fontSize = 18.sp)
-                            Row {
-
-                                Text(course.rating)
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = "Avaliação",
-                                    tint = Color.Yellow
-                                )
-                            }
-
-                            IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
-                                Icon(
-                                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                    contentDescription = "Favoritar curso",
-                                    tint = if (isFavorite) Color.Red else Color.LightGray
-                                )
-                            }
-                        }
-                        EnrollButton(onNavigateToCheckout)
-                    }
-                    is SubscriptionState.Success -> {
-                        val subscription = (uiState as SubscriptionState.Success).subscription
-                          RateCourse(
-                            subscription = subscription,
-                            ratingUpdated = ratingUpdated,
-                            viewModel = viewModel
-                        )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            //Text(course.instructor, fontSize = 18.sp)
-                            Row {
-
-                                Text(course.rating)
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = "Avaliação",
-                                    tint = Color.Yellow
-                                )
-                            }
-
-                            IconButton(onClick = { viewModel.toggleFavorite(course.id) }) {
-                                Icon(
-                                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                    contentDescription = "Favoritar curso",
-                                    tint = if (isFavorite) Color.Red else Color.LightGray
-                                )
-                            }
-                        }
-                    }
-                    is SubscriptionState.Error -> {
-                        val errorMessage = (uiState as SubscriptionState.Error).message
-                        Text(text = errorMessage)
-                    }
+                Row {
+                    Text(course.rating)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Avaliação",
+                        tint = Color.Yellow
+                    )
                 }
 
+                IconButton(onClick = onToggleFavorite) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = "Favoritar curso",
+                        tint = if (isFavorite) Color.Red else Color.LightGray
+                    )
+                }
+            }
+
+            if (subscription == null) {
+                EnrollButton(onEnrollClick)
             }
         }
     }
 }
-@Composable
-fun RateCourse(
-    subscription: Subscription?,
-    ratingUpdated: Boolean,
-    viewModel: CourseDetailsViewModel
-) {
-        subscription?.let {
-            RatingBar(rating = subscription.rate.toFloat()) { newRating ->
-                viewModel.updateRating(subscription.id, newRating)
-            }
-        }
-        if (ratingUpdated) {
-            viewModel.resetRatingUpdated()
-        }
-
-}
 
 @Composable
-fun EnrollButton(onNavigateToCheckout: () -> Unit) {
+fun EnrollButton(onEnrollClick: () -> Unit) {
     Button(
-        onClick = { onNavigateToCheckout() },
+        onClick = onEnrollClick,
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
         Text(text = "Cadastrar")
+    }
+}
+
+@Composable
+fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
+    when (dialogState) {
+        is DialogState.Success -> {
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                confirmButton = {
+                    Button(onClick = onDismiss) { Text("OK") }
+                },
+                title = { Text("Sucesso") },
+                text = { Text(dialogState.message) }
+            )
+        }
+        is DialogState.Error -> {
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                confirmButton = {
+                    Button(onClick = onDismiss) { Text("OK") }
+                },
+                title = { Text("Erro") },
+                text = { Text(dialogState.message) }
+            )
+        }
+        DialogState.None -> {}
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
