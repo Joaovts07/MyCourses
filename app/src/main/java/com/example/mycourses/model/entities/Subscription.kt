@@ -4,6 +4,6 @@ data class Subscription(
     val id: String = "",
     val courseId: String = "",
     val userId: String = "",
-    val rate: String = ""
+    val rating: String = ""
 )
 

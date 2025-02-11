@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.example.mycourses.model.states.SubscriptionState
+import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.model.states.DialogState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,20 +35,19 @@ class CourseDetailsViewModel @Inject constructor(
     private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
-    private val _uiState = MutableStateFlow<SubscriptionState>(SubscriptionState.NoSubscription)
-    val uiState: StateFlow<SubscriptionState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<CourseUiState>(CourseUiState.Loading)
+    val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
+
+    private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
+    val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
     fun initialize(course: Course) {
-        checkIfCourseIsFavorite(course.id)
-        checkUserEnrollment(firebaseAuth.currentUser?.uid ?: "", course.id)
-    }
-
-    private fun checkIfCourseIsFavorite(courseId: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-
         viewModelScope.launch {
+            val userId = firebaseAuth.currentUser?.uid ?: ""
             val user = userRepository.getUserById(userId)
-            isFavorite = user?.isFavorite(courseId) ?: false
+            val isFavorite = user?.isFavorite(course.id) ?: false
+            val subscription = userRepository.getUserSubscription(userId, course.id)
+            _uiState.value = CourseUiState.Success(course, isFavorite, subscription)
         }
     }
 
@@ -93,13 +93,19 @@ class CourseDetailsViewModel @Inject constructor(
         _ratingUpdated.value = false
     }
 
-    private fun checkUserEnrollment(userId: String, courseId: String) {
+    fun subscribeCourse(courseId: String) {
         viewModelScope.launch {
-            userRepository.getUserSubscription(userId, courseId).collect { subscription ->
-                subscription?.let {
-                    _uiState.value = SubscriptionState.Success(subscription)
-                }
+            val result = userRepository.subscribleCourse(courseId)
+            _dialogState.value = if (result.isSuccess) {
+                DialogState.Success("Cadastrado com sucesso!")
+            } else {
+                DialogState.Error("Erro ao se cadastrar no curso: $result.exceptionOrNull()?.message")
             }
+
         }
+    }
+
+    fun dismissDialog() {
+        _dialogState.value = DialogState.None
     }
 }
