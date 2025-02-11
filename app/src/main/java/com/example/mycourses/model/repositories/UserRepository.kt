@@ -81,7 +81,7 @@ class UserRepository (
                 rating = "0.0"
             )
 
-            val documentReference = firestore.collection("subscriptions").document()
+            val documentReference = firestore.collection("subscription").document()
             val subscriptionWithId = subscription.copy(id = documentReference.id)
 
             documentReference.set(subscriptionWithId).await()
