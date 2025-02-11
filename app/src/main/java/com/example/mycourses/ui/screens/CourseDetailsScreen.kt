@@ -1,6 +1,8 @@
 package com.example.mycourses.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -19,9 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.Subscription
-import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.model.states.DialogState
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
@@ -38,11 +41,12 @@ fun CourseDetailsScreen(
     viewModel.initialize(course)
 
     when (uiState) {
-        is CourseUiState.Loading -> LoadingScreen()
-        is CourseUiState.Success -> {
-            val course = (uiState as CourseUiState.Success).course
-            val isFavorite = (uiState as CourseUiState.Success).isFavorite
-            val subscription = (uiState as CourseUiState.Success).subscription
+        is CourseDetailsUiState.Loading -> LoadingScreen()
+        is CourseDetailsUiState.Success -> {
+            val course = (uiState as CourseDetailsUiState.Success).course
+            val isFavorite = (uiState as CourseDetailsUiState.Success).isFavorite
+            val subscription = (uiState as CourseDetailsUiState.Success).subscription
+            val comments = (uiState as CourseDetailsUiState.Success).comments
             CourseContent(
                 course = course,
                 isFavorite = isFavorite,
@@ -53,11 +57,12 @@ fun CourseDetailsScreen(
                     subscription?.let { viewModel.updateRating(it.id, newRating) }
                 },
                 ratingUpdated = ratingUpdated,
-                onResetRating = { viewModel.resetRatingUpdated() }
+                onResetRating = { viewModel.resetRatingUpdated() },
+                comments = comments
             )
         }
-        is CourseUiState.Error -> {
-            val message = (uiState as CourseUiState.Error).message
+        is CourseDetailsUiState.Error -> {
+            val message = (uiState as CourseDetailsUiState.Error).message
             //ErrorScreen(message)
         }
 
@@ -77,7 +82,8 @@ fun CourseContent(
     onEnrollClick: () -> Unit,
     onRatingUpdate: (Float) -> Unit,
     ratingUpdated: Boolean,
-    onResetRating: () -> Unit
+    onResetRating: () -> Unit,
+    comments: List<Comment> = emptyList()
 ) {
     Column(
         Modifier
@@ -124,6 +130,17 @@ fun CourseContent(
                         contentDescription = "Favoritar curso",
                         tint = if (isFavorite) Color.Red else Color.LightGray
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Exibir comentários
+            Text("Comentários", style = MaterialTheme.typography.titleMedium)
+            LazyColumn {
+                items(comments) { comment ->
+                    CommentItem(comment)
+
                 }
             }
 
@@ -179,5 +196,14 @@ fun LoadingScreen() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun CommentItem(comment: Comment) {
+    Column(modifier = Modifier.padding(8.dp)) {
+        Text("nome")
+        Text(comment.text)
+        //Text(comment.timestamp.toString(), style = MaterialTheme.typography.bodySmall)
     }
 }

@@ -1,14 +1,18 @@
 package com.example.mycourses.model.repositories
 
 import android.util.Log
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class CourseRepository(
     private val firestore: FirebaseFirestore
@@ -77,6 +81,32 @@ class CourseRepository(
 
         } catch (e: Exception) {
             Log.e("CourseRepository", "Erro ao Avaliar curso", e)
+        }
+    }
+
+    suspend fun addComment(courseId: String, userId: String, text: String) {
+        val comment = Comment(
+            id = firestore.collection("comments").document().id,
+            courseId = courseId,
+            userId = userId,
+            text = text,
+            createdAt = Date()
+        )
+        comment.id?.let {
+            firestore.collection("comments").document(it).set(comment).await()
+        }
+    }
+
+    suspend fun getCommentsForCourse(courseId: String): List<Comment> {
+        return try {
+            firestore.collection("comments")
+                .whereEqualTo("courseId", courseId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .documents.mapNotNull { it.toObject<Comment>() }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }
