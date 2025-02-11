@@ -48,7 +48,12 @@ fun AppNavigation(navController: NavHostController) {
             CourseDetailsScreen(course = course)
         }
         composable(AppDestination.FavoriteCourses.route) {
-            CourseFavoriteScreen()
+            CourseFavoriteScreen(
+                onNavigateToDetails = { course ->
+                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
+                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                }
+            )
         }
         composable(AppDestination.EditAccount.route) {
             EditAccountScreen(navController, accountViewModel )
