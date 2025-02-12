@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
@@ -56,7 +57,8 @@ fun CourseDetailsScreen(
                 },
                 ratingUpdated = ratingUpdated,
                 onResetRating = { viewModel.resetRatingUpdated() },
-                comments = comments
+                comments = comments,
+                viewModel
             )
         }
         is CourseDetailsUiState.Error -> {
@@ -81,8 +83,11 @@ fun CourseContent(
     onRatingUpdate: (Float) -> Unit,
     ratingUpdated: Boolean,
     onResetRating: () -> Unit,
-    comments: List<Comment> = emptyList()
+    comments: List<Comment> = emptyList(),
+    viewModel: CourseDetailsViewModel
 ) {
+    var showCommentDialog by remember { mutableStateOf(false) }
+    var commentText by remember { mutableStateOf("") }
     Column(
         Modifier
             .fillMaxSize()
@@ -132,13 +137,70 @@ fun CourseContent(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            if (comments.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Comentários", style = MaterialTheme.typography.titleMedium)
 
-            Text("Comentários", style = MaterialTheme.typography.titleMedium)
-            comments.forEach {
-                    comment ->
-                CommentItem(comment)
+                    FloatingActionButton(
+                        modifier = Modifier.size(22.dp),
+                        onClick = { showCommentDialog = true },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Adicionar Comentário",
+                        )
+                    }
+                }
 
+                comments.forEach {
+                        comment ->
+                    CommentItem(comment)
+
+                }
+
+
+
+
+                /** Dialog para Adicionar Comentário */
+                if (showCommentDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showCommentDialog = false },
+                        title = { Text("Novo Comentário") },
+                        text = {
+                            Column {
+                                OutlinedTextField(
+                                    value = commentText,
+                                    onValueChange = { commentText = it },
+                                    label = { Text("Digite seu comentário") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                if (commentText.isNotBlank()) {
+                                    viewModel.addComment(course.id, commentText)
+                                    commentText = ""
+                                    showCommentDialog = false
+                                }
+                            }) {
+                                Text("Salvar")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showCommentDialog = false }) {
+                                Text("Cancelar")
+                            }
+                        }
+                    )
+                }
             }
+
             if (subscription == null) {
                 EnrollButton(onEnrollClick)
             }

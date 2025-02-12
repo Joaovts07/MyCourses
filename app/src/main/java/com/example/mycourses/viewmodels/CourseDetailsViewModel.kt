@@ -131,10 +131,10 @@ class CourseDetailsViewModel @Inject constructor(
         _dialogState.value = DialogState.None
     }
 
-    fun addComment(courseId: String, userId: String,  commentText: String) {
+    fun addComment(courseId: String, commentText: String) {
         viewModelScope.launch {
             try {
-                val newComment = courseRepository.addComment(courseId, userId, commentText)
+                val newComment = courseRepository.addComment(courseId, commentText)
 
             } catch (e: Exception) {
                 Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")

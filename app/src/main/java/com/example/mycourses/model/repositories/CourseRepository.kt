@@ -7,7 +7,6 @@ import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -84,7 +83,8 @@ class CourseRepository(
         }
     }
 
-    suspend fun addComment(courseId: String, userId: String, text: String) {
+    suspend fun addComment(courseId: String, text: String) {
+        val userId = firestore.collection("users").document().id
         val comment = Comment(
             id = firestore.collection("comments").document().id,
             courseId = courseId,
