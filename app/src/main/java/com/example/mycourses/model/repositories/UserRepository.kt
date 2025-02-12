@@ -57,7 +57,7 @@ class UserRepository (
 
     suspend fun getUserSubscription(userId: String, courseId: String): Subscription? {
         return try {
-            val querySnapshot = firestore.collection("subscription")
+            val querySnapshot = firestore.collection("subscriptions")
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("courseId", courseId)
                 .get()
@@ -81,7 +81,7 @@ class UserRepository (
                 rating = "0.0"
             )
 
-            val documentReference = firestore.collection("subscription").document()
+            val documentReference = firestore.collection("subscriptions").document()
             val subscriptionWithId = subscription.copy(id = documentReference.id)
 
             documentReference.set(subscriptionWithId).await()

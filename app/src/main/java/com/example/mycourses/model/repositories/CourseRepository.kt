@@ -1,21 +1,24 @@
 package com.example.mycourses.model.repositories
 
 import android.util.Log
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class CourseRepository(
     private val firestore: FirebaseFirestore
 ) {
 
     fun getEnrolledCourses(userId: String): Flow<List<EnrolledCourse>> = flow {
-        val subscriptionsSnapshot = firestore.collection("subscription")
+        val subscriptionsSnapshot = firestore.collection("subscriptions")
             .whereEqualTo("userId", userId)
             .get()
             .await()
@@ -72,11 +75,38 @@ class CourseRepository(
 
     suspend fun updateRating(subscriptionId: String, newRating: Float) {
         try {
-            firestore.collection("subscription")
+            firestore.collection("subscriptions")
                 .document(subscriptionId).update("rate", newRating).await()
 
         } catch (e: Exception) {
             Log.e("CourseRepository", "Erro ao Avaliar curso", e)
+        }
+    }
+
+    suspend fun addComment(courseId: String, text: String) {
+        val userId = firestore.collection("users").document().id
+        val comment = Comment(
+            id = firestore.collection("comments").document().id,
+            courseId = courseId,
+            userId = userId,
+            text = text,
+            createdAt = Date()
+        )
+        comment.id?.let {
+            firestore.collection("comments").document(it).set(comment).await()
+        }
+    }
+
+    suspend fun getCommentsForCourse(courseId: String): List<Comment> {
+        return try {
+            firestore.collection("comments")
+                .whereEqualTo("courseId", courseId)
+                .get()
+                .await()
+                .documents.mapNotNull { it.toObject<Comment>() }
+        } catch (e: Exception) {
+            Log.e("CourseRepository", "Erro ao buscar comentários", e)
+            emptyList()
         }
     }
 }

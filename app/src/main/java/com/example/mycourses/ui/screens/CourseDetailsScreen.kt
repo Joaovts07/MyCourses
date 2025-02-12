@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
@@ -19,9 +20,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.mycourses.R
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.Subscription
-import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.model.states.DialogState
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
@@ -38,11 +40,12 @@ fun CourseDetailsScreen(
     viewModel.initialize(course)
 
     when (uiState) {
-        is CourseUiState.Loading -> LoadingScreen()
-        is CourseUiState.Success -> {
-            val course = (uiState as CourseUiState.Success).course
-            val isFavorite = (uiState as CourseUiState.Success).isFavorite
-            val subscription = (uiState as CourseUiState.Success).subscription
+        is CourseDetailsUiState.Loading -> LoadingScreen()
+        is CourseDetailsUiState.Success -> {
+            val course = (uiState as CourseDetailsUiState.Success).course
+            val isFavorite = (uiState as CourseDetailsUiState.Success).isFavorite
+            val subscription = (uiState as CourseDetailsUiState.Success).subscription
+            val comments = (uiState as CourseDetailsUiState.Success).comments
             CourseContent(
                 course = course,
                 isFavorite = isFavorite,
@@ -53,11 +56,13 @@ fun CourseDetailsScreen(
                     subscription?.let { viewModel.updateRating(it.id, newRating) }
                 },
                 ratingUpdated = ratingUpdated,
-                onResetRating = { viewModel.resetRatingUpdated() }
+                onResetRating = { viewModel.resetRatingUpdated() },
+                comments = comments,
+                viewModel
             )
         }
-        is CourseUiState.Error -> {
-            val message = (uiState as CourseUiState.Error).message
+        is CourseDetailsUiState.Error -> {
+            val message = (uiState as CourseDetailsUiState.Error).message
             //ErrorScreen(message)
         }
 
@@ -77,8 +82,12 @@ fun CourseContent(
     onEnrollClick: () -> Unit,
     onRatingUpdate: (Float) -> Unit,
     ratingUpdated: Boolean,
-    onResetRating: () -> Unit
+    onResetRating: () -> Unit,
+    comments: List<Comment> = emptyList(),
+    viewModel: CourseDetailsViewModel
 ) {
+    var showCommentDialog by remember { mutableStateOf(false) }
+    var commentText by remember { mutableStateOf("") }
     Column(
         Modifier
             .fillMaxSize()
@@ -123,6 +132,71 @@ fun CourseContent(
                         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Favoritar curso",
                         tint = if (isFavorite) Color.Red else Color.LightGray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            if (comments.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Comentários", style = MaterialTheme.typography.titleMedium)
+
+                    FloatingActionButton(
+                        modifier = Modifier.size(22.dp),
+                        onClick = { showCommentDialog = true },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Adicionar Comentário",
+                        )
+                    }
+                }
+
+                comments.forEach {
+                        comment ->
+                    CommentItem(comment)
+
+                }
+
+
+
+
+                /** Dialog para Adicionar Comentário */
+                if (showCommentDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showCommentDialog = false },
+                        title = { Text("Novo Comentário") },
+                        text = {
+                            Column {
+                                OutlinedTextField(
+                                    value = commentText,
+                                    onValueChange = { commentText = it },
+                                    label = { Text("Digite seu comentário") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                if (commentText.isNotBlank()) {
+                                    viewModel.addComment(course.id, commentText)
+                                    commentText = ""
+                                    showCommentDialog = false
+                                }
+                            }) {
+                                Text("Salvar")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showCommentDialog = false }) {
+                                Text("Cancelar")
+                            }
+                        }
                     )
                 }
             }
@@ -179,5 +253,14 @@ fun LoadingScreen() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun CommentItem(comment: Comment) {
+    Column(modifier = Modifier.padding(8.dp)) {
+        Text("nome")
+        Text(comment.text)
+        //Text(comment.timestamp.toString(), style = MaterialTheme.typography.bodySmall)
     }
 }
