@@ -1,14 +1,16 @@
 package com.example.mycourses.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.model.states.DialogState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -35,20 +37,40 @@ class CourseDetailsViewModel @Inject constructor(
     private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
-    private val _uiState = MutableStateFlow<CourseUiState>(CourseUiState.Loading)
-    val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<CourseDetailsUiState>(CourseDetailsUiState.Loading)
+    val uiState: StateFlow<CourseDetailsUiState> = _uiState.asStateFlow()
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
     fun initialize(course: Course) {
         viewModelScope.launch {
-            val userId = firebaseAuth.currentUser?.uid ?: ""
-            val user = userRepository.getUserById(userId)
-            val isFavorite = user?.isFavorite(course.id) ?: false
-            val subscription = userRepository.getUserSubscription(userId, course.id)
-            _uiState.value = CourseUiState.Success(course, isFavorite, subscription)
+            try {
+                val user = getUser()
+                user?.let {
+                    val isFavorite = user.isFavorite(course.id) ?: false
+                    val subscription = userRepository.getUserSubscription(user.id, course.id)
+                    val comments = courseRepository.getCommentsForCourse(course.id)
+                    _uiState.value = CourseDetailsUiState.Success(
+                        course,
+                        isFavorite,
+                        subscription,
+                        comments
+                    )
+
+                }
+            } catch (e: Exception) {
+                _uiState.value = CourseDetailsUiState.Error(e.message ?: "Erro ao carregar curso")
+            }
+
+
         }
+    }
+
+    suspend fun getUser(): User? {
+        val userId = firebaseAuth.currentUser?.uid ?: ""
+        val user = userRepository.getUserById(userId)
+        return user
     }
 
     fun toggleFavorite(courseId: String) {
@@ -107,5 +129,16 @@ class CourseDetailsViewModel @Inject constructor(
 
     fun dismissDialog() {
         _dialogState.value = DialogState.None
+    }
+
+    fun addComment(courseId: String, commentText: String) {
+        viewModelScope.launch {
+            try {
+                val newComment = courseRepository.addComment(courseId, commentText)
+
+            } catch (e: Exception) {
+                Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")
+            }
+        }
     }
 }

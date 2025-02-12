@@ -1,0 +1,17 @@
+package com.example.mycourses.model.states
+
+import com.example.mycourses.model.entities.Comment
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.Subscription
+
+sealed class CourseDetailsUiState {
+    object Loading : CourseDetailsUiState()
+    data class Success(
+        val course: Course,
+        val isFavorite: Boolean,
+        val subscription: Subscription?,
+        val comments: List<Comment> = emptyList()
+    ) : CourseDetailsUiState()
+
+    data class Error(val message: String) : CourseDetailsUiState()
+}
