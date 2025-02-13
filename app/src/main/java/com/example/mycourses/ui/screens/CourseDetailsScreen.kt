@@ -101,7 +101,7 @@ fun CourseContent(
     course: Course,
     isFavorite: Boolean,
     subscription: Subscription?,
-    commentsWithUsers: List<Pair<Comment, User?>>, // Lista de comentários com usuários
+    commentsWithUsers: List<Pair<Comment, User?>>,
     onToggleFavorite: () -> Unit,
     onEnrollClick: () -> Unit,
     onRatingUpdate: (Float) -> Unit,
@@ -137,6 +137,11 @@ fun CourseContent(
                         contentDescription = "Favoritar",
                         tint = if (isFavorite) Color.Red else Color.LightGray
                     )
+                }
+            }
+            if (subscription == null) {
+                Button(onClick = onEnrollClick) {
+                    Text("Inscrever-se")
                 }
             }
 

@@ -128,6 +128,7 @@ class CourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userRepository.subscribleCourse(courseId)
             _dialogState.value = if (result.isSuccess) {
+                initialize(courseRepository.getCourseById(courseId))
                 DialogState.Success("Cadastrado com sucesso!")
             } else {
                 DialogState.Error("Erro ao se cadastrar no curso: $result.exceptionOrNull()?.message")
@@ -143,8 +144,7 @@ class CourseDetailsViewModel @Inject constructor(
     fun addComment(userId: String, courseId: String, commentText: String) {
         viewModelScope.launch {
             try {
-                val newComment = courseRepository.addComment(userId, courseId, commentText)
-
+                courseRepository.addComment(userId, courseId, commentText)
             } catch (e: Exception) {
                 Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")
             }

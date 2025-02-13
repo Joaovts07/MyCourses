@@ -39,7 +39,7 @@ class CourseRepository(
         emit(enrolledCourses)
     }
 
-    private suspend fun getCourseById(courseId: String): Course {
+    suspend fun getCourseById(courseId: String): Course {
         val document = firestore.collection("courses").document(courseId).get().await()
         return getCourse(document)
     }
