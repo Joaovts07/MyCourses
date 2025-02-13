@@ -49,6 +49,7 @@ fun CourseDetailsScreen(
         is CourseDetailsUiState.Loading -> LoadingScreen()
         is CourseDetailsUiState.Success -> {
             val state = uiState as CourseDetailsUiState.Success
+            val userId = state.subscription?.userId ?: ""
             CourseContent(
                 course = state.course,
                 isFavorite = state.isFavorite,
@@ -59,7 +60,7 @@ fun CourseDetailsScreen(
                 onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
                 ratingUpdated = ratingUpdated,
                 onResetRating = { viewModel.resetRatingUpdated() },
-                onAddComment = { comment -> viewModel.addComment(course.id, comment) }
+                onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) }
             )
         }
         is CourseDetailsUiState.Error -> ErrorScreen((uiState as CourseDetailsUiState.Error).message,)
@@ -100,7 +101,7 @@ fun CourseContent(
     course: Course,
     isFavorite: Boolean,
     subscription: Subscription?,
-    commentsWithUsers: List<Pair<Comment, User?>>, // Lista de comentários com usuários
+    commentsWithUsers: List<Pair<Comment, User?>>,
     onToggleFavorite: () -> Unit,
     onEnrollClick: () -> Unit,
     onRatingUpdate: (Float) -> Unit,
@@ -138,6 +139,11 @@ fun CourseContent(
                     )
                 }
             }
+            if (subscription == null) {
+                Button(onClick = onEnrollClick) {
+                    Text("Inscrever-se")
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
             Text("Comentários", style = MaterialTheme.typography.titleMedium)
@@ -151,14 +157,16 @@ fun CourseContent(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomEnd // Garante que o botão fique na posição esperada
+        modifier = Modifier.fillMaxSize().padding(end = 4.dp),
+        contentAlignment = Alignment.CenterEnd
     ) {
         FloatingActionButton(
+            modifier = Modifier.size(24.dp),
             onClick = { showCommentDialog = true },
             containerColor = MaterialTheme.colorScheme.primary
         ) {
             Icon(
+                modifier = Modifier.size(20.dp),
                 imageVector = Icons.Default.Add,
                 contentDescription = "Adicionar Comentário"
             )
