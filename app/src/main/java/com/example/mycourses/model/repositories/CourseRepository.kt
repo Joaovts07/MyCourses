@@ -39,7 +39,7 @@ class CourseRepository(
         emit(enrolledCourses)
     }
 
-    private suspend fun getCourseById(courseId: String): Course {
+    suspend fun getCourseById(courseId: String): Course {
         val document = firestore.collection("courses").document(courseId).get().await()
         return getCourse(document)
     }
@@ -83,8 +83,7 @@ class CourseRepository(
         }
     }
 
-    suspend fun addComment(courseId: String, text: String) {
-        val userId = firestore.collection("users").document().id
+    suspend fun addComment(userId: String, courseId: String, text: String) {
         val comment = Comment(
             id = firestore.collection("comments").document().id,
             courseId = courseId,

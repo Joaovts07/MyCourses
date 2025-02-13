@@ -6,6 +6,7 @@ import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.storage
@@ -89,5 +90,29 @@ class UserRepository (
         } catch (exception: Exception) {
             Result.failure(exception)
         }
+    }
+
+    suspend fun favotireCourse(courseId: String): Result<Boolean> {
+        val userId = getCurrentUser()
+        userId?.let {
+            val updates = hashMapOf<String, Any>(
+                "favoriteCourses.$courseId" to true
+            )
+            firestore.collection("users").document(userId.id).update(updates).await()
+            return Result.success(true)
+        }
+        return Result.success(false)
+    }
+
+    suspend fun unfavoriteCourse(courseId: String): Result<Boolean> {
+        val userId = getCurrentUser()
+        userId?.let {
+            val updates = hashMapOf<String, Any>(
+                "favoriteCourses.$courseId" to FieldValue.delete()
+            )
+            firestore.collection("users").document(userId.id).update(updates).await()
+            return Result.success(true)
+        }
+        return Result.success(false)
     }
 }

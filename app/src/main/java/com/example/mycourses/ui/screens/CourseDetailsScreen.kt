@@ -1,30 +1,34 @@
 package com.example.mycourses.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.mycourses.R
 import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.Subscription
+import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.model.states.DialogState
+import com.example.mycourses.ui.components.ErrorScreen
+import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
@@ -37,186 +41,32 @@ fun CourseDetailsScreen(
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
     val dialogState by viewModel.dialogState.collectAsState()
 
-    viewModel.initialize(course)
+    LaunchedEffect(course) {
+        viewModel.initialize(course)
+    }
 
     when (uiState) {
         is CourseDetailsUiState.Loading -> LoadingScreen()
         is CourseDetailsUiState.Success -> {
-            val course = (uiState as CourseDetailsUiState.Success).course
-            val isFavorite = (uiState as CourseDetailsUiState.Success).isFavorite
-            val subscription = (uiState as CourseDetailsUiState.Success).subscription
-            val comments = (uiState as CourseDetailsUiState.Success).comments
+            val state = uiState as CourseDetailsUiState.Success
+            val userId = state.subscription?.userId ?: ""
             CourseContent(
-                course = course,
-                isFavorite = isFavorite,
-                subscription = subscription,
+                course = state.course,
+                isFavorite = state.isFavorite,
+                subscription = state.subscription,
+                commentsWithUsers = state.commentsWithUsers,
                 onToggleFavorite = { viewModel.toggleFavorite(course.id) },
                 onEnrollClick = { viewModel.subscribeCourse(course.id) },
-                onRatingUpdate = { newRating ->
-                    subscription?.let { viewModel.updateRating(it.id, newRating) }
-                },
+                onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
                 ratingUpdated = ratingUpdated,
                 onResetRating = { viewModel.resetRatingUpdated() },
-                comments = comments,
-                viewModel
+                onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) }
             )
         }
-        is CourseDetailsUiState.Error -> {
-            val message = (uiState as CourseDetailsUiState.Error).message
-            //ErrorScreen(message)
-        }
-
+        is CourseDetailsUiState.Error -> ErrorScreen((uiState as CourseDetailsUiState.Error).message,)
     }
 
-    DialogHandler(
-        dialogState = dialogState,
-        onDismiss = { viewModel.dismissDialog() }
-    )
-}
-@Composable
-fun CourseContent(
-    course: Course,
-    isFavorite: Boolean,
-    subscription: Subscription?,
-    onToggleFavorite: () -> Unit,
-    onEnrollClick: () -> Unit,
-    onRatingUpdate: (Float) -> Unit,
-    ratingUpdated: Boolean,
-    onResetRating: () -> Unit,
-    comments: List<Comment> = emptyList(),
-    viewModel: CourseDetailsViewModel
-) {
-    var showCommentDialog by remember { mutableStateOf(false) }
-    var commentText by remember { mutableStateOf("") }
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        AsyncImage(
-            model = course.image,
-            contentDescription = null,
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth(),
-            placeholder = painterResource(id = R.drawable.placeholder),
-            contentScale = ContentScale.Crop
-        )
-
-        Column(Modifier.padding(16.dp)) {
-            Text(course.name, fontSize = 24.sp)
-            Text(course.description)
-
-            if(subscription != null) {
-                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
-                if (ratingUpdated) onResetRating()
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row {
-                    Text(course.rating)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "Avaliação",
-                        tint = Color.Yellow
-                    )
-                }
-
-                IconButton(onClick = onToggleFavorite) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = "Favoritar curso",
-                        tint = if (isFavorite) Color.Red else Color.LightGray
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            if (comments.isNotEmpty()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Comentários", style = MaterialTheme.typography.titleMedium)
-
-                    FloatingActionButton(
-                        modifier = Modifier.size(22.dp),
-                        onClick = { showCommentDialog = true },
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Adicionar Comentário",
-                        )
-                    }
-                }
-
-                comments.forEach {
-                        comment ->
-                    CommentItem(comment)
-
-                }
-
-
-
-
-                /** Dialog para Adicionar Comentário */
-                if (showCommentDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showCommentDialog = false },
-                        title = { Text("Novo Comentário") },
-                        text = {
-                            Column {
-                                OutlinedTextField(
-                                    value = commentText,
-                                    onValueChange = { commentText = it },
-                                    label = { Text("Digite seu comentário") },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        },
-                        confirmButton = {
-                            Button(onClick = {
-                                if (commentText.isNotBlank()) {
-                                    viewModel.addComment(course.id, commentText)
-                                    commentText = ""
-                                    showCommentDialog = false
-                                }
-                            }) {
-                                Text("Salvar")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { showCommentDialog = false }) {
-                                Text("Cancelar")
-                            }
-                        }
-                    )
-                }
-            }
-
-            if (subscription == null) {
-                EnrollButton(onEnrollClick)
-            }
-        }
-    }
-}
-
-@Composable
-fun EnrollButton(onEnrollClick: () -> Unit) {
-    Button(
-        onClick = onEnrollClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-    ) {
-        Text(text = "Cadastrar")
-    }
+    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog() })
 }
 
 @Composable
@@ -247,20 +97,130 @@ fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun LoadingScreen() {
+fun CourseContent(
+    course: Course,
+    isFavorite: Boolean,
+    subscription: Subscription?,
+    commentsWithUsers: List<Pair<Comment, User?>>,
+    onToggleFavorite: () -> Unit,
+    onEnrollClick: () -> Unit,
+    onRatingUpdate: (Float) -> Unit,
+    ratingUpdated: Boolean,
+    onResetRating: () -> Unit,
+    onAddComment: (String) -> Unit
+) {
+    var showCommentDialog by remember { mutableStateOf(false) }
+    var commentText by remember { mutableStateOf("") }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        AsyncImage(
+            model = course.image,
+            contentDescription = null,
+            modifier = Modifier.height(200.dp).fillMaxWidth(),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(Modifier.padding(16.dp)) {
+            Text(course.name, fontSize = 24.sp)
+            Text(course.description)
+
+            if (subscription != null) {
+                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
+                if (ratingUpdated) onResetRating()
+            }
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(course.rating)
+                IconButton(onClick = onToggleFavorite) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = "Favoritar",
+                        tint = if (isFavorite) Color.Red else Color.LightGray
+                    )
+                }
+            }
+            if (subscription == null) {
+                Button(onClick = onEnrollClick) {
+                    Text("Inscrever-se")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Comentários", style = MaterialTheme.typography.titleMedium)
+
+            LazyColumn(modifier = Modifier.fillMaxHeight(0.5f)) {
+                items(commentsWithUsers) { (comment, user) ->
+                    CommentItem(comment, user)
+                }
+            }
+        }
+    }
+
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize().padding(end = 4.dp),
+        contentAlignment = Alignment.CenterEnd
     ) {
-        CircularProgressIndicator()
+        FloatingActionButton(
+            modifier = Modifier.size(24.dp),
+            onClick = { showCommentDialog = true },
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Default.Add,
+                contentDescription = "Adicionar Comentário"
+            )
+        }
+    }
+
+    if (showCommentDialog) {
+        AlertDialog(
+            onDismissRequest = { showCommentDialog = false },
+            title = { Text("Novo Comentário") },
+            text = {
+                OutlinedTextField(
+                    value = commentText,
+                    onValueChange = { commentText = it },
+                    label = { Text("Digite seu comentário") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    if (commentText.isNotBlank()) {
+                        onAddComment(commentText)
+                        commentText = ""
+                        showCommentDialog = false
+                    }
+                }) { Text("Salvar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCommentDialog = false }) { Text("Cancelar") }
+            }
+        )
     }
 }
 
 @Composable
-fun CommentItem(comment: Comment) {
-    Column(modifier = Modifier.padding(8.dp)) {
-        Text("nome")
-        Text(comment.text)
-        //Text(comment.timestamp.toString(), style = MaterialTheme.typography.bodySmall)
+fun CommentItem(comment: Comment, user: User?) {
+    Row(modifier = Modifier.padding(8.dp)) {
+        if (user?.profilePictureUrl?.isNotEmpty() == true) {
+            AsyncImage(
+                model = user.profilePictureUrl,
+                contentDescription = "Foto do usuário",
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+            )
+        } else {
+            Box(
+                modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.Blue),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = user?.name?.firstOrNull()?.toString() ?: "?", color = Color.White)
+            }
+        }
+        Column(modifier = Modifier.padding(start = 8.dp)) {
+            Text(user?.name ?: "Usuário desconhecido", fontWeight = FontWeight.Bold)
+            Text(comment.text)
+        }
     }
 }

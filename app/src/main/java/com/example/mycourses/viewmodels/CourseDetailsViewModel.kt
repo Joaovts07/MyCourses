@@ -6,28 +6,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.model.states.DialogState
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class CourseDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
     private val courseRepository: CourseRepository
 ) : ViewModel() {
 
@@ -51,11 +46,12 @@ class CourseDetailsViewModel @Inject constructor(
                     val isFavorite = user.isFavorite(course.id) ?: false
                     val subscription = userRepository.getUserSubscription(user.id, course.id)
                     val comments = courseRepository.getCommentsForCourse(course.id)
+                    val commentsWithUsers = getCommentsWithUsers(comments)
                     _uiState.value = CourseDetailsUiState.Success(
                         course,
                         isFavorite,
                         subscription,
-                        comments
+                        commentsWithUsers
                     )
 
                 }
@@ -67,30 +63,43 @@ class CourseDetailsViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getCommentsWithUsers(comments: List<Comment>): List<Pair<Comment, User?>> {
+        val commentsWithUsers = mutableListOf<Pair<Comment, User?>>()
+        return try {
+            comments.forEach { comment ->
+                val userId = comment.userId
+                val user = userRepository.getUserById(userId)
+                commentsWithUsers.add(Pair(comment, user))
+            }
+            commentsWithUsers
+        }catch (ex: Exception) {
+            Log.e("CourseDetailsVM", "Erro ao carregar comentários: ${ex.message}")
+            emptyList()
+        }
+
+    }
+
     suspend fun getUser(): User? {
-        val userId = firebaseAuth.currentUser?.uid ?: ""
-        val user = userRepository.getUserById(userId)
-        return user
+        val userId = userRepository.getCurrentUser()
+        userId?.let {
+            val user = userRepository.getUserById(userId.id)
+            return user
+        }
+        return null
     }
 
     fun toggleFavorite(courseId: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userDocRef = firestore.collection("users").document(userId)
-
         viewModelScope.launch {
             if (isFavorite) {
-                val updates = hashMapOf<String, Any>(
-                    "favoriteCourses.$courseId" to FieldValue.delete()
-                )
                 try {
-                    userDocRef.update(updates).await()
+                    userRepository.unfavoriteCourse(courseId)
                     isFavorite = false
                 } catch (e: Exception) {
                     // Tratar erro
                 }
             } else {
                 try {
-                    userDocRef.update("favoriteCourses.$courseId", true).await()
+                    userRepository.favotireCourse(courseId)
                     isFavorite = true
                 } catch (e: Exception) {
                     // Tratar erro
@@ -119,6 +128,7 @@ class CourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userRepository.subscribleCourse(courseId)
             _dialogState.value = if (result.isSuccess) {
+                initialize(courseRepository.getCourseById(courseId))
                 DialogState.Success("Cadastrado com sucesso!")
             } else {
                 DialogState.Error("Erro ao se cadastrar no curso: $result.exceptionOrNull()?.message")
@@ -131,11 +141,10 @@ class CourseDetailsViewModel @Inject constructor(
         _dialogState.value = DialogState.None
     }
 
-    fun addComment(courseId: String, commentText: String) {
+    fun addComment(userId: String, courseId: String, commentText: String) {
         viewModelScope.launch {
             try {
-                val newComment = courseRepository.addComment(courseId, commentText)
-
+                courseRepository.addComment(userId, courseId, commentText)
             } catch (e: Exception) {
                 Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")
             }
