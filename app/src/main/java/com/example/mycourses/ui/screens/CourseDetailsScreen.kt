@@ -150,11 +150,19 @@ fun CourseContent(
         }
     }
 
-    FloatingActionButton(
-        onClick = { showCommentDialog = true },
-        //modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd // Garante que o botão fique na posição esperada
     ) {
-        Icon(Icons.Default.Add, contentDescription = "Adicionar Comentário", modifier = Modifier.size(24.dp))
+        FloatingActionButton(
+            onClick = { showCommentDialog = true },
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Adicionar Comentário"
+            )
+        }
     }
 
     if (showCommentDialog) {
