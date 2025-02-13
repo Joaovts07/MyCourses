@@ -83,8 +83,7 @@ class CourseRepository(
         }
     }
 
-    suspend fun addComment(courseId: String, text: String) {
-        val userId = firestore.collection("users").document().id
+    suspend fun addComment(userId: String, courseId: String, text: String) {
         val comment = Comment(
             id = firestore.collection("comments").document().id,
             courseId = courseId,
