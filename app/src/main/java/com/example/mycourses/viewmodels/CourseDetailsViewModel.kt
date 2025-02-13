@@ -27,8 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CourseDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore,
     private val courseRepository: CourseRepository
 ) : ViewModel() {
 
@@ -86,29 +84,26 @@ class CourseDetailsViewModel @Inject constructor(
     }
 
     suspend fun getUser(): User? {
-        val userId = firebaseAuth.currentUser?.uid ?: ""
-        val user = userRepository.getUserById(userId)
-        return user
+        val userId = userRepository.getCurrentUser()
+        userId?.let {
+            val user = userRepository.getUserById(userId.id)
+            return user
+        }
+        return null
     }
 
     fun toggleFavorite(courseId: String) {
-        val userId = firebaseAuth.currentUser?.uid ?: return
-        val userDocRef = firestore.collection("users").document(userId)
-
         viewModelScope.launch {
             if (isFavorite) {
-                val updates = hashMapOf<String, Any>(
-                    "favoriteCourses.$courseId" to FieldValue.delete()
-                )
                 try {
-                    userDocRef.update(updates).await()
+                    userRepository.unfavoriteCourse(courseId)
                     isFavorite = false
                 } catch (e: Exception) {
                     // Tratar erro
                 }
             } else {
                 try {
-                    userDocRef.update("favoriteCourses.$courseId", true).await()
+                    userRepository.favotireCourse(courseId)
                     isFavorite = true
                 } catch (e: Exception) {
                     // Tratar erro
@@ -149,10 +144,10 @@ class CourseDetailsViewModel @Inject constructor(
         _dialogState.value = DialogState.None
     }
 
-    fun addComment(courseId: String, commentText: String) {
+    fun addComment(userId: String, courseId: String, commentText: String) {
         viewModelScope.launch {
             try {
-                val newComment = courseRepository.addComment(courseId, commentText)
+                val newComment = courseRepository.addComment(userId, courseId, commentText)
 
             } catch (e: Exception) {
                 Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")
