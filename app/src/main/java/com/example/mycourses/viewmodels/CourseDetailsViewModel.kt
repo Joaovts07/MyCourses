@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
@@ -51,11 +52,12 @@ class CourseDetailsViewModel @Inject constructor(
                     val isFavorite = user.isFavorite(course.id) ?: false
                     val subscription = userRepository.getUserSubscription(user.id, course.id)
                     val comments = courseRepository.getCommentsForCourse(course.id)
+                    val commentsWithUsers = getCommentsWithUsers(comments)
                     _uiState.value = CourseDetailsUiState.Success(
                         course,
                         isFavorite,
                         subscription,
-                        comments
+                        commentsWithUsers
                     )
 
                 }
@@ -65,6 +67,22 @@ class CourseDetailsViewModel @Inject constructor(
 
 
         }
+    }
+
+    private suspend fun getCommentsWithUsers(comments: List<Comment>): List<Pair<Comment, User?>> {
+        val commentsWithUsers = mutableListOf<Pair<Comment, User?>>()
+        return try {
+            comments.forEach { comment ->
+                val userId = comment.userId
+                val user = userRepository.getUserById(userId)
+                commentsWithUsers.add(Pair(comment, user))
+            }
+            commentsWithUsers
+        }catch (ex: Exception) {
+            Log.e("CourseDetailsVM", "Erro ao carregar comentários: ${ex.message}")
+            emptyList()
+        }
+
     }
 
     suspend fun getUser(): User? {
