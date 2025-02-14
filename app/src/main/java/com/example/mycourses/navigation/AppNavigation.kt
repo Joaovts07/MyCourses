@@ -62,6 +62,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(AppDestination.Account.route) {
             AccountScreen(
+                navController = navController,
                 onEditClick = {
                     navController.navigate(AppDestination.EditAccount.route)
                 },
@@ -89,5 +90,6 @@ fun AppNavigation(navController: NavHostController) {
                 context = LocalContext.current
             )
         }
+        composable(AppDestination.CourseCreation.route) { CourseCreationScreen(navController) }
     }
 }

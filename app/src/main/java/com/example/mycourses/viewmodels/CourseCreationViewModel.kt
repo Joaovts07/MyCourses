@@ -1,5 +1,17 @@
 package com.example.mycourses.viewmodels
 
+import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mycourses.model.repositories.CourseRepository
+import com.example.mycourses.model.states.CourseCreationUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 sealed class CourseCreationStep {
     object Info : CourseCreationStep()
     object Image : CourseCreationStep()
@@ -24,8 +36,12 @@ class CourseCreationViewModel @Inject constructor(
         uiState = uiState.copy(category = category)
     }
 
-    fun updateImage(imageUri: Uri?) {
+    fun updateCourseImage(imageUri: Uri?) {
         uiState = uiState.copy(imageUri = imageUri)
+    }
+
+    fun updateCourseInfo(title: String, category: String) {
+        uiState = uiState.copy(title = title, category = category)
     }
 
     fun nextStep() {
@@ -49,16 +65,7 @@ class CourseCreationViewModel @Inject constructor(
             repository.createCourse(uiState.title, uiState.category, uiState.imageUri)
         }
     }
+
 }
 
-@Composable
-fun CourseCreationScreen(viewModel: CourseCreationViewModel = hiltViewModel()) {
-    val uiState by remember { mutableStateOf(viewModel.uiState) }
-    val currentStep by remember { mutableStateOf(viewModel.currentStep) }
 
-    when (currentStep) {
-        CourseCreationStep.Info -> CourseInfoScreen(viewModel)
-        CourseCreationStep.Image -> CourseImageScreen(viewModel)
-        CourseCreationStep.Review -> CourseReviewScreen(viewModel)
-    }
-}
