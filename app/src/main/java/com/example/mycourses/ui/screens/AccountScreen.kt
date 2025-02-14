@@ -63,14 +63,10 @@ fun AccountScreen(
                 EnrolledCourses(enrolledCourses, onCourseClicked)
 
                 Spacer(Modifier.height(16.dp))
+                CreateCourseButton { accountViewModel.createCourse() }
+                Spacer(Modifier.height(16.dp))
+                LogoutButton { accountViewModel.logout() }
 
-                OutlinedButton(onClick = { accountViewModel.logout()  },
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.error),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )) {
-                    Text(text = "Sair")
-                }
             }
             is EnrolledCoursesState.Error -> {
                 val errorMessage = (uiState as EnrolledCoursesState.Error).message
@@ -131,5 +127,26 @@ fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails:
             course = enrolledCourse?.course,
             modifier = Modifier.clickable { onNavigateToDetails(enrolledCourse) }
         )
+    }
+}
+
+@Composable
+fun LogoutButton(onclick: () -> Unit) {
+    OutlinedButton(onClick = { onclick()  },
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.error),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.error
+        )) {
+        Text(text = "Sair")
+    }
+}
+
+@Composable
+fun CreateCourseButton(onclick: () -> Unit) {
+    Button(onClick = { onclick() },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )) {
+        Text(text = "Cadastrar Curso")
     }
 }
