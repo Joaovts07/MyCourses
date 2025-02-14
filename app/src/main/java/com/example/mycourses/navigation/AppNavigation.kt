@@ -9,6 +9,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.login.ui.screens.LoginNavigation
+import com.example.mycourses.AuthState
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.viewmodels.AccountViewModel
@@ -66,6 +68,16 @@ fun AppNavigation(navController: NavHostController) {
                 onCourseClicked = { course ->
                     val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
                     navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                },
+                onLogout = {
+                    LoginNavigation(
+                        navController = navController,
+                        routeSuccess = "home",
+                        onLoginSuccess = {
+
+                        }
+                    )
+
                 }
             )
         }
