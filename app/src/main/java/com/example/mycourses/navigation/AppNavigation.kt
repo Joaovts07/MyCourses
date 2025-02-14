@@ -3,14 +3,14 @@ package com.example.mycourses.navigation
 import AccountScreen
 import EditAccountScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.login.ui.screens.LoginNavigation
-import com.example.mycourses.AuthState
+import com.example.login.ui.screens.LoginScreen
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.viewmodels.AccountViewModel
@@ -70,19 +70,24 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
                 },
                 onLogout = {
-                    LoginNavigation(
-                        navController = navController,
-                        routeSuccess = "home",
-                        onLoginSuccess = {
-
-                        }
-                    )
+                    navController.navigate("login")
 
                 }
             )
         }
         composable(AppDestination.UploadUserProfile.route) {
             UploadPhotoScreen(accountViewModel, navController)
+        }
+        composable("login") {
+            LoginScreen(
+                navController = navController,
+                onLoginSuccess = {
+                    navController.navigate("login") {
+                        popUpTo(AppDestination.Account.route) { inclusive = true }
+                    }
+                },
+                context = LocalContext.current
+            )
         }
     }
 }

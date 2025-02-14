@@ -116,7 +116,13 @@ class UserRepository (
         return Result.success(false)
     }
 
-    fun logout() {
-        auth.signOut()
+    fun logout(): Boolean {
+        return try {
+            auth.signOut()
+            true
+        } catch (ex: Exception) {
+            false
+        }
     }
+
 }

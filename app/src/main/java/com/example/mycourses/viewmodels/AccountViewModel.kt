@@ -110,8 +110,12 @@ class AccountViewModel @Inject constructor(
     }
 
     fun logout() {
-        userRepository.logout()
-        _logoutState.value = true
+        _logoutState.value = userRepository.logout()
+    }
+
+    fun resetUserState() {
+        _logoutState.value = false
+
     }
 
 }
