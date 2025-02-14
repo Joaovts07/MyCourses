@@ -42,7 +42,8 @@ fun AccountScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (logoutState) {
-           onLogout()
+            onLogout()
+            accountViewModel.resetUserState()
         }
         if (isLoading) {
             CircularProgressIndicator()
