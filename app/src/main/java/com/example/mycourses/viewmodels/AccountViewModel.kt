@@ -28,6 +28,9 @@ class AccountViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<EnrolledCoursesState>(EnrolledCoursesState.Loading)
     val uiState: StateFlow<EnrolledCoursesState> = _uiState.asStateFlow()
 
+    private val _logoutState = MutableStateFlow(false)
+    val logoutState: StateFlow<Boolean> = _logoutState.asStateFlow()
+
     var user by mutableStateOf<User?>(null)
         private set
     var editedUser by mutableStateOf(User())
@@ -104,6 +107,11 @@ class AccountViewModel @Inject constructor(
                 onComplete(false)
             }
         }
+    }
+
+    fun logout() {
+        userRepository.logout()
+        _logoutState.value = true
     }
 
 }

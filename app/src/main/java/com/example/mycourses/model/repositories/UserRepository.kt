@@ -115,4 +115,8 @@ class UserRepository (
         }
         return Result.success(false)
     }
+
+    fun logout() {
+        auth.signOut()
+    }
 }

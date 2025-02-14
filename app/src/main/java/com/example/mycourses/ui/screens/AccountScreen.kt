@@ -1,3 +1,4 @@
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -22,10 +23,12 @@ import com.example.mycourses.viewmodels.AccountViewModel
 fun AccountScreen(
     onEditClick: (User) -> Unit,
     onCourseClicked: (EnrolledCourse?) -> Unit,
+    onLogout: @Composable () -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val user = accountViewModel.user
     val uiState by accountViewModel.uiState.collectAsState()
+    val logoutState by accountViewModel.logoutState.collectAsState()
 
     val isLoading = accountViewModel.isLoading
     val errorMessage = accountViewModel.errorMessage
@@ -38,6 +41,9 @@ fun AccountScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (logoutState) {
+           onLogout()
+        }
         if (isLoading) {
             CircularProgressIndicator()
         } else if (errorMessage != null) {
@@ -54,6 +60,16 @@ fun AccountScreen(
             is EnrolledCoursesState.Success -> {
                 val enrolledCourses = (uiState as EnrolledCoursesState.Success).enrolledCourses
                 EnrolledCourses(enrolledCourses, onCourseClicked)
+
+                Spacer(Modifier.height(16.dp))
+
+                OutlinedButton(onClick = { accountViewModel.logout()  },
+                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.error),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )) {
+                    Text(text = "Sair")
+                }
             }
             is EnrolledCoursesState.Error -> {
                 val errorMessage = (uiState as EnrolledCoursesState.Error).message
@@ -62,7 +78,6 @@ fun AccountScreen(
         }
     }
 }
-
 @Composable
 fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     UserPicture(user, false)
