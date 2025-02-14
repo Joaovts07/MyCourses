@@ -12,15 +12,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.EnrolledCoursesState
+import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
 @Composable
 fun AccountScreen(
+    navController: NavController,
     onEditClick: (User) -> Unit,
     onCourseClicked: (EnrolledCourse?) -> Unit,
     onLogout: @Composable () -> Unit,
@@ -63,7 +66,7 @@ fun AccountScreen(
                 EnrolledCourses(enrolledCourses, onCourseClicked)
 
                 Spacer(Modifier.height(16.dp))
-                CreateCourseButton { accountViewModel.createCourse() }
+                CreateCourseButton { navController.navigate(AppDestination.CourseCreation.route) }
                 Spacer(Modifier.height(16.dp))
                 LogoutButton { accountViewModel.logout() }
 
