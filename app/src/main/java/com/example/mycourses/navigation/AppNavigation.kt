@@ -90,6 +90,14 @@ fun AppNavigation(navController: NavHostController) {
                 context = LocalContext.current
             )
         }
-        composable(AppDestination.CourseCreation.route) { CourseCreationScreen(navController) }
+        composable(AppDestination.CourseInfoCreation.route) {
+            CourseInfoScreen { navController.navigate(AppDestination.CourseImageCreation.route) }
+        }
+        composable(AppDestination.CourseImageCreation.route) {
+            CourseImageScreen(
+                onNext = { navController.navigate("") },
+                onBack = { navController.navigate("") }
+            )
+        }
     }
 }

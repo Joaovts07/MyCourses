@@ -66,7 +66,7 @@ fun AccountScreen(
                 EnrolledCourses(enrolledCourses, onCourseClicked)
 
                 Spacer(Modifier.height(16.dp))
-                CreateCourseButton { navController.navigate(AppDestination.CourseCreation.route) }
+                CreateCourseButton { navController.navigate(AppDestination.CourseInfoCreation.route) }
                 Spacer(Modifier.height(16.dp))
                 LogoutButton { accountViewModel.logout() }
 
