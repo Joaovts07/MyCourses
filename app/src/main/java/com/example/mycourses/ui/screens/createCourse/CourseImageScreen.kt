@@ -1,4 +1,4 @@
-package com.example.mycourses.ui.screens
+package com.example.mycourses.ui.screens.createCourse
 
 import android.net.Uri
 import androidx.compose.foundation.Image
