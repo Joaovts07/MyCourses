@@ -25,9 +25,6 @@ class CourseCreationViewModel @Inject constructor(
     var uiState by mutableStateOf(CourseCreationUiState())
         private set
 
-    var currentStep by mutableStateOf<CourseCreationStep>(CourseCreationStep.Info)
-        private set
-
     fun updateTitle(title: String) {
         uiState = uiState.copy(title = title)
     }
@@ -42,22 +39,6 @@ class CourseCreationViewModel @Inject constructor(
 
     fun updateCourseInfo(title: String, category: String) {
         uiState = uiState.copy(title = title, category = category)
-    }
-
-    fun nextStep() {
-        currentStep = when (currentStep) {
-            CourseCreationStep.Info -> CourseCreationStep.Image
-            CourseCreationStep.Image -> CourseCreationStep.Review
-            CourseCreationStep.Review -> CourseCreationStep.Review
-        }
-    }
-
-    fun previousStep() {
-        currentStep = when (currentStep) {
-            CourseCreationStep.Review -> CourseCreationStep.Image
-            CourseCreationStep.Image -> CourseCreationStep.Info
-            CourseCreationStep.Info -> CourseCreationStep.Info
-        }
     }
 
     fun submitCourse() {

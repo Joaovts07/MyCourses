@@ -1,5 +1,6 @@
 package com.example.mycourses.model.repositories
 
+import android.net.Uri
 import android.util.Log
 import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
@@ -107,5 +108,9 @@ class CourseRepository(
             Log.e("CourseRepository", "Erro ao buscar comentários", e)
             emptyList()
         }
+    }
+
+    fun createCourse(title: String, category: String, imageUri: Uri?) {
+        TODO("Not yet implemented")
     }
 }
