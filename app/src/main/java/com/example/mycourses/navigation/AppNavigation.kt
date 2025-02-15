@@ -62,6 +62,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(AppDestination.Account.route) {
             AccountScreen(
+                navController = navController,
                 onEditClick = {
                     navController.navigate(AppDestination.EditAccount.route)
                 },
@@ -87,6 +88,15 @@ fun AppNavigation(navController: NavHostController) {
                     }
                 },
                 context = LocalContext.current
+            )
+        }
+        composable(AppDestination.CourseInfoCreation.route) {
+            CourseInfoScreen { navController.navigate(AppDestination.CourseImageCreation.route) }
+        }
+        composable(AppDestination.CourseImageCreation.route) {
+            CourseImageScreen(
+                onNext = { navController.navigate("") },
+                onBack = { navController.navigate("") }
             )
         }
     }
