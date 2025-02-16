@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mycourses.model.states.DialogState
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
@@ -63,5 +65,32 @@ fun ErrorScreen(message: String, onRetry: () -> Unit = {}, modifier: Modifier = 
                 Text("Tentar Novamente")
             }
         }
+    }
+}
+
+@Composable
+fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
+    when (dialogState) {
+        is DialogState.Success -> {
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                confirmButton = {
+                    Button(onClick = onDismiss) { Text("OK") }
+                },
+                title = { Text("Sucesso") },
+                text = { Text(dialogState.message) }
+            )
+        }
+        is DialogState.Error -> {
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                confirmButton = {
+                    Button(onClick = onDismiss) { Text("OK") }
+                },
+                title = { Text("Erro") },
+                text = { Text(dialogState.message) }
+            )
+        }
+        DialogState.None -> {}
     }
 }
