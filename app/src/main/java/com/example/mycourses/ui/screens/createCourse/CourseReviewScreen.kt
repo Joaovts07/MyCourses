@@ -25,19 +25,19 @@ import com.example.mycourses.viewmodels.CourseCreationViewModel
 
 @Composable
 fun CourseReviewScreen(
-    viewModel: CourseCreationViewModel = hiltViewModel(),
+    viewModel: CourseCreationViewModel,
     onBack: () -> Unit
 ) {
-    val uiState = viewModel.uiState
+    val uiState = viewModel.uiState.collectAsState()
     val dialogState by viewModel.dialogState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Revisão do Curso", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Título: ${uiState.name}")
-        Text("Categoria: ${uiState.category}")
-        uiState.image?.let { imageUri ->
+        Text("Título: ${uiState.value.name}")
+        Text("Categoria: ${uiState.value.category}")
+        uiState.value.image?.let { imageUri ->
             Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
         }
 
