@@ -13,6 +13,7 @@ import java.util.UUID
 data class Course(
     val id: String = UUID.randomUUID().toString(),
     val name: String =  "",
+    val category: String =  "",
     val price: String = "",
     val description: String = "",
     val image: String? = null,

@@ -40,7 +40,7 @@ fun AccountScreen(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBars)
-            .padding(top = 18.dp)
+            .padding( start = 16.dp, end = 16.dp, top = 18.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

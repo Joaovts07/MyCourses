@@ -26,7 +26,7 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.CourseDetailsUiState
-import com.example.mycourses.model.states.DialogState
+import com.example.mycourses.ui.components.DialogHandler
 import com.example.mycourses.ui.components.ErrorScreen
 import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.components.RatingBar
@@ -67,33 +67,6 @@ fun CourseDetailsScreen(
     }
 
     DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog() })
-}
-
-@Composable
-fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
-    when (dialogState) {
-        is DialogState.Success -> {
-            AlertDialog(
-                onDismissRequest = onDismiss,
-                confirmButton = {
-                    Button(onClick = onDismiss) { Text("OK") }
-                },
-                title = { Text("Sucesso") },
-                text = { Text(dialogState.message) }
-            )
-        }
-        is DialogState.Error -> {
-            AlertDialog(
-                onDismissRequest = onDismiss,
-                confirmButton = {
-                    Button(onClick = onDismiss) { Text("OK") }
-                },
-                title = { Text("Erro") },
-                text = { Text(dialogState.message) }
-            )
-        }
-        DialogState.None -> {}
-    }
 }
 
 @Composable

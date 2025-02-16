@@ -1,4 +1,4 @@
-package com.example.mycourses.ui.screens
+package com.example.mycourses.ui.screens.createCourse
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
