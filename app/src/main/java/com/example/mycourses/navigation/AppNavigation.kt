@@ -15,6 +15,7 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.ui.screens.createCourse.CourseImageScreen
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
+import com.example.mycourses.ui.screens.createCourse.CourseReviewScreen
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
 import com.google.gson.Gson
@@ -98,6 +99,11 @@ fun AppNavigation(navController: NavHostController) {
         composable(AppDestination.CourseImageCreation.route) {
             CourseImageScreen(
                 onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
+                onBack = { navController.navigate(AppDestination.CourseImageCreation.route) }
+            )
+        }
+        composable(AppDestination.CourseReviewCreation.route) {
+            CourseReviewScreen(
                 onBack = { navController.navigate(AppDestination.CourseImageCreation.route) }
             )
         }

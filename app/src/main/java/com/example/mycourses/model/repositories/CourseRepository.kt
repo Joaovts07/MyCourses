@@ -110,7 +110,15 @@ class CourseRepository(
         }
     }
 
-    fun createCourse(title: String, category: String, imageUri: Uri?) {
-        TODO("Not yet implemented")
+    suspend fun createCourse(course: Course) : Result<Boolean>  {
+        return try {
+            val documentReference = firestore.collection("courses").document()
+            val subscriptionWithId = course.copy(id = documentReference.id)
+
+            documentReference.set(subscriptionWithId).await()
+            Result.success(true)
+        } catch (exception: Exception) {
+            Result.failure(exception)
+        }
     }
 }

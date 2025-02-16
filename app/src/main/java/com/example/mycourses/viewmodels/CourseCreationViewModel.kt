@@ -45,12 +45,13 @@ class CourseCreationViewModel @Inject constructor(
 
     fun submitCourse() {
         viewModelScope.launch {
-            try {
-                repository.createCourse(uiState)
-
-            } catch (e: Exception){
-
+            val result = repository.createCourse(uiState)
+            _dialogState.value = if (result.isSuccess) {
+                DialogState.Success("Cadastrado com sucesso!")
+            } else {
+                DialogState.Error("Erro ao cadastrar curso: $result.exceptionOrNull()?.message")
             }
+
         }
     }
 

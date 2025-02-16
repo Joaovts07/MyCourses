@@ -14,27 +14,30 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.mycourses.ui.components.DialogHandler
 import com.example.mycourses.viewmodels.CourseCreationViewModel
 
 @Composable
 fun CourseReviewScreen(
     viewModel: CourseCreationViewModel = hiltViewModel(),
-    onSubmit: () -> Unit,
     onBack: () -> Unit
 ) {
     val uiState = viewModel.uiState
+    val dialogState by viewModel.dialogState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Revisão do Curso", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Título: ${uiState.title}")
+        Text("Título: ${uiState.name}")
         Text("Categoria: ${uiState.category}")
-        uiState.imageUri?.let { imageUri ->
+        uiState.image?.let { imageUri ->
             Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
         }
 
@@ -42,7 +45,9 @@ fun CourseReviewScreen(
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Button(onClick = onBack) { Text("Voltar") }
-            Button(onClick = onSubmit) { Text("Criar Curso") }
+            Button(onClick = { viewModel.submitCourse() }) { Text("Criar Curso") }
         }
     }
+    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog() })
+
 }

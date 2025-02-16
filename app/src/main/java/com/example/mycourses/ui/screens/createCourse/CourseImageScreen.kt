@@ -1,6 +1,8 @@
 package com.example.mycourses.ui.screens.createCourse
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +34,11 @@ fun CourseImageScreen(
     onBack: () -> Unit
 ) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         imageUri?.let {
             Image(painter = rememberAsyncImagePainter(it), contentDescription = null, modifier = Modifier.size(200.dp))
@@ -40,7 +46,9 @@ fun CourseImageScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {  }) {
+        Button(onClick = {
+            launcher.launch("image/*")
+        }) {
             Text("Selecionar Imagem")
         }
 
