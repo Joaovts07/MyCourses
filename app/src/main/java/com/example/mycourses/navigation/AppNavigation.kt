@@ -94,12 +94,19 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable(AppDestination.CourseInfoCreation.route) {
-            CourseInfoScreen { navController.navigate(AppDestination.CourseImageCreation.route) }
+            CourseInfoScreen(
+                onNext = {
+                    navController.navigate(AppDestination.CourseImageCreation.route)
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable(AppDestination.CourseImageCreation.route) {
             CourseImageScreen(
                 onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
-                onBack = { navController.navigate(AppDestination.CourseImageCreation.route) }
+                onBack = { navController.popBackStack()}
             )
         }
         composable(AppDestination.CourseReviewCreation.route) {
