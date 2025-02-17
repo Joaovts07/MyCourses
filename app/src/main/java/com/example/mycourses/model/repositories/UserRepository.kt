@@ -12,6 +12,7 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
 import kotlin.Result
+
 class UserRepository (
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth

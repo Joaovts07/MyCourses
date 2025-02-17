@@ -124,13 +124,14 @@ class CourseRepository(
 
                 val courseWithImage = course.copy(
                     id = courseId,
-                    image = imageUrl
+                    image = imageUrl,
+                    price = "0"
                 )
 
                 documentReference.set(courseWithImage).await()
                 Result.success(true)
             } else {
-                val exception = imageUrlResult.exceptionOrNull() ?: throw Exception("Erro ao fazer upload da imagem")
+                val exception = imageUrlResult.exceptionOrNull() ?: throw Exception("Erro ao Cadastrar Curso")
                 Result.failure(exception )
             }
 
@@ -148,7 +149,7 @@ class CourseRepository(
                 val downloadUrl = uploadTask.metadata?.reference?.downloadUrl?.await()?.toString()
                 Result.success(downloadUrl)
             } else {
-                Result.success(null)
+                throw Exception("Erro ao fazer upload da imagem")
             }
         } catch (exception: Exception) {
             Result.failure(exception)

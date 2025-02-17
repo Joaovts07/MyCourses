@@ -33,11 +33,11 @@ class CourseCreationViewModel @Inject constructor(
     }
 
     fun updateCourseImage(imageUri: Uri?) {
-        _uiState.update { it.copy(image = imageUri.toString()) }
+        _uiState.update { it.copy(imageUri = imageUri) }
     }
 
-    fun updateCourseInfo(title: String, category: String) {
-        _uiState.update { it.copy(name = title, category = category) }
+    fun updateCourseInfo(title: String, description: String, category: String) {
+        _uiState.update { it.copy(name = title, description = description, category = category) }
     }
 
     fun submitCourse() {
@@ -51,8 +51,9 @@ class CourseCreationViewModel @Inject constructor(
         }
     }
 
-    fun dismissDialog() {
+    fun dismissDialog(back: () -> Unit) {
         _dialogState.value = DialogState.None
+        back()
     }
 }
 
