@@ -9,13 +9,15 @@ import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
 class CourseRepository(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) {
 
     fun getEnrolledCourses(userId: String): Flow<List<EnrolledCourse>> = flow {
@@ -110,13 +112,44 @@ class CourseRepository(
         }
     }
 
-    suspend fun createCourse(course: Course) : Result<Boolean>  {
+    suspend fun createCourse(course: Course): Result<Boolean> {
         return try {
             val documentReference = firestore.collection("courses").document()
-            val subscriptionWithId = course.copy(id = documentReference.id)
+            val courseId = documentReference.id
 
-            documentReference.set(subscriptionWithId).await()
-            Result.success(true)
+            val imageUrlResult = uploadCourseImage(course.imageUri, courseId)
+
+            if (imageUrlResult.isSuccess) {
+                val imageUrl = imageUrlResult.getOrNull()
+
+                val courseWithImage = course.copy(
+                    id = courseId,
+                    image = imageUrl
+                )
+
+                documentReference.set(courseWithImage).await()
+                Result.success(true)
+            } else {
+                val exception = imageUrlResult.exceptionOrNull() ?: throw Exception("Erro ao fazer upload da imagem")
+                Result.failure(exception )
+            }
+
+        } catch (exception: Exception) {
+            Result.failure(exception)
+        }
+    }
+
+
+    suspend fun uploadCourseImage(imageUri: Uri?, courseId: String): Result<String?> {
+        return try {
+            if (imageUri != null) {
+                val storageRef = storage.reference.child("course_images/${courseId}")
+                val uploadTask = storageRef.putFile(imageUri).await()
+                val downloadUrl = uploadTask.metadata?.reference?.downloadUrl?.await()?.toString()
+                Result.success(downloadUrl)
+            } else {
+                Result.success(null)
+            }
         } catch (exception: Exception) {
             Result.failure(exception)
         }
