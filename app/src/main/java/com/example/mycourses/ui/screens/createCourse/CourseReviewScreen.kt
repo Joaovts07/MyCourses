@@ -48,6 +48,6 @@ fun CourseReviewScreen(
             Button(onClick = { viewModel.submitCourse() }) { Text("Criar Curso") }
         }
     }
-    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog() })
+    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog(onBack) })
 
 }
