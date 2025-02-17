@@ -72,13 +72,23 @@ fun CourseInfoContent(
     modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
 
-    Column(modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp)) {
+    Column(modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
         TextField(
             value = title,
             onValueChange = { title = it },
             label = { Text("Título do Curso") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Descrição") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -95,7 +105,7 @@ fun CourseInfoContent(
 
         Button(
             onClick = {
-                courseCreationViewModel.updateCourseInfo(title, category)
+                courseCreationViewModel.updateCourseInfo(title, description, category)
                 onNext()
             },
             modifier = Modifier.align(Alignment.End)

@@ -37,7 +37,7 @@ fun CourseReviewScreen(
 
         Text("Título: ${uiState.value.name}")
         Text("Categoria: ${uiState.value.category}")
-        uiState.value.image?.let { imageUri ->
+        uiState.value.imageUri?.let { imageUri ->
             Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
         }
 
@@ -48,6 +48,6 @@ fun CourseReviewScreen(
             Button(onClick = { viewModel.submitCourse() }) { Text("Criar Curso") }
         }
     }
-    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog() })
+    DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog(onBack) })
 
 }
