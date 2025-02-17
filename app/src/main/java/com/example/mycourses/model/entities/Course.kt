@@ -1,5 +1,6 @@
 package com.example.mycourses.model.entities
 
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
@@ -17,6 +18,7 @@ data class Course(
     val price: String = "",
     val description: String = "",
     val image: String? = null,
+    val imageUri: Uri? = null,
     val rating: String = ""
 ): Parcelable {
     constructor(parcel: Parcel) : this(
