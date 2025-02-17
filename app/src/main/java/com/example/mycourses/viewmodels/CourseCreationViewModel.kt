@@ -33,7 +33,7 @@ class CourseCreationViewModel @Inject constructor(
     }
 
     fun updateCourseImage(imageUri: Uri?) {
-        _uiState.update { it.copy(image = imageUri.toString()) }
+        _uiState.update { it.copy(imageUri = imageUri) }
     }
 
     fun updateCourseInfo(title: String, category: String) {
