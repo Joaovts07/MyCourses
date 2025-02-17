@@ -33,7 +33,7 @@ import com.example.mycourses.viewmodels.CourseCreationViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseInfoScreen(
-    courseCreationViewModel: CourseCreationViewModel = hiltViewModel(),
+    courseCreationViewModel: CourseCreationViewModel,
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {

@@ -1,9 +1,6 @@
 package com.example.mycourses.viewmodels
 
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
@@ -13,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,45 +18,42 @@ import javax.inject.Inject
 class CourseCreationViewModel @Inject constructor(
     private val repository: CourseRepository
 ) : ViewModel() {
-    var uiState by mutableStateOf(Course())
-        private set
+    private val _uiState = MutableStateFlow(Course())  // StateFlow para persistir estado
+    val uiState: StateFlow<Course> = _uiState.asStateFlow()
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
-
     fun updateTitle(title: String) {
-        uiState = uiState.copy(name = title)
+        _uiState.update { it.copy(name = title) }
     }
 
     fun updateCategory(category: String) {
-        uiState = uiState.copy(category = category)
+        _uiState.update { it.copy(category = category) }
     }
 
     fun updateCourseImage(imageUri: Uri?) {
-        uiState = uiState.copy(image = imageUri.toString())
+        _uiState.update { it.copy(image = imageUri.toString()) }
     }
 
     fun updateCourseInfo(title: String, category: String) {
-        uiState = uiState.copy(name = title, category = category)
+        _uiState.update { it.copy(name = title, category = category) }
     }
 
     fun submitCourse() {
         viewModelScope.launch {
-            val result = repository.createCourse(uiState)
+            val result = repository.createCourse(_uiState.value)
             _dialogState.value = if (result.isSuccess) {
                 DialogState.Success("Cadastrado com sucesso!")
             } else {
-                DialogState.Error("Erro ao cadastrar curso: $result.exceptionOrNull()?.message")
+                DialogState.Error("Erro ao cadastrar curso: ${result.exceptionOrNull()?.message}")
             }
-
         }
     }
 
     fun dismissDialog() {
         _dialogState.value = DialogState.None
     }
-
 }
 
 

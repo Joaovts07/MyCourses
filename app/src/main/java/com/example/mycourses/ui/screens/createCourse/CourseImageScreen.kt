@@ -23,13 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.mycourses.viewmodels.CourseCreationViewModel
 
 @Composable
 fun CourseImageScreen(
-    viewModel: CourseCreationViewModel = hiltViewModel(),
+    viewModel: CourseCreationViewModel,
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
