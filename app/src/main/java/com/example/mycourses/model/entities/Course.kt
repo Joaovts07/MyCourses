@@ -1,13 +1,10 @@
 package com.example.mycourses.model.entities
 
 import android.net.Uri
-import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.navigation.NavType
 import com.example.mycourses.extensions.toBrazilianCurrency
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.gson.Gson
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -62,20 +59,3 @@ fun getCourse(document: DocumentSnapshot) = Course(
     price = BigDecimal(document["price"].toString()).toBrazilianCurrency(),
     rating = document["rate"].toString()
 )
-
-class CourseType : NavType<Course>(isNullableAllowed = false) {
-    override val name: String
-        get() = "course"
-
-    override fun get(bundle: Bundle, key: String): Course? {
-        return bundle.getParcelable(key)
-    }
-
-    override fun parseValue(value: String): Course {
-        return Gson().fromJson(value, Course::class.java)
-    }
-
-    override fun put(bundle: Bundle, key: String, value: Course) {
-        bundle.putParcelable(key, value)
-    }
-}

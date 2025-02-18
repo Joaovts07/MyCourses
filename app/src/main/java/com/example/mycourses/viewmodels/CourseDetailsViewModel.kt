@@ -38,14 +38,15 @@ class CourseDetailsViewModel @Inject constructor(
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
-    fun initialize(course: Course) {
+    fun initialize(courseId: String) {
         viewModelScope.launch {
             try {
                 val user = getUser()
                 user?.let {
-                    val isFavorite = user.isFavorite(course.id) ?: false
-                    val subscription = userRepository.getUserSubscription(user.id, course.id)
-                    val comments = courseRepository.getCommentsForCourse(course.id)
+                    val course = courseRepository.getCourseById(courseId)
+                    val isFavorite = user.isFavorite(courseId) ?: false
+                    val subscription = userRepository.getUserSubscription(user.id, courseId)
+                    val comments = courseRepository.getCommentsForCourse(courseId)
                     val commentsWithUsers = getCommentsWithUsers(comments)
                     _uiState.value = CourseDetailsUiState.Success(
                         course,
@@ -128,7 +129,7 @@ class CourseDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             val result = userRepository.subscribleCourse(courseId)
             _dialogState.value = if (result.isSuccess) {
-                initialize(courseRepository.getCourseById(courseId))
+                initialize(courseId)
                 DialogState.Success("Cadastrado com sucesso!")
             } else {
                 DialogState.Error("Erro ao se cadastrar no curso: $result.exceptionOrNull()?.message")

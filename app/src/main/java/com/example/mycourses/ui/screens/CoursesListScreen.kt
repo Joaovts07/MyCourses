@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.theme.caveatFont
 import com.example.mycourses.viewmodels.CoursesListViewModel
@@ -23,8 +22,7 @@ import com.example.mycourses.viewmodels.CoursesListViewModel
 @Composable
 fun CoursesListScreen(
     modifier: Modifier = Modifier,
-    onNavigateToCheckout: () -> Unit = {},
-    onNavigateToDetails: (Course) -> Unit = {},
+    onNavigateToDetails: (String) -> Unit = {},
     viewModel: CoursesListViewModel = hiltViewModel()
 ) {
     val courses = viewModel.courses
@@ -79,8 +77,7 @@ fun CoursesListScreen(
                     items(courses) { course ->
                         HighlighCourseCard(
                             course = course,
-                            modifier = Modifier.clickable { onNavigateToDetails(course) },
-                            //onOrderClick = onNavigateToCheckout
+                            modifier = Modifier.clickable { onNavigateToDetails(course.id) },
                         )
                     }
                 }

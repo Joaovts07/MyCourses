@@ -125,7 +125,8 @@ class CourseRepository(
                 val courseWithImage = course.copy(
                     id = courseId,
                     image = imageUrl,
-                    price = "0"
+                    price = "0",
+                    rating = "0"
                 )
 
                 documentReference.set(courseWithImage).await()
