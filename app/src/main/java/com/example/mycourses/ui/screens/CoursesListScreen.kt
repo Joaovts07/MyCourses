@@ -23,7 +23,6 @@ import com.example.mycourses.viewmodels.CoursesListViewModel
 @Composable
 fun CoursesListScreen(
     modifier: Modifier = Modifier,
-    onNavigateToCheckout: () -> Unit = {},
     onNavigateToDetails: (Course) -> Unit = {},
     viewModel: CoursesListViewModel = hiltViewModel()
 ) {
@@ -80,7 +79,6 @@ fun CoursesListScreen(
                         HighlighCourseCard(
                             course = course,
                             modifier = Modifier.clickable { onNavigateToDetails(course) },
-                            //onOrderClick = onNavigateToCheckout
                         )
                     }
                 }

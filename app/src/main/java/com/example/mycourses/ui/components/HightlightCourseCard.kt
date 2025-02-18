@@ -24,7 +24,6 @@ import com.example.mycourses.ui.theme.MyCoursesTheme
 fun HighlighCourseCard(
     course: Course?,
     modifier: Modifier = Modifier,
-    onCourseClicked: () -> Unit = {}
 ) {
     Card(
         modifier
