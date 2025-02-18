@@ -29,6 +29,9 @@ class CourseDetailsViewModel @Inject constructor(
     var isFavorite by mutableStateOf(false)
         private set
 
+    var course by mutableStateOf(Course())
+        private set
+
     private val _ratingUpdated = MutableStateFlow(false)
     val ratingUpdated: StateFlow<Boolean> = _ratingUpdated.asStateFlow()
 
@@ -147,6 +150,17 @@ class CourseDetailsViewModel @Inject constructor(
                 courseRepository.addComment(userId, courseId, commentText)
             } catch (e: Exception) {
                 Log.e("CourseDetailsVM", "Erro ao adicionar comentário: ${e.message}")
+            }
+        }
+    }
+
+    fun getCourseByid(courseId: String) {
+        viewModelScope.launch {
+            try {
+                course = courseRepository.getCourseById(courseId)
+
+            } catch (e: Exception) {
+                Log.e("CourseDetailsVM", "Erro ao buscar curso: ${e.message}")
             }
         }
     }
