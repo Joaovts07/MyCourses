@@ -64,9 +64,8 @@ fun HomeScreen(navController: NavHostController) {
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             CoursesListScreen(
-                onNavigateToDetails = { course ->
-                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
-                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                onNavigateToDetails = { courseId ->
+                    navController.navigate("${AppDestination.CourseDetails.route}/$courseId")
                 }
             )
         }

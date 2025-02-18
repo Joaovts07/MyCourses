@@ -39,27 +39,23 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(AppDestination.Highlight.route) {
             CoursesListScreen(
-                onNavigateToDetails = { course ->
-                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
-                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                onNavigateToDetails = { courseId ->
+                    navController.navigate("${AppDestination.CourseDetails.route}/courseId")
                 },
                 viewModel = coursesListViewModel
             )
         }
         composable(
-            "${AppDestination.CourseDetails.route}/{course}",
-            arguments = listOf(navArgument("course") { type = NavType.StringType })
+            "${AppDestination.CourseDetails.route}/{courseId}",
+            arguments = listOf(navArgument("courseId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val courseJson = backStackEntry.arguments?.getString("course") ?: ""
-            val decodedJson = URLDecoder.decode(courseJson, "UTF-8")
-            val course = Gson().fromJson(decodedJson, Course::class.java)
-            CourseDetailsScreen(course = course)
+            val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
+            CourseDetailsScreen(courseId)
         }
         composable(AppDestination.FavoriteCourses.route) {
             CourseFavoriteScreen(
-                onNavigateToDetails = { course ->
-                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
-                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                onNavigateToDetails = { courseId ->
+                    navController.navigate("${AppDestination.CourseDetails.route}/${courseId}")
                 }
             )
         }
@@ -121,35 +117,3 @@ fun AppNavigation(navController: NavHostController) {
     }
 }
 
-@Composable
-fun CourseCreationNavGraph(navController: NavHostController = rememberNavController()) {
-    val viewModel: CourseCreationViewModel = hiltViewModel()
-
-    NavHost(
-        navController = navController,
-        startDestination = AppDestination.CourseInfoCreation.route
-    ) {
-        composable(AppDestination.CourseInfoCreation.route) {
-            CourseInfoScreen(
-                courseCreationViewModel = viewModel,
-                onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(AppDestination.CourseImageCreation.route) {
-            CourseImageScreen(
-                viewModel = viewModel,
-                onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(AppDestination.CourseReviewCreation.route) {
-            CourseReviewScreen(
-                viewModel = viewModel,
-                onBack = { navController.popBackStack() }
-            )
-        }
-    }
-}

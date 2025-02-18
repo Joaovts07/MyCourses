@@ -34,15 +34,15 @@ import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
 @Composable
 fun CourseDetailsScreen(
-    course: Course,
+    courseId: String,
     viewModel: CourseDetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
     val dialogState by viewModel.dialogState.collectAsState()
 
-    LaunchedEffect(course) {
-        viewModel.initialize(course)
+    LaunchedEffect(Unit) {
+        viewModel.initialize(courseId)
     }
 
     when (uiState) {
@@ -55,8 +55,8 @@ fun CourseDetailsScreen(
                 isFavorite = state.isFavorite,
                 subscription = state.subscription,
                 commentsWithUsers = state.commentsWithUsers,
-                onToggleFavorite = { viewModel.toggleFavorite(course.id) },
-                onEnrollClick = { viewModel.subscribeCourse(course.id) },
+                onToggleFavorite = { viewModel.toggleFavorite(courseId) },
+                onEnrollClick = { viewModel.subscribeCourse(courseId) },
                 onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
                 ratingUpdated = ratingUpdated,
                 onResetRating = { viewModel.resetRatingUpdated() },
