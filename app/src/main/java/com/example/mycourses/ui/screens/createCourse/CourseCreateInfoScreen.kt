@@ -75,7 +75,7 @@ fun CourseInfoContent(
     var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
 
-    Column(modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
+    Column(modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         TextField(
             value = title,
             onValueChange = { title = it },
