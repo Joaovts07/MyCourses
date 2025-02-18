@@ -126,7 +126,7 @@ class CourseRepository(
                     id = courseId,
                     image = imageUrl,
                     price = "0",
-                    rating = "0"
+                    rate = 0
                 )
 
                 documentReference.set(courseWithImage).await()

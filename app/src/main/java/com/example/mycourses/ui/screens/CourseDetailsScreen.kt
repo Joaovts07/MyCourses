@@ -103,7 +103,7 @@ fun CourseContent(
             }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(course.rating)
+                Text(course.rate.toString())
                 IconButton(onClick = onToggleFavorite) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,

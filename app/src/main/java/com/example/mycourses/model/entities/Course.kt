@@ -16,7 +16,7 @@ data class Course(
     val description: String = "",
     val image: String? = null,
     val imageUri: Uri? = null,
-    val rating: String = ""
+    val rate: Int = 0
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         id = parcel.readString()!!,
@@ -24,7 +24,7 @@ data class Course(
         price = parcel.readString()!!,
         description = parcel.readString()!!,
         image = parcel.readString(),
-        rating = parcel.readString()!!
+        rate = parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -33,7 +33,7 @@ data class Course(
         parcel.writeString(price)
         parcel.writeString(description)
         parcel.writeString(image)
-        parcel.writeString(rating)
+        parcel.writeInt(rate)
     }
 
     override fun describeContents(): Int {
@@ -57,5 +57,5 @@ fun getCourse(document: DocumentSnapshot) = Course(
     description = document["description"] as String,
     image = document["image"] as String?,
     price = BigDecimal(document["price"].toString()).toBrazilianCurrency(),
-    rating = document["rate"].toString()
+    rate = document["rate"] as Int
 )
