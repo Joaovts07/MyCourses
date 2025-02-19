@@ -7,7 +7,7 @@ data class Course(
     val id: String = UUID.randomUUID().toString(),
     val name: String =  "",
     val category: String =  "",
-    val price: String = "",
+    val price: Double = 0.0,
     val description: String = "",
     val image: String? = null,
     val imageUri: Uri? = null,
