@@ -6,7 +6,6 @@ import com.example.mycourses.model.entities.Comment
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.Subscription
-import com.example.mycourses.model.entities.getCourse
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -35,23 +34,44 @@ class CourseRepository(
 
             if (courseId != null) {
                 val course = getCourseById(courseId)
-                enrolledCourses.add(EnrolledCourse(subscriptionId, course, subscription.rating))
+                if (course != null) {
+                    enrolledCourses.add(EnrolledCourse(subscriptionId, course, subscription.rating))
+                }
             }
         }
 
         emit(enrolledCourses)
     }
 
-    suspend fun getCourseById(courseId: String): Course {
+    fun getMyCourses(userId: String): Flow<List<Course>> = flow {
+        val coursesSnapshot = firestore.collection("courses")
+            .whereEqualTo("instructor", userId)
+            .get()
+            .await()
+
+        val myCourses = mutableListOf<Course>()
+
+        for (document in coursesSnapshot.documents) {
+            val courseId = document.id
+            val course = getCourseById(courseId)
+            if (course != null) {
+                myCourses.add(course)
+            }
+        }
+
+        emit(myCourses)
+    }
+
+    suspend fun getCourseById(courseId: String): Course? {
         val document = firestore.collection("courses").document(courseId).get().await()
-        return getCourse(document)
+        return document.toObject<Course>()
     }
 
     suspend fun getHighlightedCourses(): List<Course> {
         return try {
             val documents = firestore.collection("courses").get().await()
             documents.map { document ->
-                getCourse(document)
+                document.toObject<Course>()
             }
         } catch (e: Exception) {
             Log.e("CourseRepository", "Erro ao buscar cursos em destaque", e)
@@ -68,7 +88,7 @@ class CourseRepository(
                 .get()
                 .await()
             documents.map { document ->
-                getCourse(document)
+                document.toObject<Course>()
             }
         } catch (e: Exception) {
             Log.e("CourseRepository", "Erro ao buscar cursos favoritos", e)
@@ -141,7 +161,6 @@ class CourseRepository(
         }
     }
 
-
     suspend fun uploadCourseImage(imageUri: Uri?, courseId: String): Result<String?> {
         return try {
             if (imageUri != null) {
@@ -156,4 +175,5 @@ class CourseRepository(
             Result.failure(exception)
         }
     }
+
 }

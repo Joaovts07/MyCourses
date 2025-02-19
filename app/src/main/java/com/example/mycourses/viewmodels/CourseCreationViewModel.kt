@@ -48,7 +48,7 @@ class CourseCreationViewModel @Inject constructor(
         viewModelScope.launch {
             _dialogState.value = DialogState.Loading
             val userId = userRepository.getUserID()
-            _uiState.value = _uiState.value.copy(instructor = userId)
+            _uiState.value = _uiState.value.copy(instructorId = userId)
             val result = repository.createCourse(_uiState.value)
             _dialogState.value = if (result.isSuccess) {
                 DialogState.Success("Cadastrado com sucesso!")

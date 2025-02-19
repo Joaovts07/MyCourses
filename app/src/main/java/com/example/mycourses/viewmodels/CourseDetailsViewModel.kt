@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Comment
-import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
@@ -48,13 +47,16 @@ class CourseDetailsViewModel @Inject constructor(
                     val subscription = userRepository.getUserSubscription(user.id, courseId)
                     val comments = courseRepository.getCommentsForCourse(courseId)
                     val commentsWithUsers = getCommentsWithUsers(comments)
-                    _uiState.value = CourseDetailsUiState.Success(
-                        course,
-                        isFavorite,
-                        subscription,
-                        commentsWithUsers
-                    )
-
+                    val isMyCourse = user.id == course?.instructorId
+                    if (course != null) {
+                        _uiState.value = CourseDetailsUiState.Success(
+                            course,
+                            isFavorite,
+                            subscription,
+                            commentsWithUsers,
+                            isMyCourse
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.value = CourseDetailsUiState.Error(e.message ?: "Erro ao carregar curso")
