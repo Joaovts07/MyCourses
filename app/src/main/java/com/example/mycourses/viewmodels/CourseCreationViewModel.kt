@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
+import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.model.states.DialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseCreationViewModel @Inject constructor(
-    private val repository: CourseRepository
+    private val repository: CourseRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(Course())  // StateFlow para persistir estado
     val uiState: StateFlow<Course> = _uiState.asStateFlow()
@@ -37,11 +39,15 @@ class CourseCreationViewModel @Inject constructor(
     }
 
     fun updateCourseInfo(title: String, description: String, category: String) {
-        _uiState.update { it.copy(name = title, description = description, category = category) }
+        _uiState.update {
+            it.copy(name = title, description = description, category = category)
+        }
     }
 
     fun submitCourse() {
         viewModelScope.launch {
+            val userId = userRepository.getUserID()
+            _uiState.value = _uiState.value.copy(instructor = userId)
             val result = repository.createCourse(_uiState.value)
             _dialogState.value = if (result.isSuccess) {
                 DialogState.Success("Cadastrado com sucesso!")
