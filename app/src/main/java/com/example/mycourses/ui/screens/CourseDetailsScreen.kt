@@ -36,7 +36,7 @@ import com.example.mycourses.viewmodels.CourseDetailsViewModel
 fun CourseDetailsScreen(
     courseId: String,
     viewModel: CourseDetailsViewModel = hiltViewModel(),
-    onEditCOurse: () -> Unit
+    onEditCourse: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
@@ -63,7 +63,7 @@ fun CourseDetailsScreen(
                 onResetRating = { viewModel.resetRatingUpdated() },
                 onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) },
                 isMyCourse = state.isMyCourse,
-                onEditClick = {  }
+                onEditClick = { onEditCourse()  }
             )
         }
         is CourseDetailsUiState.Error -> ErrorScreen((uiState as CourseDetailsUiState.Error).message,)
