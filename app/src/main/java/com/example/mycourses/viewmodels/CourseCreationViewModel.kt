@@ -46,6 +46,7 @@ class CourseCreationViewModel @Inject constructor(
 
     fun submitCourse() {
         viewModelScope.launch {
+            _dialogState.value = DialogState.Loading
             val userId = userRepository.getUserID()
             _uiState.value = _uiState.value.copy(instructor = userId)
             val result = repository.createCourse(_uiState.value)
