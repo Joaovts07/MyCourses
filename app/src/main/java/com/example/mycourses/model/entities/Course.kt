@@ -10,7 +10,6 @@ data class Course(
     val price: Double = 0.0,
     val description: String = "",
     val image: String? = null,
-    val imageUri: Uri? = null,
     val rate: Double = 0.0,
     val instructorId: String = ""
 )

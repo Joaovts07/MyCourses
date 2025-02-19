@@ -1,6 +1,7 @@
 package com.example.mycourses.viewmodels
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
@@ -26,6 +27,9 @@ class CourseCreationViewModel @Inject constructor(
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
 
+    var imageUri = mutableStateOf<Uri>(Uri.EMPTY)
+        private set
+
     fun updateTitle(title: String) {
         _uiState.update { it.copy(name = title) }
     }
@@ -34,8 +38,8 @@ class CourseCreationViewModel @Inject constructor(
         _uiState.update { it.copy(category = category) }
     }
 
-    fun updateCourseImage(imageUri: Uri?) {
-        _uiState.update { it.copy(imageUri = imageUri) }
+    fun updateCourseImage(imageUri: Uri) {
+        this.imageUri.value = imageUri
     }
 
     fun updateCourseInfo(title: String, description: String, category: String) {
@@ -49,7 +53,7 @@ class CourseCreationViewModel @Inject constructor(
             _dialogState.value = DialogState.Loading
             val userId = userRepository.getUserID()
             _uiState.value = _uiState.value.copy(instructorId = userId)
-            val result = repository.createCourse(_uiState.value)
+            val result = repository.createCourse(_uiState.value, imageUri.value)
             _dialogState.value = if (result.isSuccess) {
                 DialogState.Success("Cadastrado com sucesso!")
             } else {

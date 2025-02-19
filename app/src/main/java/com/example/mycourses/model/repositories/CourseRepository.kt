@@ -132,12 +132,12 @@ class CourseRepository(
         }
     }
 
-    suspend fun createCourse(course: Course): Result<Boolean> {
+    suspend fun createCourse(course: Course, imageUri: Uri?): Result<Boolean> {
         return try {
             val documentReference = firestore.collection("courses").document()
             val courseId = documentReference.id
 
-            val imageUrlResult = uploadCourseImage(course.imageUri, courseId)
+            val imageUrlResult = uploadCourseImage(imageUri, courseId)
 
             if (imageUrlResult.isSuccess) {
                 val imageUrl = imageUrlResult.getOrNull()
