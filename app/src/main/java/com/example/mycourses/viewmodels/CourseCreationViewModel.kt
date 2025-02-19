@@ -20,7 +20,7 @@ class CourseCreationViewModel @Inject constructor(
     private val repository: CourseRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(Course())  // StateFlow para persistir estado
+    private val _uiState = MutableStateFlow(Course())
     val uiState: StateFlow<Course> = _uiState.asStateFlow()
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
