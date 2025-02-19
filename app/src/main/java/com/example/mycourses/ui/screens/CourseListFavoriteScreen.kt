@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,11 +31,12 @@ fun CourseFavoriteScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .padding(top = 32.dp)
     ) {
         Text(
             text = "Cursos Favoritos",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally)
         )
 
         when(uiState) {
