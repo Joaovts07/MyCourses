@@ -4,18 +4,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mycourses.model.states.CourseUiState
+import com.example.mycourses.ui.components.ErrorScreen
 import com.example.mycourses.ui.components.HighlighCourseCard
+import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.theme.caveatFont
 import com.example.mycourses.viewmodels.CoursesListViewModel
 
@@ -25,18 +28,15 @@ fun CoursesListScreen(
     onNavigateToDetails: (String) -> Unit = {},
     viewModel: CoursesListViewModel = hiltViewModel()
 ) {
-    val courses = viewModel.courses
-    val isLoading = viewModel.isLoading
-    val errorMessage = viewModel.errorMessage
+    val uiState by viewModel.uiState.collectAsState()
     Column(
-        modifier.fillMaxSize()
+        modifier.fillMaxSize().padding(top = 14.dp)
     ) {
         Surface {
             Text(
                 text = "Cursos Em Destaques",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .fillMaxWidth(),
                 fontFamily = caveatFont,
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
@@ -55,26 +55,19 @@ fun CoursesListScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        when {
-            isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+        when(uiState) {
+            is CourseUiState.Loading -> {
+                LoadingScreen()
             }
-            errorMessage != null -> {
-                Text(
-                    text = "Erro ao carregar cursos: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-            else -> {
+            is CourseUiState.Error -> ErrorScreen((uiState as CourseUiState.Error).message)
+
+            is CourseUiState.Success -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(courses) { course ->
+                    items((uiState as CourseUiState.Success).courses) { course ->
                         HighlighCourseCard(
                             course = course,
                             modifier = Modifier.clickable { onNavigateToDetails(course.id) },

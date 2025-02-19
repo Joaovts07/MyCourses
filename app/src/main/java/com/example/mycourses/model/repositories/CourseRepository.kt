@@ -145,7 +145,6 @@ class CourseRepository(
                 val courseWithImage = course.copy(
                     id = courseId,
                     image = imageUrl,
-                    price = "0",
                     rate = 0.0
                 )
 

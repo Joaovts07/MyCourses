@@ -6,7 +6,7 @@ import com.example.mycourses.model.entities.Subscription
 import com.example.mycourses.model.entities.User
 
 sealed class CourseDetailsUiState {
-    data object Loading : CourseDetailsUiState()
+    object Loading : CourseDetailsUiState()
     data class Success(
         val course: Course,
         val isFavorite: Boolean,
