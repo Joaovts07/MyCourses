@@ -21,6 +21,9 @@ class UserRepository (
         val userId = auth.currentUser?.uid ?: return null
         return getUserById(userId)
     }
+    fun getUserID(): String {
+        return auth.currentUser?.uid ?: ""
+    }
 
     suspend fun getUserById(userId: String): User? {
         val document = firestore.collection("users").document(userId).get().await()

@@ -35,7 +35,8 @@ import com.example.mycourses.viewmodels.CourseDetailsViewModel
 @Composable
 fun CourseDetailsScreen(
     courseId: String,
-    viewModel: CourseDetailsViewModel = hiltViewModel()
+    viewModel: CourseDetailsViewModel = hiltViewModel(),
+    onEditCourse: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val ratingUpdated by viewModel.ratingUpdated.collectAsState()
@@ -60,7 +61,9 @@ fun CourseDetailsScreen(
                 onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
                 ratingUpdated = ratingUpdated,
                 onResetRating = { viewModel.resetRatingUpdated() },
-                onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) }
+                onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) },
+                isMyCourse = state.isMyCourse,
+                onEditClick = { onEditCourse()  }
             )
         }
         is CourseDetailsUiState.Error -> ErrorScreen((uiState as CourseDetailsUiState.Error).message,)
@@ -80,7 +83,9 @@ fun CourseContent(
     onRatingUpdate: (Float) -> Unit,
     ratingUpdated: Boolean,
     onResetRating: () -> Unit,
-    onAddComment: (String) -> Unit
+    onAddComment: (String) -> Unit,
+    isMyCourse: Boolean = false,
+    onEditClick: () -> Unit = {}
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
@@ -103,7 +108,7 @@ fun CourseContent(
             }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(course.rating)
+                Text(course.rate.toString())
                 IconButton(onClick = onToggleFavorite) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
@@ -112,7 +117,12 @@ fun CourseContent(
                     )
                 }
             }
-            if (subscription == null) {
+            if (isMyCourse) {
+                Button(onClick = onEditClick) {
+                    Text("Editar Curso")
+                }
+            }
+            if (subscription == null && !isMyCourse) {
                 Button(onClick = onEnrollClick) {
                     Text("Inscrever-se")
                 }

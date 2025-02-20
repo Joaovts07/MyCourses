@@ -92,5 +92,8 @@ fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
             )
         }
         DialogState.None -> {}
+        DialogState.Loading -> {
+            LoadingScreen()
+        }
     }
 }

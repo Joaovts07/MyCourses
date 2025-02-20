@@ -7,10 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mycourses.model.entities.Course
+import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.example.mycourses.model.states.EnrolledCoursesState
+import com.example.mycourses.model.states.AccountCoursesState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +27,8 @@ class AccountViewModel @Inject constructor(
     private val courseRepository: CourseRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<EnrolledCoursesState>(EnrolledCoursesState.Loading)
-    val uiState: StateFlow<EnrolledCoursesState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<AccountCoursesState>(AccountCoursesState.Loading)
+    val uiState: StateFlow<AccountCoursesState> = _uiState.asStateFlow()
 
     private val _logoutState = MutableStateFlow(false)
     val logoutState: StateFlow<Boolean> = _logoutState.asStateFlow()
@@ -48,15 +50,21 @@ class AccountViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 isLoading = true
-                user = userRepository.getCurrentUser()
-                user?.let {
-                    courseRepository.getEnrolledCourses(it.id).collect { enrolledCourses ->
-                        _uiState.value = EnrolledCoursesState.Success(enrolledCourses)
-                    }
+                val userId = userRepository.getUserID()
+                var enrolledCourses = listOf<EnrolledCourse>()
+                var myCourses = listOf<Course>()
+                courseRepository.getEnrolledCourses(userId).collect {
+                    enrolledCourses = it
                 }
+                courseRepository.getMyCourses(userId).collect {
+                    myCourses = it
+
+                }
+                _uiState.value = AccountCoursesState.Success(enrolledCourses, myCourses)
+
             } catch (e: Exception) {
                 errorMessage = "Erro ao carregar dados: ${e.message}"
-                _uiState.value = EnrolledCoursesState.Error(e.message.toString())
+                _uiState.value = AccountCoursesState.Error(e.message.toString())
                 Log.e("AccountViewModel", "Erro ao carregar dados da conta", e)
             } finally {
                 isLoading = false

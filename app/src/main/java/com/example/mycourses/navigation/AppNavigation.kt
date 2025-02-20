@@ -9,10 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.login.ui.screens.LoginScreen
-import com.example.mycourses.model.entities.Course
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.ui.screens.createCourse.CourseImageScreen
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
@@ -21,7 +19,6 @@ import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CourseCreationViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
 import com.google.gson.Gson
-import java.net.URLDecoder
 import java.net.URLEncoder
 
 @Composable
@@ -50,7 +47,10 @@ fun AppNavigation(navController: NavHostController) {
             arguments = listOf(navArgument("courseId") { type = NavType.StringType })
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-            CourseDetailsScreen(courseId)
+            CourseDetailsScreen(courseId){
+                navController.navigate(AppDestination.CourseInfoCreation.route)
+            }
+
         }
         composable(AppDestination.FavoriteCourses.route) {
             CourseFavoriteScreen(
@@ -111,7 +111,7 @@ fun AppNavigation(navController: NavHostController) {
         composable(AppDestination.CourseReviewCreation.route) {
             CourseReviewScreen(
                 viewModel = courseCreationViewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.navigate(AppDestination.Account.route) }
             )
         }
     }
