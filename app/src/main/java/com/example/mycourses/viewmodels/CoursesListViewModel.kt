@@ -9,7 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
+import com.example.mycourses.model.states.CourseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,29 +23,20 @@ class CoursesListViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var courses = mutableStateListOf<Course>()
-        private set
-    var favoriteCourses = mutableStateListOf<Course>()
-        private set
-    var isLoading by mutableStateOf(false)
-        private set
-    var errorMessage by mutableStateOf<String?>(null)
+    private val _uiState = MutableStateFlow<CourseUiState>(CourseUiState.Loading)
+    val uiState: StateFlow<CourseUiState> = _uiState.asStateFlow()
 
     init {
         loadCourses()
     }
 
     private fun loadCourses() {
-        if (isLoading) return
         viewModelScope.launch {
             try {
-                isLoading = true
-                courses.clear()
-                courses.addAll(courseRepository.getHighlightedCourses())
+                val courses = courseRepository.getHighlightedCourses()
+                _uiState.value = CourseUiState.Success(courses)
             } catch (e: Exception) {
-                errorMessage = e.message
-            } finally {
-                isLoading = false
+                _uiState.value = CourseUiState.Error(e.message ?: "Erro ao carregar cursos")
             }
         }
     }
@@ -49,16 +44,14 @@ class CoursesListViewModel @Inject constructor(
     fun loadFavoriteCourses() {
         viewModelScope.launch {
             try {
-                isLoading = true
-                favoriteCourses.clear()
+                _uiState.value = CourseUiState.Loading
                 val user = userRepository.getCurrentUser()
                 if (user != null) {
-                    favoriteCourses.addAll(courseRepository.getFavoriteCourses(user.favoriteCourses))
+                    val favoriteCourses = courseRepository.getFavoriteCourses(user.favoriteCourses)
+                    _uiState.value = CourseUiState.Success(favoriteCourses)
                 }
             } catch (e: Exception) {
-                errorMessage = e.message
-            } finally {
-                isLoading = false
+                _uiState.value = CourseUiState.Error(e.message ?: "Erro ao carregar cursos")
             }
         }
     }

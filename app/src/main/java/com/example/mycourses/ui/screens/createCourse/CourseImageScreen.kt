@@ -32,16 +32,15 @@ fun CourseImageScreen(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        imageUri = uri
+        imageUri = uri ?: Uri.EMPTY
     }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        imageUri?.let {
-            Image(painter = rememberAsyncImagePainter(it), contentDescription = null, modifier = Modifier.size(200.dp))
-        }
+
+        Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
 
         Spacer(modifier = Modifier.height(16.dp))
 

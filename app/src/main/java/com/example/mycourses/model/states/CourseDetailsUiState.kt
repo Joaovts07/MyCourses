@@ -11,7 +11,8 @@ sealed class CourseDetailsUiState {
         val course: Course,
         val isFavorite: Boolean,
         val subscription: Subscription?,
-        val commentsWithUsers: List<Pair<Comment, User?>>
+        val commentsWithUsers: List<Pair<Comment, User?>>,
+        val isMyCourse: Boolean
     ) : CourseDetailsUiState()
 
     data class Error(val message: String) : CourseDetailsUiState()

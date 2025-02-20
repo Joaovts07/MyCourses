@@ -30,6 +30,7 @@ fun CourseReviewScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState()
     val dialogState by viewModel.dialogState.collectAsState()
+    val imageUri by viewModel.imageUri
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Revisão do Curso", style = MaterialTheme.typography.titleLarge)
@@ -37,9 +38,7 @@ fun CourseReviewScreen(
 
         Text("Título: ${uiState.value.name}")
         Text("Categoria: ${uiState.value.category}")
-        uiState.value.imageUri?.let { imageUri ->
-            Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
-        }
+        Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
 
         Spacer(modifier = Modifier.height(24.dp))
 

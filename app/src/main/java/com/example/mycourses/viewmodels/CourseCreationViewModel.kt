@@ -1,10 +1,12 @@
 package com.example.mycourses.viewmodels
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.repositories.CourseRepository
+import com.example.mycourses.model.repositories.UserRepository
 import com.example.mycourses.model.states.DialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,13 +18,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseCreationViewModel @Inject constructor(
-    private val repository: CourseRepository
+    private val repository: CourseRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(Course())  // StateFlow para persistir estado
+    private val _uiState = MutableStateFlow(Course())
     val uiState: StateFlow<Course> = _uiState.asStateFlow()
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.None)
     val dialogState: StateFlow<DialogState> = _dialogState.asStateFlow()
+
+    var imageUri = mutableStateOf<Uri>(Uri.EMPTY)
+        private set
 
     fun updateTitle(title: String) {
         _uiState.update { it.copy(name = title) }
@@ -32,17 +38,22 @@ class CourseCreationViewModel @Inject constructor(
         _uiState.update { it.copy(category = category) }
     }
 
-    fun updateCourseImage(imageUri: Uri?) {
-        _uiState.update { it.copy(imageUri = imageUri) }
+    fun updateCourseImage(imageUri: Uri) {
+        this.imageUri.value = imageUri
     }
 
     fun updateCourseInfo(title: String, description: String, category: String) {
-        _uiState.update { it.copy(name = title, description = description, category = category) }
+        _uiState.update {
+            it.copy(name = title, description = description, category = category)
+        }
     }
 
     fun submitCourse() {
         viewModelScope.launch {
-            val result = repository.createCourse(_uiState.value)
+            _dialogState.value = DialogState.Loading
+            val userId = userRepository.getUserID()
+            _uiState.value = _uiState.value.copy(instructorId = userId)
+            val result = repository.createCourse(_uiState.value, imageUri.value)
             _dialogState.value = if (result.isSuccess) {
                 DialogState.Success("Cadastrado com sucesso!")
             } else {
