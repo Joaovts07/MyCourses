@@ -34,8 +34,8 @@ fun EditAccountScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = viewModel.user) {
-        viewModel.initialize(viewModel.user ?: User())
+    LaunchedEffect(Unit) {
+        viewModel.initialize()
     }
 
     Scaffold(
