@@ -13,9 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
-import com.example.mycourses.model.states.EnrolledCoursesState
+import com.example.mycourses.model.states.AccountUiState
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.ui.components.HighlighCourseCard
 import com.example.mycourses.ui.components.UserPicture
@@ -26,15 +27,10 @@ fun AccountScreen(
     navController: NavController,
     onEditClick: (User) -> Unit,
     onCourseClicked: (EnrolledCourse?) -> Unit,
-    onLogout: @Composable () -> Unit,
+    onLogout: () -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
-    val user = accountViewModel.user
     val uiState by accountViewModel.uiState.collectAsState()
-    val logoutState by accountViewModel.logoutState.collectAsState()
-
-    val isLoading = accountViewModel.isLoading
-    val errorMessage = accountViewModel.errorMessage
 
     Column(
         modifier = Modifier
@@ -44,40 +40,46 @@ fun AccountScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (logoutState) {
-            onLogout()
-            accountViewModel.resetUserState()
-        }
-        if (isLoading) {
-            CircularProgressIndicator()
-        } else if (errorMessage != null) {
-            Text(text = errorMessage, color = Color.Red)
-        } else if (user != null) {
-            UserInfo(user, onEditClick = onEditClick)
-            Spacer(modifier = Modifier.height(16.dp))
+        LaunchedEffect(accountViewModel.logoutEvent) {
+            accountViewModel.logoutEvent.collect { onLogout() }
         }
 
+
         when (uiState) {
-            is EnrolledCoursesState.Loading -> {
-                CircularProgressIndicator()
-            }
-            is EnrolledCoursesState.Success -> {
-                val enrolledCourses = (uiState as EnrolledCoursesState.Success).enrolledCourses
+            is AccountUiState.Loading -> CircularProgressIndicator()
+            is AccountUiState.Success -> {
+                UserInfo((uiState as AccountUiState.Success).user, onEditClick = onEditClick)
+                Spacer(modifier = Modifier.height(16.dp))
+                val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
+                val myCourses = (uiState as AccountUiState.Success).myCourses
                 EnrolledCourses(enrolledCourses, onCourseClicked)
 
                 Spacer(Modifier.height(16.dp))
-                CreateCourseButton { navController.navigate(AppDestination.CourseInfoCreation.route) }
+
+                MyCourses(myCourses,
+                    { navigateToCourse(navController) })
+
+                Spacer(Modifier.height(16.dp))
+
+                CreateCourseButton { navigateToCourse(navController) }
                 Spacer(Modifier.height(16.dp))
                 LogoutButton { accountViewModel.logout() }
 
             }
-            is EnrolledCoursesState.Error -> {
-                val errorMessage = (uiState as EnrolledCoursesState.Error).message
+            is AccountUiState.Error -> {
+                val errorMessage = (uiState as AccountUiState.Error).message
                 Text(text = errorMessage)
             }
+
+            else -> {}
         }
     }
 }
+
+private fun navigateToCourse(navController: NavController) {
+    navController.navigate(AppDestination.CourseInfoCreation.route)
+}
+
 @Composable
 fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     UserPicture(user, false)
@@ -117,7 +119,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 @Composable
 fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails: (EnrolledCourse?) -> Unit) {
     Text(
-        text = "Cursos Cadastrados",
+        text = "Inscrições",
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
         color = Color(0xFF007FFF)
@@ -129,6 +131,25 @@ fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails:
         HighlighCourseCard(
             course = enrolledCourse?.course,
             modifier = Modifier.clickable { onNavigateToDetails(enrolledCourse) }
+        )
+    }
+}
+
+@Composable
+fun MyCourses(courses: List<Course>, navigate: () -> Unit) {
+    Text(
+        text = "Meus Cursos",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF007FFF)
+    )
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    for (course in courses) {
+        HighlighCourseCard(
+            course = course,
+            modifier = Modifier.clickable { navigate() }
         )
     }
 }
