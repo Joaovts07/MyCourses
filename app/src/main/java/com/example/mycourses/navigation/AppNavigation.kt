@@ -68,9 +68,10 @@ fun AppNavigation(navController: NavHostController) {
                 onEditClick = {
                     navController.navigate(AppDestination.EditAccount.route)
                 },
-                onCourseClicked = { course ->
-                    val courseJson = URLEncoder.encode(Gson().toJson(course), "UTF-8")
-                    navController.navigate("${AppDestination.CourseDetails.route}/$courseJson")
+                onCourseClicked = { enrolledCourse ->
+                    navController.navigate(
+                        "${AppDestination.CourseDetails.route}/${enrolledCourse?.course?.id}"
+                    )
                 },
                 onLogout = {
                     navController.navigate("login")

@@ -45,7 +45,7 @@ class CourseRepository(
 
     fun getMyCourses(userId: String): Flow<List<Course>> = flow {
         val coursesSnapshot = firestore.collection("courses")
-            .whereEqualTo("instructor", userId)
+            .whereEqualTo("instructorId", userId)
             .get()
             .await()
 
