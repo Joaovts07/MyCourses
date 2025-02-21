@@ -110,7 +110,7 @@ fun AppNavigation(navController: NavHostController) {
         composable(AppDestination.CourseReviewCreation.route) {
             CourseReviewScreen(
                 viewModel = courseCreationViewModel,
-                onBack = { navController.navigate(AppDestination.Account.route) }
+                onBack = { navController.popBackStack() }
             )
         }
     }
