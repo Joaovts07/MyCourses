@@ -7,18 +7,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mycourses.model.entities.Course
-import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.repositories.CourseRepository
 import com.example.mycourses.model.repositories.UserRepository
-import com.example.mycourses.model.states.AccountCoursesState
+import com.example.mycourses.model.states.AccountUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Date
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,19 +29,16 @@ class AccountViewModel @Inject constructor(
     private val courseRepository: CourseRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<AccountCoursesState>(AccountCoursesState.Loading)
-    val uiState: StateFlow<AccountCoursesState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<AccountUiState>(AccountUiState.Loading)
+    val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    private val _logoutState = MutableStateFlow(false)
-    val logoutState: StateFlow<Boolean> = _logoutState.asStateFlow()
+    private val _logoutEvent = MutableSharedFlow<Unit>()
+    val logoutEvent: SharedFlow<Unit> = _logoutEvent.asSharedFlow()
 
-    var user by mutableStateOf<User?>(null)
+    var user by mutableStateOf(User())
         private set
+
     var editedUser by mutableStateOf(User())
-        private set
-    var isLoading by mutableStateOf(true)
-        private set
-    var errorMessage by mutableStateOf<String?>(null)
         private set
 
     init {
@@ -49,31 +48,30 @@ class AccountViewModel @Inject constructor(
     private fun loadAccountData() {
         viewModelScope.launch {
             try {
-                isLoading = true
-                val userId = userRepository.getUserID()
-                var enrolledCourses = listOf<EnrolledCourse>()
-                var myCourses = listOf<Course>()
-                courseRepository.getEnrolledCourses(userId).collect {
-                    enrolledCourses = it
+                user = userRepository.getCurrentUser() ?: User()
+                user.let {
+                    combine(
+                        courseRepository.getEnrolledCourses(user.id),
+                        courseRepository.getMyCourses(user.id)
+                    ) { enrolledCourses, myCourses ->
+                        AccountUiState.Success(
+                            enrolledCourses = enrolledCourses,
+                            myCourses = myCourses,
+                            user = user
+                        )
+                    }.collect { uiState ->
+                        _uiState.value = uiState
+                    }
                 }
-                courseRepository.getMyCourses(userId).collect {
-                    myCourses = it
-
-                }
-                _uiState.value = AccountCoursesState.Success(enrolledCourses, myCourses)
-
             } catch (e: Exception) {
-                errorMessage = "Erro ao carregar dados: ${e.message}"
-                _uiState.value = AccountCoursesState.Error(e.message.toString())
+                _uiState.value = AccountUiState.Error(e.message.toString())
                 Log.e("AccountViewModel", "Erro ao carregar dados da conta", e)
-            } finally {
-                isLoading = false
             }
         }
     }
 
-    fun initialize(user: User) {
-        editedUser = user.copy()
+    fun initialize() {
+        editedUser = user
     }
 
     fun updateName(name: String) {
@@ -103,14 +101,9 @@ class AccountViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 imageUri?.let {
-                    var user = user
-                    val updatedUser = user?.copy()
-                    updatedUser?.let {
-                        userRepository.updateUser(it, imageUri)
-                        user = it
-                        onComplete(true)
-                    }
-                }
+                    userRepository.updateUser(user, it)
+                    onComplete(true)
+                }?: onComplete(false)
             } catch (e: Exception) {
                 onComplete(false)
             }
@@ -118,11 +111,14 @@ class AccountViewModel @Inject constructor(
     }
 
     fun logout() {
-        _logoutState.value = userRepository.logout()
+        viewModelScope.launch {
+            userRepository.logout()
+            _logoutEvent.emit(Unit)
+        }
     }
 
     fun resetUserState() {
-        _logoutState.value = false
+        //_logoutState.value = false
 
     }
 

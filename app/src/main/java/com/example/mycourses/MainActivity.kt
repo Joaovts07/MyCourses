@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.login.ui.screens.LoginNavigation
+import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.AppNavigation
 import com.example.mycourses.ui.theme.MyCoursesTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -51,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     AuthState.UNAUTHENTICATED -> {
                         LoginNavigation(
                             navController = navController,
-                            routeSuccess = "home",
+                            routeSuccess = AppDestination.Home.route,
                             onLoginSuccess = {
                                 authState = AuthState.AUTHENTICATED
                             }

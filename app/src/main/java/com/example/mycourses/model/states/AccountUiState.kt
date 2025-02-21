@@ -4,12 +4,12 @@ import com.example.mycourses.model.entities.Course
 import com.example.mycourses.model.entities.EnrolledCourse
 import com.example.mycourses.model.entities.User
 
-sealed class AccountCoursesState {
-    object Loading : AccountCoursesState()
+sealed class AccountUiState {
+    data object Loading : AccountUiState()
     data class Success(
         val enrolledCourses: List<EnrolledCourse>,
         val myCourses: List<Course>,
         val user: User
-    ) : AccountCoursesState()
-    data class Error(val message: String) : AccountCoursesState()
+    ) : AccountUiState()
+    data class Error(val message: String) : AccountUiState()
 }
