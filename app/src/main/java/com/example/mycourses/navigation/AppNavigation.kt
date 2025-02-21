@@ -87,7 +87,7 @@ fun AppNavigation(navController: NavHostController) {
                 context = LocalContext.current
             )
         }
-        composable("${AppDestination.CourseInfoCreation.route}/{course}",
+        composable("${AppDestination.CourseInfoCreation.route}/{courseId}",
             arguments = listOf(navArgument("courseId") { type = NavType.StringType; nullable = true })
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")
