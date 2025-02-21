@@ -32,7 +32,7 @@ fun CourseReviewScreen(
     val dialogState by viewModel.dialogState.collectAsState()
     val imageUri by viewModel.imageUri
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp, top = 32.dp)) {
         Text("Revisão do Curso", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -44,7 +44,12 @@ fun CourseReviewScreen(
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Button(onClick = onBack) { Text("Voltar") }
-            Button(onClick = { viewModel.submitCourse() }) { Text("Criar Curso") }
+            Button(
+                onClick = {
+                    viewModel.submitCourse()
+                }
+            ) { Text(if (uiState.value.id.isEmpty()) "Cadastrar Curso" else "Atualizar Curso")
+            }
         }
     }
     DialogHandler(dialogState, onDismiss = { viewModel.dismissDialog(onBack) })

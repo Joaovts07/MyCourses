@@ -175,4 +175,14 @@ class CourseRepository(
         }
     }
 
+    suspend fun updateCourse(course: Course): Result<Unit> {
+        return try {
+            firestore.collection("courses").document(course.id).set(course).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("CourseRepository", "Erro ao atualizar curso: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
 }
