@@ -18,8 +18,7 @@ import com.example.mycourses.ui.screens.createCourse.CourseReviewScreen
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CourseCreationViewModel
 import com.example.mycourses.viewmodels.CoursesListViewModel
-import com.google.gson.Gson
-import java.net.URLEncoder
+
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -48,7 +47,7 @@ fun AppNavigation(navController: NavHostController) {
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
             CourseDetailsScreen(courseId){
-                navController.navigate(AppDestination.CourseInfoCreation.route)
+                navController.navigate("${AppDestination.CourseInfoCreation.route}/$courseId")
             }
 
         }
@@ -67,11 +66,6 @@ fun AppNavigation(navController: NavHostController) {
                 navController = navController,
                 onEditClick = {
                     navController.navigate(AppDestination.EditAccount.route)
-                },
-                onCourseClicked = { enrolledCourse ->
-                    navController.navigate(
-                        "${AppDestination.CourseDetails.route}/${enrolledCourse?.course?.id}"
-                    )
                 },
                 onLogout = {
                     navController.navigate("login")
@@ -93,8 +87,12 @@ fun AppNavigation(navController: NavHostController) {
                 context = LocalContext.current
             )
         }
-        composable(AppDestination.CourseInfoCreation.route) {
+        composable("${AppDestination.CourseInfoCreation.route}/{course}",
+            arguments = listOf(navArgument("courseId") { type = NavType.StringType; nullable = true })
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getString("courseId")
             CourseInfoScreen(
+                courseId = courseId,
                 courseCreationViewModel = courseCreationViewModel,
                 onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
                 onBack = { navController.popBackStack() }
