@@ -16,10 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,15 +30,20 @@ fun CourseImageScreen(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
+    val imageUri by viewModel.imageUri
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        imageUri = uri ?: Uri.EMPTY
+        viewModel.updateCourseImage(uri)
     }
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    val uiState by viewModel.uiState.collectAsState()
 
-        Image(painter = rememberAsyncImagePainter(imageUri), contentDescription = null, modifier = Modifier.size(200.dp))
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        val image = if (uiState.image != null) { uiState.image } else { imageUri }
+
+        Image(painter = rememberAsyncImagePainter(image), contentDescription = null, modifier = Modifier.size(200.dp))
+
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -55,7 +58,9 @@ fun CourseImageScreen(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Button(onClick = onBack) { Text("Voltar") }
             Button(onClick = {
-                viewModel.updateCourseImage(imageUri)
+                imageUri?.let {
+                    viewModel.updateCourseImage(imageUri)
+                }
                 onNext()
             }) { Text("Próximo") }
         }

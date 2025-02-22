@@ -18,6 +18,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,17 +28,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mycourses.viewmodels.CourseCreationViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseInfoScreen(
+    courseId: String? = null,
     courseCreationViewModel: CourseCreationViewModel,
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
+    LaunchedEffect(courseId) {
+        if (courseId != null) {
+            courseCreationViewModel.loadCourse(courseId)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,14 +79,11 @@ fun CourseInfoContent(
     onNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("") }
-
+    val uiState by courseCreationViewModel.uiState.collectAsState()
     Column(modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
         TextField(
-            value = title,
-            onValueChange = { title = it },
+            value = uiState.name,
+            onValueChange = { courseCreationViewModel.updateTitle(it) },
             label = { Text("Título do Curso") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -86,8 +91,8 @@ fun CourseInfoContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = description,
-            onValueChange = { description = it },
+            value = uiState.description,
+            onValueChange = { courseCreationViewModel.updateDescription(it) },
             label = { Text("Descrição") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -95,8 +100,8 @@ fun CourseInfoContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
-            value = category,
-            onValueChange = { category = it },
+            value = uiState.category,
+            onValueChange = { courseCreationViewModel.updateCategory(it) },
             label = { Text("Categoria") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -105,7 +110,7 @@ fun CourseInfoContent(
 
         Button(
             onClick = {
-                courseCreationViewModel.updateCourseInfo(title, description, category)
+                courseCreationViewModel.updateCourseInfo(uiState)
                 onNext()
             },
             modifier = Modifier.align(Alignment.End)

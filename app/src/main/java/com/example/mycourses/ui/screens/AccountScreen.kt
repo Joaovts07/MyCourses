@@ -26,7 +26,6 @@ import com.example.mycourses.viewmodels.AccountViewModel
 fun AccountScreen(
     navController: NavController,
     onEditClick: (User) -> Unit,
-    onCourseClicked: (EnrolledCourse?) -> Unit,
     onLogout: () -> Unit,
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
@@ -52,12 +51,11 @@ fun AccountScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
                 val myCourses = (uiState as AccountUiState.Success).myCourses
-                EnrolledCourses(enrolledCourses, onCourseClicked)
+                EnrolledCourses(enrolledCourses, navController)
 
                 Spacer(Modifier.height(16.dp))
 
-                MyCourses(myCourses,
-                    { navigateToCourse(navController) })
+                MyCourses(myCourses, navController)
 
                 Spacer(Modifier.height(16.dp))
 
@@ -71,7 +69,6 @@ fun AccountScreen(
                 Text(text = errorMessage)
             }
 
-            else -> {}
         }
     }
 }
@@ -117,7 +114,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
 }
 
 @Composable
-fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails: (EnrolledCourse?) -> Unit) {
+fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, navController: NavController) {
     Text(
         text = "Inscrições",
         fontSize = 20.sp,
@@ -130,13 +127,15 @@ fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, onNavigateToDetails:
     for (enrolledCourse in enrolledCourses) {
         HighlighCourseCard(
             course = enrolledCourse?.course,
-            modifier = Modifier.clickable { onNavigateToDetails(enrolledCourse) }
+            modifier = Modifier.clickable {
+                navController.navigate("${AppDestination.CourseDetails.route}/${enrolledCourse?.course?.id}")
+            }
         )
     }
 }
 
 @Composable
-fun MyCourses(courses: List<Course>, navigate: () -> Unit) {
+fun MyCourses(courses: List<Course>, navController: NavController) {
     Text(
         text = "Meus Cursos",
         fontSize = 20.sp,
@@ -149,7 +148,9 @@ fun MyCourses(courses: List<Course>, navigate: () -> Unit) {
     for (course in courses) {
         HighlighCourseCard(
             course = course,
-            modifier = Modifier.clickable { navigate() }
+            modifier = Modifier.clickable {
+                navController.navigate("${AppDestination.CourseDetails.route}/${course.id}")
+            }
         )
     }
 }
