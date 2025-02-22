@@ -175,9 +175,26 @@ class CourseRepository(
         }
     }
 
-    suspend fun updateCourse(course: Course): Result<Unit> {
+    suspend fun updateCourse(course: Course, imageUri: Uri? = null): Result<Unit> {
         return try {
             firestore.collection("courses").document(course.id).set(course).await()
+
+            imageUri?.let {
+                val imageUrlResult = uploadCourseImage(imageUri, course.id)
+                if (imageUrlResult.isSuccess) {
+                    val imageUrl = imageUrlResult.getOrNull()
+
+                    val courseWithImage = course.copy(
+                        id = course.id,
+                        image = imageUrl,
+                        rate = 0.0
+                    )
+
+                    firestore.collection("courses").document(course.id).set(courseWithImage).await()
+                }
+
+                Result.success(true)
+            }
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("CourseRepository", "Erro ao atualizar curso: ${e.message}", e)
