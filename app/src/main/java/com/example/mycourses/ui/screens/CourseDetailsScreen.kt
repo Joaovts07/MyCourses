@@ -30,6 +30,7 @@ import com.example.mycourses.ui.components.DialogHandler
 import com.example.mycourses.ui.components.ErrorScreen
 import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.components.RatingBar
+import com.example.mycourses.ui.components.ShareCourseButton
 import com.example.mycourses.viewmodels.CourseDetailsViewModel
 
 @Composable
@@ -99,9 +100,13 @@ fun CourseContent(
         )
 
         Column(Modifier.padding(16.dp)) {
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(course.name, fontSize = 24.sp)
-                Text(course.name, fontSize = 24.sp)
+                ShareCourseButton(course.name, course.description,"", course.image)
             }
             Text(course.description)
 
