@@ -99,7 +99,10 @@ fun CourseContent(
         )
 
         Column(Modifier.padding(16.dp)) {
-            Text(course.name, fontSize = 24.sp)
+            Row {
+                Text(course.name, fontSize = 24.sp)
+                Text(course.name, fontSize = 24.sp)
+            }
             Text(course.description)
 
             if (subscription != null) {
