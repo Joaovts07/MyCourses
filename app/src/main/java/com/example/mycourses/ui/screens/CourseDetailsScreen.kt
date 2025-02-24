@@ -105,8 +105,12 @@ fun CourseContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(course.name, fontSize = 24.sp)
-                ShareCourseButton(course.name, course.description,"", course.image)
+                Text(
+                    text = course.name,
+                    fontSize = 24.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                ShareCourseButton(course.name, course.description, "", course.image)
             }
             Text(course.description)
 
