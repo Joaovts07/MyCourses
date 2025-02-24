@@ -80,8 +80,8 @@ fun AppNavigation(navController: NavHostController) {
             LoginScreen(
                 navController = navController,
                 onLoginSuccess = {
-                    navController.navigate("login") {
-                        popUpTo(AppDestination.Account.route) { inclusive = true }
+                    navController.navigate(AppDestination.Account.route) {
+                        popUpTo("login") { inclusive = true }
                     }
                 },
                 context = LocalContext.current
