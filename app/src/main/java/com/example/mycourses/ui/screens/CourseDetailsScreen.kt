@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -91,61 +92,84 @@ fun CourseContent(
     var showCommentDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) { // Box para o fundo
         AsyncImage(
             model = course.image,
             contentDescription = null,
-            modifier = Modifier.height(200.dp).fillMaxWidth(),
+            modifier = Modifier.fillMaxHeight(0.8f).fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
 
-        Column(Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        Column(Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onToggleFavorite) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Favoritar",
+                            tint = if (isFavorite) Color.Red else Color.LightGray
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    ShareCourseButton(
+                        courseName = course.name,
+                        courseDescription = course.description,
+                        courseLink = "https://seuapp.com/curso/${course.id}", // Substitua pelo link correto
+                        courseImageUrl = course.image
+                    )
+                }
+            }
+
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .padding(top = 100.dp)
+                    .weight(1f)
             ) {
                 Text(
                     text = course.name,
                     fontSize = 24.sp,
-                    modifier = Modifier.weight(1f)
+                    textAlign = TextAlign.Center,
+                    color = Color.White
                 )
-                ShareCourseButton(course.name, course.description, "", course.image)
-            }
-            Text(course.description)
+                Text(course.description)
 
-            if (subscription != null) {
-                RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
-                if (ratingUpdated) onResetRating()
-            }
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(course.rate.toString())
-                IconButton(onClick = onToggleFavorite) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                        contentDescription = "Favoritar",
-                        tint = if (isFavorite) Color.Red else Color.LightGray
-                    )
+                if (subscription != null) {
+                    RatingBar(rating = subscription.rating.toFloat(), onRatingChange = onRatingUpdate)
+                    if (ratingUpdated) onResetRating()
                 }
-            }
-            if (isMyCourse) {
-                Button(onClick = onEditClick) {
-                    Text("Editar Curso")
-                }
-            }
-            if (subscription == null && !isMyCourse) {
-                Button(onClick = onEnrollClick) {
-                    Text("Inscrever-se")
-                }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Comentários", style = MaterialTheme.typography.titleMedium)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(course.rate.toString())
+                }
+                if (isMyCourse) {
+                    Button(onClick = onEditClick) {
+                        Text("Editar Curso")
+                    }
+                }
+                if (subscription == null && !isMyCourse) {
+                    Button(onClick = onEnrollClick) {
+                        Text("Inscrever-se")
+                    }
+                }
 
-            LazyColumn(modifier = Modifier.fillMaxHeight(0.5f)) {
-                items(commentsWithUsers) { (comment, user) ->
-                    CommentItem(comment, user)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Comentários", style = MaterialTheme.typography.titleMedium)
+
+                LazyColumn(modifier = Modifier.fillMaxHeight(0.5f)) {
+                    items(commentsWithUsers) { (comment, user) ->
+                        CommentItem(comment, user)
+                    }
                 }
             }
         }
