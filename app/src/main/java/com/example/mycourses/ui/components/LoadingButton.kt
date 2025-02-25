@@ -1,5 +1,7 @@
 package com.example.mycourses.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -15,7 +17,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoadingButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     text: String = "Button",
     enabled: Boolean = true,
@@ -23,7 +24,8 @@ fun LoadingButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth()
+        .height(48.dp),
         shape = RoundedCornerShape(8.dp),
         enabled = enabled,
         colors = colors

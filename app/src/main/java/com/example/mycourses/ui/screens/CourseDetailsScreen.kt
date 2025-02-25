@@ -155,14 +155,12 @@ fun CourseContent(
                 if (isMyCourse) {
                     LoadingButton(
                         onClick = onEditClick,
-                        modifier = Modifier.padding(bottom = 8.dp),
                         text = "Editar Curso"
                     )
                 }
                 if (subscription == null && !isMyCourse) {
                     LoadingButton(
                         onClick = onEnrollClick,
-                        modifier = Modifier.padding(bottom = 8.dp),
                         text = "Inscrever-se"
                     )
                 }
