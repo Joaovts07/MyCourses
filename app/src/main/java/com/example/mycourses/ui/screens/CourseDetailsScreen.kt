@@ -92,52 +92,54 @@ fun CourseContent(
     var showCommentDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) { // Box para o fundo
+    Column(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = course.image,
             contentDescription = null,
-            modifier = Modifier.fillMaxHeight(0.8f).fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxHeight(0.5f)
+                .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
 
-        Column(Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.TopEnd
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    contentAlignment = Alignment.TopEnd
                 ) {
-                    IconButton(onClick = onToggleFavorite) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                            contentDescription = "Favoritar",
-                            tint = if (isFavorite) Color.Red else Color.LightGray
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onToggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = "Favoritar",
+                                tint = if (isFavorite) Color.Red else Color.LightGray
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        ShareCourseButton(
+                            courseName = course.name,
+                            courseDescription = course.description,
+                            courseLink = "https://seuapp.com/curso/${course.id}",
+                            courseImageUrl = course.image
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    ShareCourseButton(
-                        courseName = course.name,
-                        courseDescription = course.description,
-                        courseLink = "https://seuapp.com/curso/${course.id}", // Substitua pelo link correto
-                        courseImageUrl = course.image
-                    )
                 }
             }
 
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .padding(top = 100.dp)
-                    .weight(1f)
-            ) {
+            item {
                 Text(
                     text = course.name,
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center,
-                    color = Color.White
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(course.description)
 
@@ -147,18 +149,21 @@ fun CourseContent(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(course.rate.toString())
                 }
+
                 if (isMyCourse) {
-                    Button(onClick = onEditClick) {
+                    Button(onClick = onEditClick, modifier = Modifier.padding(bottom = 8.dp)) {
                         Text("Editar Curso")
                     }
                 }
                 if (subscription == null && !isMyCourse) {
-                    Button(onClick = onEnrollClick) {
+                    Button(onClick = onEnrollClick, modifier = Modifier.padding(bottom = 8.dp)) {
                         Text("Inscrever-se")
                     }
                 }
@@ -166,29 +171,31 @@ fun CourseContent(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Comentários", style = MaterialTheme.typography.titleMedium)
 
-                LazyColumn(modifier = Modifier.fillMaxHeight(0.5f)) {
+                LazyColumn(modifier = Modifier.fillParentMaxHeight(0.5f)) {
                     items(commentsWithUsers) { (comment, user) ->
                         CommentItem(comment, user)
                     }
                 }
             }
         }
-    }
 
-    Box(
-        modifier = Modifier.fillMaxSize().padding(end = 4.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        FloatingActionButton(
-            modifier = Modifier.size(24.dp),
-            onClick = { showCommentDialog = true },
-            containerColor = MaterialTheme.colorScheme.primary
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = Icons.Default.Add,
-                contentDescription = "Adicionar Comentário"
-            )
+            FloatingActionButton(
+                modifier = Modifier.size(48.dp),
+                onClick = { showCommentDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Adicionar Comentário",
+                    tint = Color.White
+                )
+            }
         }
     }
 
