@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +28,7 @@ import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.ui.components.DialogHandler
 import com.example.mycourses.ui.components.ErrorScreen
+import com.example.mycourses.ui.components.LoadingButton
 import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.ui.components.ShareCourseButton
@@ -107,40 +107,35 @@ fun CourseContent(
             contentPadding = PaddingValues(16.dp)
         ) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    contentAlignment = Alignment.TopEnd
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = onToggleFavorite) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = "Favoritar",
-                                tint = if (isFavorite) Color.Red else Color.LightGray
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        ShareCourseButton(
-                            courseName = course.name,
-                            courseDescription = course.description,
-                            courseLink = "https://seuapp.com/curso/${course.id}",
-                            courseImageUrl = course.image
+                    Text(
+                        text = course.name,
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 8.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) 
+
+                    IconButton(onClick = onToggleFavorite) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = "Favoritar",
+                            tint = if (isFavorite) Color.Red else Color.LightGray
                         )
                     }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    ShareCourseButton(
+                        courseName = course.name,
+                        courseDescription = course.description,
+                        courseLink = "https://seuapp.com/curso/${course.id}",
+                        courseImageUrl = course.image
+                    )
                 }
-            }
 
-            item {
-                Text(
-                    text = course.name,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
                 Text(course.description)
 
                 if (subscription != null) {
@@ -158,14 +153,18 @@ fun CourseContent(
                 }
 
                 if (isMyCourse) {
-                    Button(onClick = onEditClick, modifier = Modifier.padding(bottom = 8.dp)) {
-                        Text("Editar Curso")
-                    }
+                    LoadingButton(
+                        onClick = onEditClick,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        text = "Editar Curso"
+                    )
                 }
                 if (subscription == null && !isMyCourse) {
-                    Button(onClick = onEnrollClick, modifier = Modifier.padding(bottom = 8.dp)) {
-                        Text("Inscrever-se")
-                    }
+                    LoadingButton(
+                        onClick = onEnrollClick,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        text = "Inscrever-se"
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
