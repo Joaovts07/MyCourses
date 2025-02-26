@@ -78,7 +78,8 @@ fun AccountScreen(
 
 }
 private fun navigateToCourse(navController: NavController) {
-    navController.navigate(AppDestination.CourseInfoCreation.route)
+    val courseId = null
+    navController.navigate("${AppDestination.CourseInfoCreation.route}/$courseId}")
 }
 
 @Composable
