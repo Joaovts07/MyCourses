@@ -1,4 +1,3 @@
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -39,7 +38,7 @@ fun AccountScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 30.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 32.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -70,6 +69,7 @@ fun AccountScreen(
                             containerColor = MaterialTheme.colorScheme.error
                         )
                     ) { accountViewModel.logout() }
+                    Spacer(Modifier.height(48.dp))
 
                 }
                 is AccountUiState.Error -> {
