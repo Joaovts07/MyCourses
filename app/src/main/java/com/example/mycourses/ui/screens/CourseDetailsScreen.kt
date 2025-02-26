@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,9 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +30,7 @@ import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.CourseDetailsUiState
 import com.example.mycourses.ui.components.DialogHandler
 import com.example.mycourses.ui.components.ErrorScreen
+import com.example.mycourses.ui.components.LoadingButton
 import com.example.mycourses.ui.components.LoadingScreen
 import com.example.mycourses.ui.components.RatingBar
 import com.example.mycourses.ui.components.ShareCourseButton
@@ -91,25 +93,44 @@ fun CourseContent(
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
+    val scrollState = rememberLazyListState()
 
-    Box(modifier = Modifier.fillMaxSize()) { // Box para o fundo
+
+    Column(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
             model = course.image,
             contentDescription = null,
-            modifier = Modifier.fillMaxHeight(0.8f).fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxHeight(0.5f)
+                .fillMaxWidth()
+                .height(200.dp)
+                .graphicsLayer {
+                    val scale = 1f - scrollState.firstVisibleItemScrollOffset  / 1000f
+                    scaleX = scale
+                    scaleY = scale
+                },
             contentScale = ContentScale.Crop
         )
 
-        Column(Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.TopEnd
-            ) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            item {
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Text(
+                        text = course.name,
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 8.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
@@ -117,28 +138,15 @@ fun CourseContent(
                             tint = if (isFavorite) Color.Red else Color.LightGray
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
                     ShareCourseButton(
                         courseName = course.name,
                         courseDescription = course.description,
-                        courseLink = "https://seuapp.com/curso/${course.id}", // Substitua pelo link correto
+                        courseLink = "https://seuapp.com/curso/${course.id}",
                         courseImageUrl = course.image
                     )
                 }
-            }
 
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .padding(top = 100.dp)
-                    .weight(1f)
-            ) {
-                Text(
-                    text = course.name,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
                 Text(course.description)
 
                 if (subscription != null) {
@@ -147,48 +155,55 @@ fun CourseContent(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(course.rate.toString())
                 }
+
                 if (isMyCourse) {
-                    Button(onClick = onEditClick) {
-                        Text("Editar Curso")
-                    }
+                    LoadingButton(
+                        onClick = onEditClick,
+                        text   = "Editar Curso"
+                    )
                 }
                 if (subscription == null && !isMyCourse) {
-                    Button(onClick = onEnrollClick) {
-                        Text("Inscrever-se")
-                    }
+                    LoadingButton(
+                        onClick = onEnrollClick,
+                        text = "Inscrever-se"
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Comentários", style = MaterialTheme.typography.titleMedium)
 
-                LazyColumn(modifier = Modifier.fillMaxHeight(0.5f)) {
+                LazyColumn(modifier = Modifier.fillParentMaxHeight(0.5f)) {
                     items(commentsWithUsers) { (comment, user) ->
                         CommentItem(comment, user)
                     }
                 }
             }
         }
-    }
 
-    Box(
-        modifier = Modifier.fillMaxSize().padding(end = 4.dp),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        FloatingActionButton(
-            modifier = Modifier.size(24.dp),
-            onClick = { showCommentDialog = true },
-            containerColor = MaterialTheme.colorScheme.primary
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                imageVector = Icons.Default.Add,
-                contentDescription = "Adicionar Comentário"
-            )
+            FloatingActionButton(
+                modifier = Modifier.size(48.dp),
+                onClick = { showCommentDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Adicionar Comentário",
+                    tint = Color.White
+                )
+            }
         }
     }
 
