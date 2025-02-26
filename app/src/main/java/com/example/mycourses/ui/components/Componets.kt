@@ -108,6 +108,7 @@ fun DialogHandler(dialogState: DialogState, onDismiss: () -> Unit) {
 fun MyCoursesScaffold(
     navController: NavController,
     selectedItem: BottomAppBarItem,
+    showBottomBar: Boolean = true,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -117,11 +118,14 @@ fun MyCoursesScaffold(
             )
         },
         bottomBar = {
-            MyCoursesBottomAppBar(
-                item = selectedItem,
-                items = bottomAppBarItems,
-                onItemChange = { navController.navigate(it.destination.route) }
-            )
+            if (showBottomBar) {
+                MyCoursesBottomAppBar(
+                    item = selectedItem,
+                    items = bottomAppBarItems,
+                    onItemChange = { navController.navigate(it.destination.route) }
+                )
+            }
+
         }
     ) { paddingValues ->
         content(paddingValues)
