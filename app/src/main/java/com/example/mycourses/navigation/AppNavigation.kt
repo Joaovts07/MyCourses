@@ -25,13 +25,10 @@ import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
 import com.example.mycourses.ui.screens.createCourse.CourseReviewScreen
 import com.example.mycourses.viewmodels.AccountViewModel
 import com.example.mycourses.viewmodels.CourseCreationViewModel
-import com.example.mycourses.viewmodels.CoursesListViewModel
-
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val accountViewModel: AccountViewModel = hiltViewModel()
-    val coursesListViewModel: CoursesListViewModel = hiltViewModel()
     val courseCreationViewModel: CourseCreationViewModel = hiltViewModel()
     val backStackEntryState by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntryState?.destination
@@ -48,14 +45,7 @@ fun AppNavigation(navController: NavHostController) {
         composable(AppDestination.Home.route) {
             HomeScreen(navController)
         }
-        composable(AppDestination.Highlight.route) {
-            CoursesListScreen(
-                onNavigateToDetails = {
-                    navController.navigate("${AppDestination.CourseDetails.route}/courseId")
-                },
-                viewModel = coursesListViewModel
-            )
-        }
+
         composable(
             "${AppDestination.CourseDetails.route}/{courseId}",
             arguments = listOf(navArgument("courseId") { type = NavType.StringType })
@@ -81,16 +71,20 @@ fun AppNavigation(navController: NavHostController) {
             EditAccountScreen(navController, accountViewModel )
         }
         composable(AppDestination.Account.route) {
-            AccountScreen(
-                navController = navController,
-                onEditClick = {
-                    navController.navigate(AppDestination.EditAccount.route)
-                },
-                onLogout = {
-                    navController.navigate("login")
+            MyCoursesScaffold(navController, selectedItem) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    AccountScreen(
+                        navController = navController,
+                        onEditClick = {
+                            navController.navigate(AppDestination.EditAccount.route)
+                        },
+                        onLogout = {
+                            navController.navigate("login")
 
+                        }
+                    )
                 }
-            )
+            }
         }
         composable(AppDestination.UploadUserProfile.route) {
             UploadPhotoScreen(accountViewModel, navController)

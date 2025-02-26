@@ -6,10 +6,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Star
 import com.example.mycourses.ui.components.BottomAppBarItem
 
-
 sealed class AppDestination(val route: String) {
     data object Home : AppDestination("initialScreen")
-    data object Highlight : AppDestination("courses")
     data object Account : AppDestination("account")
     data object CourseDetails : AppDestination("courseDetails")
     data object FavoriteCourses: AppDestination("favoriteCourses")

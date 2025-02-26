@@ -31,54 +31,51 @@ fun AccountScreen(
 ) {
     val uiState by accountViewModel.uiState.collectAsState()
 
-    Surface(
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 32.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LaunchedEffect(accountViewModel.logoutEvent) {
-                accountViewModel.logoutEvent.collect { onLogout() }
+        LaunchedEffect(accountViewModel.logoutEvent) {
+            accountViewModel.logoutEvent.collect { onLogout() }
+        }
+
+        when (uiState) {
+            is AccountUiState.Loading -> CircularProgressIndicator()
+            is AccountUiState.Success -> {
+                UserInfo((uiState as AccountUiState.Success).user, onEditClick = onEditClick)
+                Spacer(modifier = Modifier.height(16.dp))
+                val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
+                val myCourses = (uiState as AccountUiState.Success).myCourses
+                EnrolledCourses(enrolledCourses, navController)
+
+                Spacer(Modifier.height(16.dp))
+
+                MyCourses(myCourses, navController)
+
+                Spacer(Modifier.height(16.dp))
+
+                LoadingButton (text = "Cadastrar Curso" ) { navigateToCourse(navController) }
+                Spacer(modifier = Modifier.height(16.dp))
+                LoadingButton (
+                    text = "Sair",
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) { accountViewModel.logout() }
+                Spacer(Modifier.height(8.dp))
+
             }
-
-            when (uiState) {
-                is AccountUiState.Loading -> CircularProgressIndicator()
-                is AccountUiState.Success -> {
-                    UserInfo((uiState as AccountUiState.Success).user, onEditClick = onEditClick)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
-                    val myCourses = (uiState as AccountUiState.Success).myCourses
-                    EnrolledCourses(enrolledCourses, navController)
-
-                    Spacer(Modifier.height(16.dp))
-
-                    MyCourses(myCourses, navController)
-
-                    Spacer(Modifier.height(16.dp))
-
-                    LoadingButton (text = "Cadastrar Curso" ) { navigateToCourse(navController) }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    LoadingButton (
-                        text = "Sair",
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error
-                        )
-                    ) { accountViewModel.logout() }
-                    Spacer(Modifier.height(48.dp))
-
-                }
-                is AccountUiState.Error -> {
-                    val errorMessage = (uiState as AccountUiState.Error).message
-                    Text(text = errorMessage)
-                }
+            is AccountUiState.Error -> {
+                val errorMessage = (uiState as AccountUiState.Error).message
+                Text(text = errorMessage)
             }
         }
     }
+
 }
 private fun navigateToCourse(navController: NavController) {
     navController.navigate(AppDestination.CourseInfoCreation.route)
