@@ -53,13 +53,6 @@ fun HomeScreen(navController: NavHostController) {
                 items = bottomAppBarItems,
                 onItemChange = { navController.navigate(it.destination.route) }
             )
-        },
-        floatingActionButton = {
-            if (isShowFab) {
-                FloatingActionButton(onClick = {}) {
-                    Icon(Icons.Filled.Edit, contentDescription = null)
-                }
-            }
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
