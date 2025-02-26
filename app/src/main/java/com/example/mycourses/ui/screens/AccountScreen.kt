@@ -19,6 +19,7 @@ import com.example.mycourses.model.entities.User
 import com.example.mycourses.model.states.AccountUiState
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.ui.components.HighlighCourseCard
+import com.example.mycourses.ui.components.LoadingButton
 import com.example.mycourses.ui.components.UserPicture
 import com.example.mycourses.viewmodels.AccountViewModel
 
@@ -61,9 +62,14 @@ fun AccountScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    CreateCourseButton { navigateToCourse(navController) }
+                    LoadingButton (text = "Cadastrar Curso" ) { navigateToCourse(navController) }
                     Spacer(modifier = Modifier.height(16.dp))
-                    LogoutButton { accountViewModel.logout() }
+                    LoadingButton (
+                        text = "Sair",
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) { accountViewModel.logout() }
 
                 }
                 is AccountUiState.Error -> {
@@ -106,12 +112,7 @@ fun UserInfo(user: User, onEditClick: (User) -> Unit) {
     )
     Spacer(modifier = Modifier.height(4.dp))
 
-    Button(onClick = { onEditClick(user) },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )) {
-        Text(text = "Editar Perfil")
-    }
+    LoadingButton (text = "Editar Perfil" ) { onEditClick(user)  }
 }
 
 @Composable
@@ -123,7 +124,7 @@ fun EnrolledCourses(enrolledCourses: List<EnrolledCourse?>, navController: NavCo
         color = Color(0xFF007FFF)
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Spacer(modifier = Modifier.height(14.dp))
 
     for (enrolledCourse in enrolledCourses) {
         HighlighCourseCard(
@@ -144,7 +145,7 @@ fun MyCourses(courses: List<Course>, navController: NavController) {
         color = Color(0xFF007FFF)
     )
 
-    Spacer(modifier = Modifier.height(12.dp))
+    Spacer(modifier = Modifier.height(14.dp))
 
     for (course in courses) {
         HighlighCourseCard(
@@ -153,26 +154,5 @@ fun MyCourses(courses: List<Course>, navController: NavController) {
                 navController.navigate("${AppDestination.CourseDetails.route}/${course.id}")
             }
         )
-    }
-}
-
-@Composable
-fun LogoutButton(onclick: () -> Unit) {
-    OutlinedButton(onClick = { onclick()  },
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.error),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.error
-        )) {
-        Text(text = "Sair")
-    }
-}
-
-@Composable
-fun CreateCourseButton(onclick: () -> Unit) {
-    Button(onClick = { onclick() },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )) {
-        Text(text = "Cadastrar Curso")
     }
 }
