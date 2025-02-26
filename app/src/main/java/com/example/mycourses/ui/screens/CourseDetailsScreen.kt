@@ -155,7 +155,7 @@ fun CourseContent(
                 if (isMyCourse) {
                     LoadingButton(
                         onClick = onEditClick,
-                        text = "Editar Curso"
+                        text   = "Editar Curso"
                     )
                 }
                 if (subscription == null && !isMyCourse) {
