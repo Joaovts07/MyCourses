@@ -3,6 +3,7 @@ package com.example.mycourses.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -16,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,20 +56,23 @@ fun CourseDetailsScreen(
         is CourseDetailsUiState.Success -> {
             val state = uiState as CourseDetailsUiState.Success
             val userId = state.subscription?.userId ?: ""
-            CourseContent(
-                course = state.course,
-                isFavorite = state.isFavorite,
-                subscription = state.subscription,
-                commentsWithUsers = state.commentsWithUsers,
-                onToggleFavorite = { viewModel.toggleFavorite(courseId) },
-                onEnrollClick = { viewModel.subscribeCourse(courseId) },
-                onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
-                ratingUpdated = ratingUpdated,
-                onResetRating = { viewModel.resetRatingUpdated() },
-                onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) },
-                isMyCourse = state.isMyCourse,
-                onEditClick = { onEditCourse()  }
-            )
+            Surface {
+                CourseContent(
+                    course = state.course,
+                    isFavorite = state.isFavorite,
+                    subscription = state.subscription,
+                    commentsWithUsers = state.commentsWithUsers,
+                    onToggleFavorite = { viewModel.toggleFavorite(courseId) },
+                    onEnrollClick = { viewModel.subscribeCourse(courseId) },
+                    onRatingUpdate = { rating -> state.subscription?.let { viewModel.updateRating(it.id, rating) } },
+                    ratingUpdated = ratingUpdated,
+                    onResetRating = { viewModel.resetRatingUpdated() },
+                    onAddComment = { comment -> viewModel.addComment(userId,state.course.id, comment) },
+                    isMyCourse = state.isMyCourse,
+                    onEditClick = { onEditCourse()  }
+                )
+            }
+
         }
         is CourseDetailsUiState.Error -> ErrorScreen((uiState as CourseDetailsUiState.Error).message,)
     }
@@ -102,13 +106,7 @@ fun CourseContent(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxHeight(0.5f)
-                .fillMaxWidth()
-                .height(200.dp)
-                .graphicsLayer {
-                    val scale = 1f - scrollState.firstVisibleItemScrollOffset  / 1000f
-                    scaleX = scale
-                    scaleY = scale
-                },
+                .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
 
@@ -235,6 +233,15 @@ fun CourseContent(
     }
 }
 
+fun Modifier.parallaxLayoutModifier(scrollState: LazyListState, rate: Int) =
+    layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        val height = if (rate > 0) scrollState.firstVisibleItemScrollOffset / rate else scrollState.firstVisibleItemIndex
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, height)
+        }
+    }
+
 @Composable
 fun CommentItem(comment: Comment, user: User?) {
     Row(modifier = Modifier.padding(8.dp)) {
@@ -246,7 +253,7 @@ fun CommentItem(comment: Comment, user: User?) {
             )
         } else {
             Box(
-                modifier = Modifier.size(40.dp).clip(CircleShape).background(Color.Blue),
+                modifier = Modifier.size(40.dp).clip(CircleShape).background(MaterialTheme.colorScheme.onSurface),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = user?.name?.firstOrNull()?.toString() ?: "?", color = Color.White)
