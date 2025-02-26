@@ -2,15 +2,23 @@ package com.example.mycourses.navigation
 
 import AccountScreen
 import EditAccountScreen
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.login.ui.screens.LoginScreen
+import com.example.mycourses.ui.components.MyCoursesScaffold
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.ui.screens.createCourse.CourseImageScreen
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
@@ -25,7 +33,14 @@ fun AppNavigation(navController: NavHostController) {
     val accountViewModel: AccountViewModel = hiltViewModel()
     val coursesListViewModel: CoursesListViewModel = hiltViewModel()
     val courseCreationViewModel: CourseCreationViewModel = hiltViewModel()
-
+    val backStackEntryState by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntryState?.destination
+    val selectedItem by remember(currentDestination) {
+        mutableStateOf(
+            bottomAppBarItems.find { it.destination.route == currentDestination?.route }
+                ?: bottomAppBarItems.first()
+        )
+    }
     NavHost(
         navController = navController,
         startDestination = AppDestination.Home.route
@@ -35,7 +50,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(AppDestination.Highlight.route) {
             CoursesListScreen(
-                onNavigateToDetails = { courseId ->
+                onNavigateToDetails = {
                     navController.navigate("${AppDestination.CourseDetails.route}/courseId")
                 },
                 viewModel = coursesListViewModel
@@ -52,11 +67,15 @@ fun AppNavigation(navController: NavHostController) {
 
         }
         composable(AppDestination.FavoriteCourses.route) {
-            CourseFavoriteScreen(
-                onNavigateToDetails = { courseId ->
-                    navController.navigate("${AppDestination.CourseDetails.route}/${courseId}")
+            MyCoursesScaffold(navController, selectedItem) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    CourseFavoriteScreen(
+                        onNavigateToDetails = { courseId ->
+                            navController.navigate("${AppDestination.CourseDetails.route}/$courseId")
+                        }
+                    )
                 }
-            )
+            }
         }
         composable(AppDestination.EditAccount.route) {
             EditAccountScreen(navController, accountViewModel )
