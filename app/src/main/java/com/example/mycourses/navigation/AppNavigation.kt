@@ -104,12 +104,15 @@ fun AppNavigation(navController: NavHostController) {
             arguments = listOf(navArgument("courseId") { type = NavType.StringType; nullable = true })
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")
-            CourseInfoScreen(
-                courseId = courseId,
-                courseCreationViewModel = courseCreationViewModel,
-                onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
+            MyCoursesScaffold(navController, selectedItem, false) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    CourseInfoScreen(
+                        courseId = courseId,
+                        courseCreationViewModel = courseCreationViewModel,
+                        onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
+                    )
+                }
+            }
         }
 
         composable(AppDestination.CourseImageCreation.route) {
