@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,6 +93,8 @@ fun CourseContent(
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
+    val scrollState = rememberLazyListState()
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         AsyncImage(
@@ -98,11 +102,18 @@ fun CourseContent(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxHeight(0.5f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(200.dp)
+                .graphicsLayer {
+                    val scale = 1f - scrollState.firstVisibleItemScrollOffset  / 1000f
+                    scaleX = scale
+                    scaleY = scale
+                },
             contentScale = ContentScale.Crop
         )
 
         LazyColumn(
+            state = scrollState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp)
         ) {
@@ -118,7 +129,7 @@ fun CourseContent(
                             .weight(1f)
                             .padding(bottom = 8.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) 
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     IconButton(onClick = onToggleFavorite) {
                         Icon(
