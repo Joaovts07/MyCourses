@@ -31,48 +31,49 @@ fun AccountScreen(
 ) {
     val uiState by accountViewModel.uiState.collectAsState()
 
-    Column(
+    Surface(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars)
-            .padding( start = 16.dp, end = 16.dp, top = 18.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LaunchedEffect(accountViewModel.logoutEvent) {
-            accountViewModel.logoutEvent.collect { onLogout() }
-        }
-
-
-        when (uiState) {
-            is AccountUiState.Loading -> CircularProgressIndicator()
-            is AccountUiState.Success -> {
-                UserInfo((uiState as AccountUiState.Success).user, onEditClick = onEditClick)
-                Spacer(modifier = Modifier.height(16.dp))
-                val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
-                val myCourses = (uiState as AccountUiState.Success).myCourses
-                EnrolledCourses(enrolledCourses, navController)
-
-                Spacer(Modifier.height(16.dp))
-
-                MyCourses(myCourses, navController)
-
-                Spacer(Modifier.height(16.dp))
-
-                CreateCourseButton { navigateToCourse(navController) }
-                Spacer(Modifier.height(16.dp))
-                LogoutButton { accountViewModel.logout() }
-
-            }
-            is AccountUiState.Error -> {
-                val errorMessage = (uiState as AccountUiState.Error).message
-                Text(text = errorMessage)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 30.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LaunchedEffect(accountViewModel.logoutEvent) {
+                accountViewModel.logoutEvent.collect { onLogout() }
             }
 
+            when (uiState) {
+                is AccountUiState.Loading -> CircularProgressIndicator()
+                is AccountUiState.Success -> {
+                    UserInfo((uiState as AccountUiState.Success).user, onEditClick = onEditClick)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    val enrolledCourses = (uiState as AccountUiState.Success).enrolledCourses
+                    val myCourses = (uiState as AccountUiState.Success).myCourses
+                    EnrolledCourses(enrolledCourses, navController)
+
+                    Spacer(Modifier.height(16.dp))
+
+                    MyCourses(myCourses, navController)
+
+                    Spacer(Modifier.height(16.dp))
+
+                    CreateCourseButton { navigateToCourse(navController) }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LogoutButton { accountViewModel.logout() }
+
+                }
+                is AccountUiState.Error -> {
+                    val errorMessage = (uiState as AccountUiState.Error).message
+                    Text(text = errorMessage)
+                }
+            }
         }
     }
 }
-
 private fun navigateToCourse(navController: NavController) {
     navController.navigate(AppDestination.CourseInfoCreation.route)
 }
