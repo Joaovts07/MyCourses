@@ -20,7 +20,6 @@ import androidx.navigation.navArgument
 import com.example.login.ui.screens.LoginScreen
 import com.example.mycourses.ui.components.MyCoursesScaffold
 import com.example.mycourses.ui.screens.*
-import com.example.mycourses.ui.screens.createCourse.CourseImageScreen
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
 import com.example.mycourses.ui.screens.createCourse.CourseReviewScreen
 import com.example.mycourses.viewmodels.AccountViewModel
@@ -113,14 +112,6 @@ fun AppNavigation(navController: NavHostController) {
                     )
                 }
             }
-        }
-
-        composable(AppDestination.CourseImageCreation.route) {
-            CourseImageScreen(
-                viewModel = courseCreationViewModel,
-                onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
         }
 
         composable(AppDestination.CourseReviewCreation.route) {
