@@ -27,38 +27,40 @@ fun CourseFavoriteScreen(
     LaunchedEffect(key1 = true) {
         viewModel.loadFavoriteCourses()
     }
+    Surface {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 32.dp)
+        ) {
+            Text(
+                text = "Cursos Favoritos",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally)
+            )
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(top = 32.dp)
-    ) {
-        Text(
-            text = "Cursos Favoritos",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally)
-        )
+            when(uiState) {
+                is CourseUiState.Loading -> { LoadingScreen() }
 
-        when(uiState) {
-            is CourseUiState.Loading -> { LoadingScreen() }
+                is CourseUiState.Error -> { ErrorScreen((uiState as CourseUiState.Error).message) }
 
-            is CourseUiState.Error -> { ErrorScreen((uiState as CourseUiState.Error).message) }
-
-            is CourseUiState.Success -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ){
-                    val favoriteCourses = (uiState as CourseUiState.Success).courses
-                    items(favoriteCourses.size){ course ->
-                        HighlighCourseCard(
-                            course = favoriteCourses[course],
-                            modifier = Modifier.clickable { onNavigateToDetails(favoriteCourses[course]) },
-                        )
+                is CourseUiState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ){
+                        val favoriteCourses = (uiState as CourseUiState.Success).courses
+                        items(favoriteCourses.size){ course ->
+                            HighlighCourseCard(
+                                course = favoriteCourses[course],
+                                modifier = Modifier.clickable { onNavigateToDetails(favoriteCourses[course]) },
+                            )
+                        }
                     }
                 }
             }
         }
     }
+
 }
