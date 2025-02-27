@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -134,6 +137,20 @@ fun ImageSelector(
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
+            IconButton(
+                onClick = { launcher.launch("image/*") } ,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .clip(CircleShape)
+                    .size(40.dp)
+                    .background(Color.Gray, CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Editar foto",
+                    tint = Color.White
+                )
+            }
         } else {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
