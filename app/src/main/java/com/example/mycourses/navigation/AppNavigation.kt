@@ -108,7 +108,7 @@ fun AppNavigation(navController: NavHostController) {
                     CourseInfoScreen(
                         courseId = courseId,
                         courseCreationViewModel = courseCreationViewModel,
-                        onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
+                        onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
                     )
                 }
             }
