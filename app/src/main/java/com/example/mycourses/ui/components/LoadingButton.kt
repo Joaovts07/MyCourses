@@ -16,12 +16,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingButton(
-    onClick: () -> Unit,
     isLoading: Boolean = false,
     text: String = "Button",
     enabled: Boolean = true,
-    colors: ButtonColors = ButtonDefaults.buttonColors()
-) {
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    onClick: () -> Unit,
+    ) {
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
