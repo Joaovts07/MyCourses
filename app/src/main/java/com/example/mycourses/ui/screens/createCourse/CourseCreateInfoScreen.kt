@@ -119,7 +119,7 @@ fun CourseInfoContent(
 @Composable
 fun ImageSelector(
     imageUri: Uri?,
-    launcher: ManagedActivityResultLauncher<String, Uri?>
+    launcher: ManagedActivityResultLauncher<String, Uri?>? = null
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -128,7 +128,9 @@ fun ImageSelector(
             .height(300.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color.Gray.copy(alpha = 0.2f))
-            .clickable { launcher.launch("image/*") }
+            .clickable {
+                launcher?.launch("image/*")
+            }
     ) {
         if (imageUri != null) {
             AsyncImage(
@@ -138,7 +140,9 @@ fun ImageSelector(
                 contentScale = ContentScale.Crop
             )
             IconButton(
-                onClick = { launcher.launch("image/*") } ,
+                onClick = {
+                    launcher?.launch("image/*")
+                } ,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .clip(CircleShape)

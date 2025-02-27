@@ -115,10 +115,14 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(AppDestination.CourseReviewCreation.route) {
-            CourseReviewScreen(
-                viewModel = courseCreationViewModel,
-                onBack = { navController.popBackStack() }
-            )
+            MyCoursesScaffold(navController, selectedItem, false) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    CourseReviewScreen(
+                        viewModel = courseCreationViewModel,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+            }
         }
     }
 }

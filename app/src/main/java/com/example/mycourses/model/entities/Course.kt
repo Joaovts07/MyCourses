@@ -1,6 +1,5 @@
 package com.example.mycourses.model.entities
 
-import android.net.Uri
 import java.util.UUID
 
 data class Course(
