@@ -20,7 +20,6 @@ import androidx.navigation.navArgument
 import com.example.login.ui.screens.LoginScreen
 import com.example.mycourses.ui.components.MyCoursesScaffold
 import com.example.mycourses.ui.screens.*
-import com.example.mycourses.ui.screens.createCourse.CourseImageScreen
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
 import com.example.mycourses.ui.screens.createCourse.CourseReviewScreen
 import com.example.mycourses.viewmodels.AccountViewModel
@@ -104,27 +103,26 @@ fun AppNavigation(navController: NavHostController) {
             arguments = listOf(navArgument("courseId") { type = NavType.StringType; nullable = true })
         ) { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")
-            CourseInfoScreen(
-                courseId = courseId,
-                courseCreationViewModel = courseCreationViewModel,
-                onNext = { navController.navigate(AppDestination.CourseImageCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(AppDestination.CourseImageCreation.route) {
-            CourseImageScreen(
-                viewModel = courseCreationViewModel,
-                onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
-                onBack = { navController.popBackStack() }
-            )
+            MyCoursesScaffold(navController, selectedItem, false) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    CourseInfoScreen(
+                        courseId = courseId,
+                        courseCreationViewModel = courseCreationViewModel,
+                        onNext = { navController.navigate(AppDestination.CourseReviewCreation.route) },
+                    )
+                }
+            }
         }
 
         composable(AppDestination.CourseReviewCreation.route) {
-            CourseReviewScreen(
-                viewModel = courseCreationViewModel,
-                onBack = { navController.popBackStack() }
-            )
+            MyCoursesScaffold(navController, selectedItem, false) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    CourseReviewScreen(
+                        viewModel = courseCreationViewModel,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+            }
         }
     }
 }
