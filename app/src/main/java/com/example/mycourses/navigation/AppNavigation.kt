@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -17,7 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import com.example.login.ui.screens.LoginScreen
+import com.example.login.presentation.login.LoginScreen
 import com.example.mycourses.ui.components.MyCoursesScaffold
 import com.example.mycourses.ui.screens.*
 import com.example.mycourses.ui.screens.createCourse.CourseInfoScreen
@@ -95,8 +94,7 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate(AppDestination.Account.route) {
                         popUpTo("login") { inclusive = true }
                     }
-                },
-                context = LocalContext.current
+                }
             )
         }
         composable("${AppDestination.CourseInfoCreation.route}/{courseId}",

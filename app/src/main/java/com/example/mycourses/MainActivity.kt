@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.example.login.ui.screens.LoginNavigation
+import com.example.login.presentation.login.LoginNavigation
 import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.AppNavigation
 import com.example.mycourses.ui.theme.MyCoursesTheme
