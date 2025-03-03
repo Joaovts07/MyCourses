@@ -13,7 +13,6 @@ import com.example.mycourses.navigation.AppDestination
 import com.example.mycourses.navigation.bottomAppBarItems
 import com.example.mycourses.ui.components.MyCoursesScaffold
 
-
 @Composable
 fun HomeScreen(navController: NavHostController) {
     val backStackEntryState by navController.currentBackStackEntryAsState()
