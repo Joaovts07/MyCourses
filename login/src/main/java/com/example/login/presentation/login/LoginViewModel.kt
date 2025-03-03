@@ -1,15 +1,14 @@
-package com.example.login.viewmodels
+package com.example.login.presentation.login
 
 import android.app.Activity
 import android.util.Log
 import androidx.activity.result.ActivityResult
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.login.repository.AuthRepository
+import com.example.login.domain.usecase.CheckIfUserExistsUseCase
+import com.example.login.domain.usecase.CreateUserUseCase
+import com.example.login.domain.usecase.LoginUseCase
+import com.example.login.domain.usecase.LoginWithGoogleUseCase
 import com.example.login.validators.isValidEmail
 import com.example.login.validators.isValidPassword
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -18,6 +17,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -25,38 +28,42 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val loginUseCase: LoginUseCase,
+    private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
+    private val createUserUseCase: CreateUserUseCase,
+    private val checkIfUserExistsUseCase: CheckIfUserExistsUseCase
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(LoginUiState())
-        private set
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    private val _loginState = mutableStateOf<LoginState>(LoginState.Idle)
-    val loginState: MutableState<LoginState> = _loginState
+    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
+    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
     fun onEmailChange(email: String) {
-        uiState = uiState.copy(email = email)
+        _uiState.update { it.copy(email = email) }
     }
 
     fun onPasswordChange(password: String) {
-        uiState = uiState.copy(password = password)
+        _uiState.update { it.copy(password = password) }
     }
 
-    fun login(onSuccess: () -> Unit) {
-        if(verifyFields(uiState.email, uiState.password)) {
-            uiState.copy(errorMessage = "Campos inválidos", isLoading = false)
+    fun login() {
+        if (verifyFields(_uiState.value.email, _uiState.value.password)) {
             _loginState.value = LoginState.Error("Campos inválidos")
             return
         }
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            uiState = uiState.copy(isLoading = true)
-            val result = authRepository.login(uiState.email, uiState.password)
-            uiState = if (result.isSuccess) {
-                onSuccess()
-                LoginUiState()
+            _uiState.update { it.copy(isLoading = true) }
+            val result = loginUseCase(_uiState.value.email, _uiState.value.password)
+            if (result.isSuccess) {
+                _loginState.value = LoginState.Logged
+                _uiState.update { LoginUiState() }
             } else {
-                uiState.copy(errorMessage = result.exceptionOrNull()?.message, isLoading = false)
+                _uiState.update { it.copy(errorMessage = result.exceptionOrNull()?.message, isLoading = false) }
+                _loginState.value =
+                    LoginState.Error(result.exceptionOrNull()?.message ?: "Erro desconhecido")
             }
         }
     }
@@ -64,35 +71,36 @@ class LoginViewModel @Inject constructor(
     private fun handleGoogleSignIn(nome: String, email: String, dataNascimento: String? = "") {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            uiState = uiState.copy(isLoading = true)
-            val userExists = authRepository.checkIfUserExists()
+            _uiState.update { it.copy(isLoading = true) }
+            val userExists = checkIfUserExistsUseCase()
             if (!userExists) {
                 val dateBirthdayTimestamp = try {
                     val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
                     val dateBirthday = dataNascimento?.let { formatter.parse(it) }
                     dateBirthday?.let { Timestamp(it) }
-                    } catch (ex: Exception) {
-                        Timestamp.now()
-                    }
-                authRepository.createUser(nome, email, dateBirthdayTimestamp)
+                } catch (ex: Exception) {
+                    Timestamp.now()
+                }
+                createUserUseCase(nome, email, dateBirthdayTimestamp)
             }
             _loginState.value = LoginState.Logged
-            uiState.copy(isLoading = false)
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     fun loginWithGoogle(idToken: String, nome: String, email: String, dataNascimento: String? = "") {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            uiState = uiState.copy(isLoading = true)
-            val result = authRepository.loginWithGoogle(idToken)
+            _uiState.update { it.copy(isLoading = true) }
+            val result = loginWithGoogleUseCase(idToken)
             if (result.isSuccess) {
                 handleGoogleSignIn(nome, email, dataNascimento)
             } else {
-                uiState.copy(errorMessage = result.exceptionOrNull()?.message, isLoading = false)
+                _uiState.update { it.copy(errorMessage = result.exceptionOrNull()?.message, isLoading = false) }
             }
         }
     }
+
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
         try {
             val googleAccount = task.getResult(ApiException::class.java)
@@ -102,13 +110,11 @@ class LoginViewModel @Inject constructor(
                 loginWithGoogle(idToken, displayName, email)
             }
         } catch (e: ApiException) {
-            uiState.copy(errorMessage = e.message)
+            _uiState.update { it.copy(errorMessage = e.message) }
         }
     }
 
-    fun handleGoogleSignInResult(
-        result: ActivityResult,
-    ) {
+    fun handleGoogleSignInResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             if (task.isSuccessful) {
@@ -121,10 +127,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun verifyFields(
-        email: String,
-        password: String
-    ): Boolean {
+    private fun verifyFields(email: String, password: String): Boolean {
         val isEmailError = !isValidEmail(email)
         val isPasswordError = !isValidPassword(password)
         return isEmailError || isPasswordError
@@ -144,3 +147,13 @@ sealed class LoginState {
     object Logged : LoginState()
     data class Error(val message: String) : LoginState()
 }
+
+fun isValidEmail(email: String): Boolean {
+    val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$".toRegex()
+    return emailRegex.matches(email)
+}
+
+fun isValidPassword(password: String): Boolean {
+    return password.length >= 6
+}
+
