@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,41 +31,46 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyCoursesTheme {
-                val navController = rememberNavController()
-                val auth = FirebaseAuth.getInstance()
-                var authState by remember { mutableStateOf(AuthState.LOADING) }
-                LaunchedEffect(auth) {
-                    authState = if (auth.currentUser != null) AuthState.AUTHENTICATED else AuthState.UNAUTHENTICATED
-                }
-
-                when (authState) {
-                    AuthState.LOADING -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    AuthState.AUTHENTICATED -> {
-                        AppNavigation(navController)
-                    }
-                    AuthState.UNAUTHENTICATED -> {
-                        LoginNavigation(
-                            navController = navController,
-                            routeSuccess = AppDestination.Home.route,
-                            onLoginSuccess = {
-                                authState = AuthState.AUTHENTICATED
-                            }
-                        )
-                    }
-                }
+                InitNavigation()
             }
         }
     }
+}
 
+@Composable
+private fun InitNavigation() {
+    val navController = rememberNavController()
+    val auth = FirebaseAuth.getInstance()
+    var authState by remember { mutableStateOf(AuthState.LOADING) }
+    LaunchedEffect(auth) {
+        authState =
+            if (auth.currentUser != null) AuthState.AUTHENTICATED else AuthState.UNAUTHENTICATED
+    }
 
+    when (authState) {
+        AuthState.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
+        AuthState.AUTHENTICATED -> {
+            AppNavigation(navController)
+        }
+
+        AuthState.UNAUTHENTICATED -> {
+            LoginNavigation(
+                navController = navController,
+                routeSuccess = AppDestination.Home.route,
+                onLoginSuccess = {
+                    authState = AuthState.AUTHENTICATED
+                }
+            )
+        }
+    }
 }
 
 enum class AuthState {
